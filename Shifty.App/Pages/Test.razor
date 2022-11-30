@@ -1,0 +1,76 @@
+@page "/Test"
+
+@if (user is not null)
+{
+    <h3>@user.Identity.Name</h3>
+    <div class="m-2 p-2">
+        Is Authenticated: @user.Identity.IsAuthenticated
+    </div>
+    <div class="m-2 p-2">
+        Authentication Type: @user.Identity.AuthenticationType
+    </div>
+    <div class="m-2 p-2">
+        Admin Role: @user.IsInRole("Admin")
+        Manager Role: @user.IsInRole("Manager")
+    </div>
+    if (user.IsInRole("Admin"))
+    {
+        <MudText>This is only for admin users</MudText>
+    }
+    if (user.IsInRole("Application"))
+    {
+        <MudText>This is only for application users</MudText>
+    } if (user.IsInRole("Manager"))
+    {
+        <MudText>This is only for Manager users</MudText>
+    }
+    <div class="m-2 p-2">
+        <h5>Claims</h5>
+        @foreach (var claim in user.Claims)
+        {
+            <span>
+                @claim.Type
+            </span>
+            <span>:</span>
+            <span>
+                @claim.Value
+            </span>
+            <br />
+        }
+
+        @foreach (var claimsIdentity in user.Identities)
+        {
+            <MudText>@claimsIdentity.RoleClaimType</MudText>
+            @foreach (var claim in claimsIdentity.Claims)
+            {
+                <span>
+                    @claim.Type
+                </span>
+                <span>:</span>
+                <span>
+                    @claim.Value
+                </span>
+                <br />
+            }
+                
+        }
+    </div>
+}
+else
+{
+    <div class="m-2 p-2">
+        No User Exists
+    </div>
+}
+
+@code {
+    [CascadingParameter] public Task<AuthenticationState> AuthTask { get; set; }
+
+    private System.Security.Claims.ClaimsPrincipal user;
+
+    protected async override Task OnInitializedAsync()
+    {
+        var authState = await AuthTask;
+        this.user = authState.User;
+    }
+}
