@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shifty.Api", "Shifty.Api\Shifty.Api.csproj", "{BEDEC57C-E274-4F0A-B82C-9EBBCD8C67F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shifty.App", "Shifty.App\Shifty.App.csproj", "{A27A55FD-8B36-48DA-9EC5-2FC45E2D89C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shifty.GenerateApi", "Shifty.GenerateApi\Shifty.GenerateApi.csproj", "{45CCCE83-B163-4DDF-9826-61413C85BF4F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BEDEC57C-E274-4F0A-B82C-9EBBCD8C67F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEDEC57C-E274-4F0A-B82C-9EBBCD8C67F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEDEC57C-E274-4F0A-B82C-9EBBCD8C67F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEDEC57C-E274-4F0A-B82C-9EBBCD8C67F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A27A55FD-8B36-48DA-9EC5-2FC45E2D89C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A27A55FD-8B36-48DA-9EC5-2FC45E2D89C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A27A55FD-8B36-48DA-9EC5-2FC45E2D89C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A27A55FD-8B36-48DA-9EC5-2FC45E2D89C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45CCCE83-B163-4DDF-9826-61413C85BF4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45CCCE83-B163-4DDF-9826-61413C85BF4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45CCCE83-B163-4DDF-9826-61413C85BF4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45CCCE83-B163-4DDF-9826-61413C85BF4F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
