@@ -18,7 +18,7 @@
 
         @foreach (var employee in Shift.Employees)
         {
-            <MudItem xs="7">
+            <MudItem xs="6">
                 <MudText>@employee.FirstName @employee.LastName</MudText>
                 <MudDivider></MudDivider>
             </MudItem>
@@ -30,6 +30,13 @@
                     Label="@(IsEmployeeCheckedIn(employee) ? "Checked in" : "Checked out")"
                     Disabled="@(ShiftHasEnded || _employeeCheckInStatus[employee.Id] == CheckInStatus.Updating)"
                     DisableRipple="@(ShiftHasEnded)"/>
+            </MudItem>
+            <MudItem xs="1">
+                <MudButton
+                    StartIcon="@Icons.Material.Filled.Delete"
+                    OnClick="async () => await RemoveEmployeeFromShift(employee.Id)"
+                    Disabled="@(ShiftHasEnded)">
+                </MudButton>
             </MudItem>
         }
     </MudGrid>
@@ -127,16 +134,41 @@
             _snackbar.Add($"No employee with name {_employeeToAdd}", Severity.Error);
             return;
         }
-        var employeeIdToAdd = employee.Id;
-        employeeIds.Add(employeeIdToAdd);
+        employeeIds.Add(employee.Id);
 
         var patch = new PatchShiftDTO
         {
             EmployeeIds = employeeIds
         };
-        var either = await _shiftRepository.AddEmployeeToShift(Shift.Id, patch);
+        var either = await _shiftRepository.PatchShift(Shift.Id, patch);
         either.Match(
-            r => _snackbar.Add($"Added {_employeeToAdd} to shift", Severity.Success),
+            r =>
+            {
+                _snackbar.Add($"Added {_employeeToAdd} to shift", Severity.Success);
+                Shift.Employees.Add(employee);
+                _employeeCheckInStatus.Add(employee.Id, Shift.CheckIns.Any(c => c.Employee.Id == employee.Id) ? CheckInStatus.CheckedIn : CheckInStatus.NotCheckedIn);
+            },
+            error => _snackbar.Add($"Could not add {_employeeToAdd} to shift: {error.Message}", Severity.Error)
+            );
+    }
+
+    async Task RemoveEmployeeFromShift(int employeeId)
+    {
+        var employeeToRemove = Shift.Employees.FirstOrDefault(e => e.Id == employeeId);
+        var employeeIds = Shift.Employees.Select(e => e.Id).ToList();
+        employeeIds.Remove(employeeId);
+        var patch = new PatchShiftDTO
+        {
+            EmployeeIds = employeeIds
+        };
+        var either = await _shiftRepository.PatchShift(Shift.Id, patch);
+        either.Match(
+            r =>
+            {
+                _snackbar.Add($"Removed {employeeToRemove.FirstName} {employeeToRemove.LastName} from shift", Severity.Success);
+                Shift.Employees.Remove(employeeToRemove);
+                _employeeCheckInStatus.Remove(employeeToRemove.Id);
+            },
             error => _snackbar.Add($"Could not add {_employeeToAdd} to shift: {error.Message}", Severity.Error)
             );
     }

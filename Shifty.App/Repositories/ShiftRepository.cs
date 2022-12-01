@@ -33,7 +33,7 @@ namespace Shifty.App.Repositories
             return await TryAsync(_client.ApiShiftsTodayGetAsync()).ToEither();
         }
 
-        public async Task<Either<Error, Task>> AddEmployeeToShift(int shiftId, PatchShiftDTO patch)
+        public async Task<Either<Error, Task>> PatchShift(int shiftId, PatchShiftDTO patch)
         {
             return await TryAsync(_client.ApiShiftsPatchAsync(shiftId, patch)).ToEither();
         }

@@ -12,6 +12,6 @@ namespace Shifty.App.Repositories
         Task<Either<Error, bool>> CheckOut(int shiftId, int employeeId);
         Task<Either<Error, bool>> CheckIn(int shiftId, int employeeId);
         Task<Either<Error, ICollection<ShiftDTO>>> TodayShifts();
-        Task<Either<Error, Task>> AddEmployeeToShift(int shiftId, PatchShiftDTO patch);
+        Task<Either<Error, Task>> PatchShift(int shiftId, PatchShiftDTO patch);
     }
 }
