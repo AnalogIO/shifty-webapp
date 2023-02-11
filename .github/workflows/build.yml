@@ -30,11 +30,11 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore .
       - name: Build Shifty App
-        run: dotnet build . --no-restore /p:ContinuousIntegrationBuild=true -C Release
+        run: dotnet build . --no-restore /p:ContinuousIntegrationBuild=true --configuration Release
       - name: Run tests
         run: dotnet test . /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
       - name: Publish Shifty App
-        run: dotnet publish -c Release -o publish
+        run: dotnet publish --configuration Release --output publish
       - name: Publish workflow artifact
         if: ${{ inputs.publish_artifacts }}
         uses: actions/checkout@v3
