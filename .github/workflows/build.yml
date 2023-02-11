@@ -3,8 +3,6 @@ name: Build Webapp
 on:
   pull_request:
     branches: [develop, production]
-  push:
-    branches: [feature/jra/githubactions]
 
   workflow_dispatch:
 
@@ -40,6 +38,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: shifty
-          path: publish
+          path: publish/wwwroot
           retention-days: 1
           if-no-files-found: error
