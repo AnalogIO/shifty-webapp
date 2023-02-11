@@ -1,0 +1,33 @@
+name: Deploy Webapp
+
+on:
+  push:
+    branches: [develop, production, feature/jra/githubactions]
+
+jobs:
+  buildtest:
+    uses: ./.github/workflows/build.yml
+    with:
+      publish_artifacts: true
+    secrets: inherit
+
+  deploy:
+    name: Deploy Webapp
+    runs-on: ubuntu-latest
+    needs: [buildtest]
+    environment:
+      name: "dev"
+      url: ${{ steps.webapp-deploy.outputs.webapp-url }}
+
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: shifty
+      - name: Deploy to Azure Web App
+        id: webapp-deploy
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: "app-aio-shifty-dev"
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile }}
+          package: .
