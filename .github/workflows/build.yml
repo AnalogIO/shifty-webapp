@@ -1,0 +1,41 @@
+name: Build Webapp
+
+on:
+  pull_request:
+    branches: [develop, production]
+
+  workflow_dispatch:
+
+  workflow_call:
+    inputs:
+      publish_artifacts:
+        description: "Publish workflow artifacts"
+        type: boolean
+        default: false
+
+jobs:
+  build_test:
+    name: Build and test Webapp
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout codebase
+        uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.x
+      - name: Restore dependencies
+        run: dotnet restore .
+      - name: Build Shifty App
+        run: dotnet build . --no-restore /p:ContinuousIntegrationBuild=true -C Release
+      - name: Run tests
+        run: dotnet test . /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+      - name: Publish Shifty App
+        run: dotnet publish -c Release -o publish
+      - name: Publish workflow artifact
+        if: ${{ inputs.publish_artifacts }}
+        uses: actions/checkout@v3
+        with:
+          name: shifty
+          path: publish
