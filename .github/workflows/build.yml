@@ -32,12 +32,14 @@ jobs:
       - name: Build Shifty App
         run: dotnet build . --no-restore /p:ContinuousIntegrationBuild=true --configuration Release
       - name: Run tests
-        run: dotnet test . /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+        run: dotnet test . --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
       - name: Publish Shifty App
-        run: dotnet publish --configuration Release --output publish
+        run: dotnet publish --no-restore --configuration Release --output publish
       - name: Publish workflow artifact
-        if: ${{ inputs.publish_artifacts }}
-        uses: actions/checkout@v3
+        # if: ${{ inputs.publish_artifacts }}
+        uses: actions/upload-artifact@v3
         with:
           name: shifty
           path: publish
+          retention-days: 1
+          if-no-files-found: error
