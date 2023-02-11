@@ -3,6 +3,8 @@ name: Build Webapp
 on:
   pull_request:
     branches: [develop, production]
+  push:
+    branches: [feature/jra/githubactions]
 
   workflow_dispatch:
 
