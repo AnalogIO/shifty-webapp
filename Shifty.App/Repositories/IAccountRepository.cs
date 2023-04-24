@@ -7,6 +7,6 @@ namespace Shifty.App.Repositories
 {
     public interface IAccountRepository
     {
-        Task<Either<Error, EmployeeLoginResponse>> Login(EmployeeLoginDTO loginDto);
+        Task<Either<Error, EmployeeLoginResponse>> Login(string username, string password);
     }
 }

@@ -20,9 +20,9 @@ namespace Shifty.App.Services
             _localStorage = storageService;
         }
 
-        public async Task<bool> LoginUser(EmployeeLoginDTO loginDto)
+        public async Task<bool> LoginUser(string username, string password)
         {
-            var either = await _accountRepository.Login(loginDto);
+            var either = await _accountRepository.Login(username, password);
 
             if (either.IsLeft)
             {

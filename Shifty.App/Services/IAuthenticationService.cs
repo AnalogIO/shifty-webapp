@@ -5,6 +5,6 @@ namespace Shifty.App.Services
 {
     public interface IAuthenticationService
     {
-        Task<bool> LoginUser(EmployeeLoginDTO loginDto);
+        Task<bool> LoginUser(string username, string password);
     }
 }

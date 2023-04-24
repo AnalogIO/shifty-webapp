@@ -15,9 +15,14 @@ namespace Shifty.App.Repositories
             _client = client;
         }
         
-        public async Task<Either<Error, EmployeeLoginResponse>> Login(EmployeeLoginDTO loginDto)
+        public async Task<Either<Error, EmployeeLoginResponse>> Login(string username, string password)
         {
-            return await TryAsync(_client.ApiAccountLoginAsync(loginDto)).ToEither();
+            var dto = new EmployeeLoginDTO()
+            {
+                Username = username,
+                Password = password
+            };
+            return await TryAsync(_client.ApiAccountLoginAsync(dto)).ToEither();
         }
     }
 }
