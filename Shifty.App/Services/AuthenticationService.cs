@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using LanguageExt.UnsafeValueAccess;
-using Shifty.Api.Generated.ShiftPlanningV1;
 using Shifty.App.Authentication;
 using Shifty.App.Repositories;
 
@@ -22,7 +21,7 @@ namespace Shifty.App.Services
 
         public async Task<bool> LoginUser(string username, string password)
         {
-            var either = await _accountRepository.Login(username, password);
+            var either = await _accountRepository.LoginAsync(username, password);
 
             if (either.IsLeft)
             {
