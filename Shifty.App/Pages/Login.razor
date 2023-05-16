@@ -5,6 +5,7 @@
 @inject IAuthenticationService _authenticationService
 
 <EditForm Model="@_loginForm" OnValidSubmit="async () =>  await LoginUser()" >
+    <DataAnnotationsValidator/>
     <MudCard Class="mb-auto">
         <MudCardContent>
             @if (_loggingIn)
@@ -19,20 +20,16 @@
                 }
                 
                 <MudTextField T="string"
-                              @bind-Value="_loginForm.Username"
+                              @bind-Value="_loginForm.Email"
                               Label="Email"
-                              For="() => _loginForm.Username"
+                              For="() => _loginForm.Email"
                               Immediate="true"
-                              DebounceInterval="500"
-                              Required="true"
-                              RequiredError="Email is required!"
-                              Validation="@(new EmailAddressAttribute() { ErrorMessage = "The e-mail address is invalid" })"/>
+                              DebounceInterval="500"/>
                 <MudTextField T="string" Label="Password"
                               @bind-Value="_loginForm.Password"
                               InputType="InputType.Password"
                               For="() => _loginForm.Password"
-                              Immediate="true"
-                              RequiredError="Password is required!"/>
+                              Immediate="true"/>
             }
         </MudCardContent>
         <MudCardActions>
@@ -58,7 +55,7 @@
     {
         [Required]
         [EmailAddress]
-        public string Username { get; set; }
+        public string Email { get; set; }
 
         [Required]
         public string Password { get; set; }
@@ -68,7 +65,7 @@
     {
         _successfulLogin = true;
         _loggingIn = true;
-        _successfulLogin = await _authenticationService.LoginUser(_loginForm.Username, _loginForm.Password);
+        _successfulLogin = await _authenticationService.LoginUser(_loginForm.Email, _loginForm.Password);
         _loggingIn = false;
     }
 }
