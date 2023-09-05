@@ -1,23 +1,29 @@
 using System.Threading.Tasks;
 using LanguageExt;
 using LanguageExt.Common;
-using Shifty.Api.Generated.ShiftPlanningV1;
+using Shifty.Api.Generated.AnalogCoreV1;
 using static LanguageExt.Prelude;
 
 namespace Shifty.App.Repositories
 {
     public class AccountRepository : IAccountRepository
     {
-        private readonly ShiftPlanningV1 _client;
+        private readonly AnalogCoreV1 _client;
 
-        public AccountRepository(ShiftPlanningV1 client)
+        public AccountRepository(AnalogCoreV1 client)
         {
             _client = client;
         }
         
-        public async Task<Either<Error, EmployeeLoginResponse>> Login(EmployeeLoginDTO loginDto)
+        public async Task<Either<Error, TokenDto>> LoginAsync(string username, string password)
         {
-            return await TryAsync(_client.ApiAccountLoginAsync(loginDto)).ToEither();
+            var dto = new LoginDto()
+            {
+                Email= username,
+                Password = password,
+                Version = "2.1.0"
+            };
+            return await TryAsync(_client.ApiV1AccountLoginAsync(loginDto: dto)).ToEither();
         }
     }
 }

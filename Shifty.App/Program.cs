@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
-using Shifty.Api.Generated.ShiftPlanningV1;
+using Shifty.Api.Generated.AnalogCoreV1;
 using Shifty.App.Authentication;
 using Shifty.App.Repositories;
 using Shifty.App.Services;
@@ -36,14 +36,12 @@ namespace Shifty.App
 
             
             services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
-                .CreateClient("ShiftPlanning"));
-            services.AddHttpClient("ShiftPlanning",
-                    client => client.BaseAddress = new Uri("https://analogio.dk/shiftplanning/"))
+                .CreateClient("AnalogCoreV1"));
+            services.AddHttpClient("AnalogCoreV1",
+                    client => client.BaseAddress = new Uri("https://core.dev.analogio.dk/"))
                 .AddHttpMessageHandler<RequestAuthenticationHandler>();
             services.AddScoped(provider => 
-                new ShiftPlanningV1(provider.GetRequiredService<IHttpClientFactory>().CreateClient("ShiftPlanning")));
-            services.AddScoped<IShiftRepository, ShiftRepository>();
-            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+                new AnalogCoreV1(provider.GetRequiredService<IHttpClientFactory>().CreateClient("AnalogCoreV1")));
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<CustomAuthStateProvider>();
             services.AddScoped<AuthenticationStateProvider>(s => s.GetService<CustomAuthStateProvider>());

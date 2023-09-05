@@ -1,12 +1,12 @@
 using System.Threading.Tasks;
 using LanguageExt;
 using LanguageExt.Common;
-using Shifty.Api.Generated.ShiftPlanningV1;
+using Shifty.Api.Generated.AnalogCoreV1;
 
 namespace Shifty.App.Repositories
 {
     public interface IAccountRepository
     {
-        Task<Either<Error, EmployeeLoginResponse>> Login(EmployeeLoginDTO loginDto);
+        public Task<Either<Error, TokenDto>> LoginAsync(string username, string password);
     }
 }
