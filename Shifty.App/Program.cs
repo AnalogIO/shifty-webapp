@@ -38,7 +38,7 @@ namespace Shifty.App
             services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
                 .CreateClient("AnalogCoreV1"));
             services.AddHttpClient("AnalogCoreV1",
-                    client => client.BaseAddress = new Uri("https://localhost:5001/"))
+                    client => client.BaseAddress = new Uri("https://core.dev.analogio.dk/"))
                 .AddHttpMessageHandler<RequestAuthenticationHandler>();
             services.AddScoped(provider => 
                 new AnalogCoreV1(provider.GetRequiredService<IHttpClientFactory>().CreateClient("AnalogCoreV1")));
