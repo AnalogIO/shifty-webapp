@@ -1,63 +1,71 @@
 @page "/Login"
 @using Microsoft.AspNetCore.Components
 @using System.ComponentModel.DataAnnotations
-@using global::Shifty.Api.Generated.ShiftPlanningV1
 @using Shifty.App.Services
 @inject IAuthenticationService _authenticationService
 
-<MudCard Class="mb-auto">
-    <MudCardContent>
-        @if (_loggingIn)
-        {
-            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
-        }
-        else
-        {
-            if (!_successfulLogin)
+<EditForm Model="@_loginForm" OnValidSubmit="async () =>  await LoginUser()" >
+    <DataAnnotationsValidator/>
+    <MudCard Class="mb-auto">
+        <MudCardContent>
+            @if (_loggingIn)
             {
-                <MudAlert Severity="Severity.Warning" ShowCloseIcon="true">Invalid credentials</MudAlert>
+                <MudProgressCircular Color="Color.Default" Indeterminate="true" />
             }
-            
-            <MudForm Model="@_employeeLoginDto" @bind-IsValid="@_validInput">
+            else
+            {
+                if (!_successfulLogin)
+                {
+                    <MudAlert Severity="Severity.Warning" ShowCloseIcon="true">Invalid credentials</MudAlert>
+                }
+                
                 <MudTextField T="string"
-                              @bind-Value="_employeeLoginDto.Username"
+                              @bind-Value="_loginForm.Email"
                               Label="Email"
+                              For="() => _loginForm.Email"
                               Immediate="true"
-                              DebounceInterval="500"
-                              Required="true"
-                              RequiredError="Email is required!"
-                              Validation="@(new EmailAddressAttribute() { ErrorMessage = "The e-mail address is invalid" })"/>
+                              DebounceInterval="500"/>
                 <MudTextField T="string" Label="Password"
-                              @bind-Value="_employeeLoginDto.Password"
+                              @bind-Value="_loginForm.Password"
                               InputType="InputType.Password"
-                              Immediate="true"
-                              Required="true"
-                              RequiredError="Password is required!"/>
-            </MudForm>
-        }
-    </MudCardContent>
-    <MudCardActions>
-        <MudButton Variant="Variant.Filled"
-                   Color="Color.Primary"
-                   Disabled="@(!_validInput)"
-                   Class="ml-auto"
-                   OnClick="@(async () => await LoginUser())">
-            Login
-        </MudButton>
-    </MudCardActions>
-</MudCard>
+                              For="() => _loginForm.Password"
+                              Immediate="true"/>
+            }
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton ButtonType="ButtonType.Submit"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Class="ml-auto"
+                       OnClick="@(async () => await LoginUser())">
+                Login
+            </MudButton>
+        </MudCardActions>
+    </MudCard>
+</EditForm>
+
 
 @code {
     bool _validInput;
     bool _loggingIn = false;
     bool _successfulLogin = true;
-    EmployeeLoginDTO _employeeLoginDto = new();
+    LoginForm _loginForm = new();
+    
+    public class LoginForm
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        public string Password { get; set; }
+    }
 
     async Task LoginUser()
     {
         _successfulLogin = true;
         _loggingIn = true;
-        _successfulLogin = await _authenticationService.LoginUser(_employeeLoginDto);
+        _successfulLogin = await _authenticationService.LoginUser(_loginForm.Email, _loginForm.Password);
         _loggingIn = false;
     }
 }
