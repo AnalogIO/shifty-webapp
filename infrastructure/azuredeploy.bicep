@@ -38,13 +38,6 @@ module shiftywebapp 'shifty.bicep' = {
     organizationPrefix: organizationPrefix
     applicationPrefix: 'shifty'
     environment: environment
-  }
-}
-
-module dns 'modules/dns.bicep' = {
-  name: '${deployment().name}-dns'
-  scope: sharedRg
-  params: {
-    environment: environment
+    sharedResourceGroupName: sharedRg.name
   }
 }
