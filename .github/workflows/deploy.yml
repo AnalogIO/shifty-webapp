@@ -25,6 +25,7 @@ jobs:
     with:
       environment: dev
       subscriptionId: analogio-dev
+      targetBranch: develop
 
   deploy_prod:
     name: Deploy prd
@@ -35,3 +36,4 @@ jobs:
     with:
       environment: prd
       subscriptionId: analogio-prd
+      targetBranch: production

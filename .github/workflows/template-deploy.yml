@@ -13,6 +13,11 @@ on:
         required: true
         description: "The Azure subscription ID to deploy to"
         default: "analogio-dev"
+      targetBranch:
+        type: string
+        required: true
+        description: "The target branch in the repository"
+        default: "develop"
 
 jobs:
   deploy:
@@ -43,7 +48,7 @@ jobs:
           scope: subscription
           region: "West Europe"
           template: azuredeploy.json
-          parameters: "environment=${{ inputs.environment }}"
+          parameters: "environment=${{ inputs.environment }} targetBranch=${{ inputs.targetBranch }}"
           deploymentName: "azuredeploy-${{github.run_number}}"
           failOnStdErr: true
 

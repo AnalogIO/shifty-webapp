@@ -2,6 +2,8 @@ param location string = resourceGroup().location
 
 param environment string
 
+param targetBranch string
+
 param organizationPrefix string
 param applicationPrefix string
 
@@ -17,7 +19,7 @@ resource staticwebapp 'Microsoft.Web/staticSites@2022-03-01' = {
   properties: {
     allowConfigFileUpdates: false
     repositoryUrl: 'https://github.com/AnalogIO/shifty-webapp'
-    branch: 'develop'
+    branch: targetBranch
     provider: 'GitHub'
     stagingEnvironmentPolicy: 'Disabled'
     enterpriseGradeCdnStatus: 'Disabled'
