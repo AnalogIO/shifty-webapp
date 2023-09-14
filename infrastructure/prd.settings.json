@@ -1,0 +1,11 @@
+{
+    "appservicePlan": {
+        "sku": {
+            "name": "B2",
+            "tier": "Basic",
+            "family": "B",
+            "size": "B2",
+            "capacity": "1"
+        }
+    }
+}
