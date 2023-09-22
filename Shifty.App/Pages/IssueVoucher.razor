@@ -1,0 +1,25 @@
+@page "/Voucher"
+@using Components
+
+<MudMainContent>
+    @if (user is not null)
+    {
+        <Voucher user=@user></Voucher>
+    }
+    else
+    {
+        <MudAlert>Something went wrong!</MudAlert>
+    }
+</MudMainContent>
+
+@code {
+    [CascadingParameter] public Task<AuthenticationState> AuthTask { get; set; }
+
+    private System.Security.Claims.ClaimsPrincipal user;
+
+    protected async override Task OnInitializedAsync()
+    {
+        var authState = await AuthTask;
+        this.user = authState.User;
+    }
+}

@@ -1,0 +1,95 @@
+@namespace Components
+
+@using Shifty.Api.Generated.AnalogCoreV1
+@using Shifty.Api.Generated.AnalogCoreV2
+@using System.ComponentModel.DataAnnotations
+
+<MudCard Class="mb-auto" Width="40vw">
+    <MudCardContent>
+        <MudText Align="Align.Center" Class="mb-n4">Issue Voucher Form</MudText>
+        <MudForm>
+            <MudSelect  T="Product" 
+                        Label="Product"
+                        Placeholder="Available products..."
+                        AnchorOrigin="Origin.BottomCenter"
+                        @bind-Value=_voucherForm.Product>
+
+                <MudSelectItem Value="@(new Product{
+                    Name="Filter Coffee",
+                    ProductId=1
+                })" />
+                <MudSelectItem Value="@(new Product{
+                    Name="Fancy Coffee",
+                    ProductId=2
+                })" />
+            </MudSelect>
+
+            <MudNumericField @bind-Value="_voucherForm.Amount" Placeholder="1" Label="Amount" Variant="Variant.Text" Min="1" Max="10" />
+
+            <MudTextField T="string"
+                @bind-Value="_voucherForm.Description"
+                Label="Description" />
+            
+            <MudCardActions>
+                <MudButton  Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            Class="ml-auto"
+                            OnClick="@(async () => await IssueVoucher())"
+                            EndIcon="@Icons.Material.Filled.Sell">
+                    Issue Voucher
+                </MudButton>
+            </MudCardActions>
+        </MudForm>
+
+    </MudCardContent>
+
+</MudCard>
+
+@code
+{
+    [Parameter]
+    public System.Security.Claims.ClaimsPrincipal user { get; set; }
+    VoucherForm _voucherForm = new();
+
+    public class VoucherForm
+    {
+        [Required]
+        public string Description { get; set; }
+        public Product Product { get; set; }
+        public int Amount { get; set; } = 1;
+    }
+
+    async private Task IssueVoucher()
+    {
+        var request = new IssueVoucherRequest{
+            Amount=_voucherForm.Amount,
+            Description=_voucherForm.Description,
+            ProductId=_voucherForm.Product.GetProductId(),
+            Requester=user.Identity.Name,
+            VoucherPrefix="SHF" // SHF for Shifty (temp)
+        };
+        var api = new AnalogCoreV2(new());
+        var response = await api.ApiV2VouchersIssueVouchersAsync(request);
+        
+        Console.WriteLine(response);
+        
+        return;
+    }
+
+    public class Product
+    {
+        public string Name { get; set; }
+        public int ProductId { get; set; }
+        public int GetProductId() => ProductId;
+
+        public override bool Equals(object o)
+        {
+            var other = o as Product;
+            return other?.ProductId == ProductId;
+        }
+
+        public override int GetHashCode() => ProductId;
+
+        public override string ToString() => Name;
+    }
+}
