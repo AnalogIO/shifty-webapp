@@ -2,9 +2,8 @@ param environment string
 
 param webappAzureGeneratedFqdn string
 
-resource zone 'Microsoft.Network/dnsZones@2018-05-01' = {
+resource zone 'Microsoft.Network/dnsZones@2018-05-01' existing = {
   name: '${environment}.analogio.dk'
-  location: 'global'
 }
 
 resource cname 'Microsoft.Network/dnsZones/CNAME@2018-05-01' = {

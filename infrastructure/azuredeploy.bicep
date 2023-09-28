@@ -11,9 +11,8 @@ var organizationPrefix = 'aio'
 var sharedResourcesAbbreviation = 'shr'
 var webAppResourcesAbbreviation = 'app'
 
-resource sharedRg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
+resource sharedRg 'Microsoft.Resources/resourceGroups@2022-09-01' existing = {
   name: 'rg-${organizationPrefix}-${sharedResourcesAbbreviation}-${environment}'
-  location: location
 }
 
 resource shiftyRg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
