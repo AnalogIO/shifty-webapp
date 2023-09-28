@@ -16,17 +16,6 @@ resource sharedRg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
   location: location
 }
 
-module sharedResources 'modules/shared.bicep' = {
-  name: '${deployment().name}-shared'
-  scope: sharedRg
-  params: {
-    location: location
-    environment: environment
-    organizationPrefix: organizationPrefix
-    sharedResourcesAbbreviation: sharedResourcesAbbreviation
-  }
-}
-
 resource shiftyRg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
   name: 'rg-${organizationPrefix}-${webAppResourcesAbbreviation}-shifty-${environment}'
   location: location
