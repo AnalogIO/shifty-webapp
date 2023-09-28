@@ -1,9 +1,6 @@
 name: Build Webapp
 
 on:
-  pull_request:
-    branches: [develop, production]
-
   workflow_dispatch:
 
   workflow_call:
@@ -14,7 +11,7 @@ on:
         default: false
 
 jobs:
-  build_test:
+  build-test:
     name: Build and test Webapp
     runs-on: ubuntu-latest
 

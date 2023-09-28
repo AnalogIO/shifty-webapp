@@ -1,15 +1,19 @@
 name: Build
 
 on:
-  workflow_dispatch:
-
-  pull_request:
-    branches: [develop, production]
+  workflow_call:
+    inputs:
+      publish_artifacts:
+        description: "Publish workflow artifacts"
+        type: boolean
+        default: false
 
 jobs:
-  core-build:
+  shifty-build:
     name: Build webapp
     uses: ./.github/workflows/shifty-build.yml
+    with:
+      publish_artifacts: ${{ inputs.publish_artifacts }}
     secrets: inherit
 
   infra-build:

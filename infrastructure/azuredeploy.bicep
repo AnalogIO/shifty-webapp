@@ -3,8 +3,6 @@ targetScope = 'subscription'
 @allowed([ 'dev', 'prd' ])
 param environment string
 
-param targetBranch string
-
 var location = 'West Europe'
 
 var organizationPrefix = 'aio'
@@ -27,7 +25,6 @@ module shiftywebapp 'shifty.bicep' = {
     location: location
     organizationPrefix: organizationPrefix
     applicationPrefix: 'shifty'
-    targetBranch: targetBranch
     environment: environment
     sharedResourceGroupName: sharedRg.name
   }
