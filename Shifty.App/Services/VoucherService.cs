@@ -18,17 +18,17 @@ namespace Shifty.App.Services
             _voucherRepository = voucherRepository;
         }
 
-        public async Task<ICollection<IssueVoucherResponse>> IssueVouchers(int amount, int productId, string description)
+        public async Task<(bool, ICollection<IssueVoucherResponse>)> IssueVouchers(int amount, int productId, string description)
         {
             var either = await _voucherRepository.IssueAsync(amount: amount, productId: productId, description: description);
 
             if (either.IsLeft)
             {
-                return null;
+                return (false, null);
             }
             else
             {
-                return either.ValueUnsafe();
+                return (true, either.ValueUnsafe());
             }
         }
     }

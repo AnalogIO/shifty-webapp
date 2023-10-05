@@ -6,6 +6,6 @@ namespace Shifty.App.Services
 {
     public interface IVoucherService
     {
-        Task<ICollection<IssueVoucherResponse>> IssueVouchers(int amount, int productId, string description);
+        Task<(bool, ICollection<IssueVoucherResponse>)> IssueVouchers(int amount, int productId, string description);
     }
 }

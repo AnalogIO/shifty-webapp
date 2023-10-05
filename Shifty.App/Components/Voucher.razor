@@ -81,11 +81,12 @@
 
     protected override async Task OnInitializedAsync()
     {
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
         (_productsLoaded, _products) = await _productService.GetProducts();
 
         if (!_productsLoaded)
         {
-            Snackbar.Add("Reactor meltdown is imminent", Severity.Error);
+            Snackbar.Add("Fatal error loading products", Severity.Error);
             Console.WriteLine("Error happened while loading products...");
         }
 
@@ -96,9 +97,19 @@
     {
         _showResult = false;
         _showProgessBar = true;
-        _vouchers = await _voucherService.IssueVouchers(amount: _voucherForm.Amount, productId: _voucherForm.Product.Id, description: _voucherForm.Description);
-        _showProgessBar = false;
-        _showResult = true;
+        bool success;
+        (success, _vouchers) = await _voucherService.IssueVouchers(amount: _voucherForm.Amount, productId: _voucherForm.Product.Id, description: _voucherForm.Description);
+        if (success)
+        {
+            _showProgessBar = false;
+            _showResult = true;
+        }
+        else
+        {
+            _showProgessBar = false;
+            _showResult = false;
+            Snackbar.Add("Fatal error issuing voucher(s).", Severity.Error);
+        }
     }
 
     Func<ProductDto,string> converter = p => p?.Name;
