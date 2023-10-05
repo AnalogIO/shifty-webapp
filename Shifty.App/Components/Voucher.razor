@@ -4,6 +4,7 @@
 @using Shifty.Api.Generated.AnalogCoreV1
 @inject IProductService _productService
 @inject IVoucherService _voucherService
+@inject ISnackbar Snackbar
 
 <MudCard Class="mb-auto" Width="40vw">
     <MudCardContent>
@@ -67,6 +68,7 @@
 
         if (!_productsLoaded)
         {
+            Snackbar.Add("Reactor meltdown is imminent", Severity.Error);
             Console.WriteLine("Error happened while loading products...");
         }
 
