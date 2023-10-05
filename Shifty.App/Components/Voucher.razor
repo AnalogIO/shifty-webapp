@@ -112,6 +112,5 @@
         }
     }
 
-    Func<ProductDto,string> converter = p => p?.Name;
-
+    Func<ProductDto,string> converter = p => p != null ? $"{p?.Name} ({p?.NumberOfTickets})" : "";
 }
