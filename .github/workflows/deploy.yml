@@ -17,7 +17,7 @@ jobs:
     secrets: inherit
 
   deploy:
-    needs: [build_all]
+    needs: [build-all]
     name: Azure Deployment
     runs-on: ubuntu-22.04
     environment:
