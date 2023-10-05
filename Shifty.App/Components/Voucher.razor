@@ -1,27 +1,26 @@
 @namespace Components
-
-@using Shifty.Api.Generated.AnalogCoreV1
-@using Shifty.Api.Generated.AnalogCoreV2
 @using System.ComponentModel.DataAnnotations
+@using Shifty.App.Services
+@using Shifty.Api.Generated.AnalogCoreV1
+@inject IProductService _productService
+@inject IVoucherService _voucherService
 
 <MudCard Class="mb-auto" Width="40vw">
     <MudCardContent>
         <MudText Align="Align.Center" Class="mb-n4">Issue Voucher Form</MudText>
         <MudForm>
-            <MudSelect  T="Product" 
+            <MudSelect  T="ProductDto" 
                         Label="Product"
                         Placeholder="Available products..."
                         AnchorOrigin="Origin.BottomCenter"
+                        ToStringFunc="@converter"
+                        
                         @bind-Value=_voucherForm.Product>
 
-                <MudSelectItem Value="@(new Product{
-                    Name="Filter Coffee",
-                    ProductId=1
-                })" />
-                <MudSelectItem Value="@(new Product{
-                    Name="Fancy Coffee",
-                    ProductId=2
-                })" />
+                @foreach (var product in _products)
+                {
+                    <MudSelectItem Value="@product" />
+                }
             </MudSelect>
 
             <MudNumericField @bind-Value="_voucherForm.Amount" Placeholder="1" Label="Amount" Variant="Variant.Text" Min="1" Max="10" />
@@ -50,46 +49,35 @@
     [Parameter]
     public System.Security.Claims.ClaimsPrincipal user { get; set; }
     VoucherForm _voucherForm = new();
+    
+    bool _productsLoaded = false;
+    ICollection<ProductDto> _products = new List<ProductDto>();
 
     public class VoucherForm
     {
         [Required]
         public string Description { get; set; }
-        public Product Product { get; set; }
+        public ProductDto Product { get; set; }
         public int Amount { get; set; } = 1;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        (_productsLoaded, _products) = await _productService.GetProducts();
+
+        if (!_productsLoaded)
+        {
+            Console.WriteLine("Error happened while loading products...");
+        }
+
+        Console.WriteLine(_products.First<ProductDto>().Name);
     }
 
     async private Task IssueVoucher()
     {
-        var request = new IssueVoucherRequest{
-            Amount=_voucherForm.Amount,
-            Description=_voucherForm.Description,
-            ProductId=_voucherForm.Product.GetProductId(),
-            Requester=user.Identity.Name,
-            VoucherPrefix="SHF" // SHF for Shifty (temp)
-        };
-        var api = new AnalogCoreV2(new());
-        var response = await api.ApiV2VouchersIssueVouchersAsync(request);
-        
-        Console.WriteLine(response);
-        
-        return;
+        var vouchers = await _voucherService.IssueVouchers(amount: _voucherForm.Amount, productId: _voucherForm.Product.Id, description: _voucherForm.Description);
     }
 
-    public class Product
-    {
-        public string Name { get; set; }
-        public int ProductId { get; set; }
-        public int GetProductId() => ProductId;
+    Func<ProductDto,string> converter = p => p?.Name;
 
-        public override bool Equals(object o)
-        {
-            var other = o as Product;
-            return other?.ProductId == ProductId;
-        }
-
-        public override int GetHashCode() => ProductId;
-
-        public override string ToString() => Name;
-    }
 }
