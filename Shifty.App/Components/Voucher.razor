@@ -2,6 +2,7 @@
 @using System.ComponentModel.DataAnnotations
 @using Shifty.App.Services
 @using Shifty.Api.Generated.AnalogCoreV1
+@using Shifty.Api.Generated.AnalogCoreV2
 @inject IProductService _productService
 @inject IVoucherService _voucherService
 @inject ISnackbar Snackbar
@@ -40,9 +41,22 @@
                 </MudButton>
             </MudCardActions>
         </MudForm>
-
+        @if (_showProgessBar)
+        {
+            <MudContainer class="d-flex justify-content-center">
+                <MudProgressCircular hidden="@_showProgessBar" Color="Color.Default" Indeterminate="true" />
+            </MudContainer>
+        }
+        @if (_showResult)
+        {
+            <MudPaper Style="border-width: 2px; padding: 4px;" Outlined="true">
+                @foreach (var voucher in _vouchers)
+                {
+                    @voucher.VoucherCode <br />
+                }
+            </MudPaper>
+        }
     </MudCardContent>
-
 </MudCard>
 
 @code
@@ -50,9 +64,12 @@
     [Parameter]
     public System.Security.Claims.ClaimsPrincipal user { get; set; }
     VoucherForm _voucherForm = new();
-    
+
     bool _productsLoaded = false;
+    bool _showResult = false;
+    bool _showProgessBar = false;
     ICollection<ProductDto> _products = new List<ProductDto>();
+    ICollection<IssueVoucherResponse> _vouchers;
 
     public class VoucherForm
     {
@@ -77,7 +94,11 @@
 
     async private Task IssueVoucher()
     {
-        var vouchers = await _voucherService.IssueVouchers(amount: _voucherForm.Amount, productId: _voucherForm.Product.Id, description: _voucherForm.Description);
+        _showResult = false;
+        _showProgessBar = true;
+        _vouchers = await _voucherService.IssueVouchers(amount: _voucherForm.Amount, productId: _voucherForm.Product.Id, description: _voucherForm.Description);
+        _showProgessBar = false;
+        _showResult = true;
     }
 
     Func<ProductDto,string> converter = p => p?.Name;
