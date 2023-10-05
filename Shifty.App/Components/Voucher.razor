@@ -10,13 +10,14 @@
 <MudCard Class="mb-auto" Width="40vw">
     <MudCardContent>
         <MudText Align="Align.Center" Class="mb-n4">Issue Voucher Form</MudText>
-        <MudForm>
+        <MudForm @bind-IsValid="@isFormValid" >
             <MudSelect  T="ProductDto" 
                         Label="Product"
                         Placeholder="Available products..."
                         AnchorOrigin="Origin.BottomCenter"
                         ToStringFunc="@converter"
-                        
+                        Required="true"
+                        RequiredError="Product is required"
                         @bind-Value=_voucherForm.Product>
 
                 @foreach (var product in _products)
@@ -25,16 +26,26 @@
                 }
             </MudSelect>
 
-            <MudNumericField @bind-Value="_voucherForm.Amount" Placeholder="1" Label="Amount" Variant="Variant.Text" Min="1" Max="10" />
+            <MudNumericField @bind-Value="_voucherForm.Amount"
+                             Placeholder="1" 
+                             Label="Amount" 
+                             Variant="Variant.Text" 
+                             Required="true"
+                             RequiredError="Product is required" 
+                             Min="1"
+                             Max="10" />
 
             <MudTextField T="string"
                 @bind-Value="_voucherForm.Description"
-                Label="Description" />
+                Label="Description" 
+                Required="true"
+                RequiredError="Description is required" />
             
             <MudCardActions>
                 <MudButton  Variant="Variant.Filled"
                             Color="Color.Primary"
                             Class="ml-auto"
+                            Disabled="@(!isFormValid)"
                             OnClick="@(async () => await IssueVoucher())"
                             EndIcon="@Icons.Material.Filled.Sell">
                     Issue Voucher
@@ -65,6 +76,7 @@
     public System.Security.Claims.ClaimsPrincipal user { get; set; }
     VoucherForm _voucherForm = new();
 
+    bool isFormValid = false;
     bool _productsLoaded = false;
     bool _showResult = false;
     bool _showProgessBar = false;
