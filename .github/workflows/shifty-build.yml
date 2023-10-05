@@ -1,0 +1,40 @@
+name: Build Webapp
+
+on:
+  workflow_dispatch:
+
+  workflow_call:
+    inputs:
+      publish_artifacts:
+        description: "Publish workflow artifacts"
+        type: boolean
+        default: false
+
+jobs:
+  build-test:
+    name: Build and test Webapp
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout codebase
+        uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.x
+      - name: Restore dependencies
+        run: dotnet restore .
+      - name: Build Shifty App
+        run: dotnet build . --no-restore /p:ContinuousIntegrationBuild=true --configuration Release
+      - name: Run tests
+        run: dotnet test . --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+      - name: Publish Shifty App
+        run: dotnet publish --no-restore --configuration Release --output publish
+      - name: Publish workflow artifact
+        if: ${{ inputs.publish_artifacts }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: shifty
+          path: publish/wwwroot
+          retention-days: 1
+          if-no-files-found: error
