@@ -2,7 +2,7 @@
 @using Components
 
 <MudMainContent>
-    @if (user is not null)
+    @if (user is not null && user.IsInRole("Board"))
     {
         <Voucher user=@user></Voucher>
     }

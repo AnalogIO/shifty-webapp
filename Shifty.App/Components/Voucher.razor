@@ -101,8 +101,6 @@
             Snackbar.Add("Fatal error loading products", Severity.Error);
             Console.WriteLine("Error happened while loading products...");
         }
-
-        Console.WriteLine(_products.First<ProductDto>().Name);
     }
 
     async private Task IssueVoucher()
@@ -123,6 +121,6 @@
             Snackbar.Add("Fatal error issuing voucher(s).", Severity.Error);
         }
     }
-
+    
     Func<ProductDto,string> converter = p => p != null ? $"{p?.Name} ({p?.NumberOfTickets})" : "";
 }

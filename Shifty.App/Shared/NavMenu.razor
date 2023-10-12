@@ -1,5 +1,21 @@
 ﻿<MudNavMenu>
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
     <MudNavLink Href="ShiftsCheckIn" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.MeetingRoom">Shift Check-in</MudNavLink>
-    <MudNavLink Href="Voucher" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Sell">Issue vouchers</MudNavLink>
+    @if (user is not null && user.IsInRole("Board"))
+    {     
+        <MudNavLink Href="Voucher" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Sell">Issue vouchers</MudNavLink>
+    }
 </MudNavMenu>
+
+@code
+{
+    [CascadingParameter] public Task<AuthenticationState> AuthTask { get; set; }
+
+    private System.Security.Claims.ClaimsPrincipal user;
+
+    protected async override Task OnInitializedAsync()
+    {
+        var authState = await AuthTask;
+        this.user = authState.User;
+    }
+}
