@@ -22,14 +22,7 @@ namespace Shifty.App.Services
         public async Task<(bool, ICollection<ProductDto>)> GetProducts()
         {
             var either = await _productRepository.GetProducts();
-            if (either.IsLeft)
-            {
-                return (false, null);
-            }
-            else
-            {
-                return (true, either.ValueUnsafe());
-            }
+            return either.IsLeft ? (false, null) : (true, either.ValueUnsafe());
         }
     }
 }

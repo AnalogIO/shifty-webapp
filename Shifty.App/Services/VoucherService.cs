@@ -22,14 +22,7 @@ namespace Shifty.App.Services
         {
             var either = await _voucherRepository.IssueAsync(amount: amount, productId: productId, description: description);
 
-            if (either.IsLeft)
-            {
-                return (false, null);
-            }
-            else
-            {
-                return (true, either.ValueUnsafe());
-            }
+            return either.IsLeft ? (false, null) : (true, either.ValueUnsafe());
         }
     }
 }

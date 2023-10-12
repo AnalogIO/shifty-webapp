@@ -2,9 +2,9 @@
 @using Components
 
 <MudMainContent>
-    @if (user is not null && user.IsInRole("Board"))
+    @if (_user is not null && _user.IsInRole("Board"))
     {
-        <Voucher user=@user></Voucher>
+        <Voucher/> 
     }
     else
     {
@@ -14,12 +14,11 @@
 
 @code {
     [CascadingParameter] public Task<AuthenticationState> AuthTask { get; set; }
+    private System.Security.Claims.ClaimsPrincipal _user;
 
-    private System.Security.Claims.ClaimsPrincipal user;
-
-    protected async override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         var authState = await AuthTask;
-        this.user = authState.User;
+        _user = authState.User;
     }
 }

@@ -12,12 +12,12 @@
     <MudCard Class="mb-auto" Width="40vw">
         <MudCardContent>
             <MudText Align="Align.Center" Class="mb-n4">Issue Voucher Form</MudText>
-            <MudForm @bind-IsValid="@isFormValid" >
+            <MudForm @bind-IsValid="@_isFormValid" >
                 <MudSelect  T="ProductDto" 
                             Label="Product"
                             Placeholder="Available products..."
                             AnchorOrigin="Origin.BottomCenter"
-                            ToStringFunc="@converter"
+                            ToStringFunc="@_converter"
                             Required="true"
                             RequiredError="Product is required"
                             @bind-Value=_voucherForm.Product>
@@ -47,23 +47,23 @@
                     <MudButton  Variant="Variant.Filled"
                                 Color="Color.Primary"
                                 Class="ml-auto"
-                                Disabled="@(!isFormValid)"
+                                Disabled="@(!_isFormValid)"
                                 OnClick="@(async () => await IssueVoucher())"
                                 EndIcon="@Icons.Material.Filled.Sell">
                         Issue Voucher
                     </MudButton>
                 </MudCardActions>
             </MudForm>
-            @if (_showProgessBar)
+            @if (_showProgressBar)
             {
                 <MudContainer class="d-flex justify-content-center">
-                    <MudProgressCircular hidden="@_showProgessBar" Color="Color.Default" Indeterminate="true" />
+                    <MudProgressCircular hidden="@_showProgressBar" Color="Color.Default" Indeterminate="true" />
                 </MudContainer>
             }
             @if (_showResult)
             {
                 <MudTextField Text="@_voucherCodes"  
-                            @ref="multilineReference"
+                            @ref="_multilineReference"
                             T="string"
                             Adornment="Adornment.End" 
                             Style="border-width: 2px; padding: 4px;" 
@@ -79,21 +79,17 @@
 
 @code
 {
-    [Parameter]
-    public System.Security.Claims.ClaimsPrincipal user { get; set; }
-    VoucherForm _voucherForm = new();
-
-    bool isFormValid = false;
-    bool _productsLoaded = false;
-    bool _showResult = false;
-    bool _showProgessBar = false;
-    ICollection<ProductDto> _products = new List<ProductDto>();
-    ICollection<IssueVoucherResponse> _vouchers;
+    private VoucherForm _voucherForm = new();
+    private bool _isFormValid = false;
+    private bool _productsLoaded = false;
+    private bool _showResult = false;
+    private bool _showProgressBar = false;
+    private ICollection<ProductDto> _products = new List<ProductDto>();
+    private ICollection<IssueVoucherResponse> _vouchers;
     private string _voucherCodes;
-    private MudTextField<string> multilineReference;
-
-
-    public class VoucherForm
+    private MudTextField<string> _multilineReference;
+    
+    private class VoucherForm
     {
         [Required]
         public string Description { get; set; }
@@ -113,32 +109,30 @@
         }
     }
 
-    async protected Task CopyToClipboard()
+    private async Task CopyToClipboard()
     {
         await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", _voucherCodes);
         Snackbar.Add("Codes copied to clipboard", Severity.Success);
     }
 
-    async private Task IssueVoucher()
+    private async Task IssueVoucher()
     {
         _showResult = false;
-        _showProgessBar = true;
-        bool success;
-        (success, _vouchers) = await _voucherService.IssueVouchers(amount: _voucherForm.Amount, productId: _voucherForm.Product.Id, description: _voucherForm.Description);
+        _showProgressBar = true;
+        (var success, _vouchers) = await _voucherService.IssueVouchers(amount: _voucherForm.Amount, productId: _voucherForm.Product.Id, description: _voucherForm.Description);
         if (success)
         {
-            _showProgessBar = false;
+            _showProgressBar = false;
             _voucherCodes = string.Join("\n", _vouchers.Select(response => response.VoucherCode));
             _showResult = true;
         }
         else
         {
-            _showProgessBar = false;
+            _showProgressBar = false;
             _showResult = false;
             Snackbar.Add("Fatal error issuing voucher(s).", Severity.Error);
         }
     }
     
-    
-    Func<ProductDto,string> converter = p => p != null ? $"{p?.Name} ({p?.NumberOfTickets})" : "";
+    Func<ProductDto,string> _converter = p => p != null ? $"{p.Name} ({p.NumberOfTickets})" : "";
 }
