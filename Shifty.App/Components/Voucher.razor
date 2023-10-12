@@ -6,6 +6,7 @@
 @inject IProductService _productService
 @inject IVoucherService _voucherService
 @inject ISnackbar Snackbar
+@inject IJSRuntime JSRuntime
 
 <MudCard Class="mb-auto" Width="40vw">
     <MudCardContent>
@@ -60,12 +61,15 @@
         }
         @if (_showResult)
         {
-            <MudPaper Style="border-width: 2px; padding: 4px;" Outlined="true">
-                @foreach (var voucher in _vouchers)
-                {
-                    @voucher.VoucherCode <br />
-                }
-            </MudPaper>
+            <MudTextField Text="@_voucherCodes"  
+                          @ref="multilineReference"
+                          T="string"
+                          Adornment="Adornment.End" 
+                          Style="border-width: 2px; padding: 4px;" 
+                          Outlined="true" 
+                          AdornmentIcon="@Icons.Material.Outlined.ContentCopy"
+                          OnAdornmentClick="@(async () => await CopyToClipboard())" 
+                          Lines="@_vouchers.Count"/>
         }
     </MudCardContent>
 </MudCard>
@@ -82,6 +86,9 @@
     bool _showProgessBar = false;
     ICollection<ProductDto> _products = new List<ProductDto>();
     ICollection<IssueVoucherResponse> _vouchers;
+    private string _voucherCodes;
+    private MudTextField<string> multilineReference;
+
 
     public class VoucherForm
     {
@@ -103,6 +110,12 @@
         }
     }
 
+    async protected Task CopyToClipboard()
+    {
+        await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", _voucherCodes);
+        Snackbar.Add("Codes copied to clipboard", Severity.Success);
+    }
+
     async private Task IssueVoucher()
     {
         _showResult = false;
@@ -112,6 +125,7 @@
         if (success)
         {
             _showProgessBar = false;
+            _voucherCodes = string.Join("\n", _vouchers.Select(response => response.VoucherCode));
             _showResult = true;
         }
         else
@@ -121,6 +135,7 @@
             Snackbar.Add("Fatal error issuing voucher(s).", Severity.Error);
         }
     }
+    
     
     Func<ProductDto,string> converter = p => p != null ? $"{p?.Name} ({p?.NumberOfTickets})" : "";
 }
