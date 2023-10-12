@@ -69,7 +69,8 @@
                           Outlined="true" 
                           AdornmentIcon="@Icons.Material.Outlined.ContentCopy"
                           OnAdornmentClick="@(async () => await CopyToClipboard())" 
-                          Lines="@_vouchers.Count"/>
+                          Lines="@_vouchers.Count" 
+                          ReadOnly=true />
         }
     </MudCardContent>
 </MudCard>
