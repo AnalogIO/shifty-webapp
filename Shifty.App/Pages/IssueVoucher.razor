@@ -1,14 +1,11 @@
 @page "/Voucher"
 @using Components
+@inject NavigationManager NavManager
 
 <MudMainContent>
     @if (_user is not null && _user.IsInRole("Board"))
     {
         <Voucher/> 
-    }
-    else
-    {
-        <MudAlert>Something went wrong!</MudAlert>
     }
 </MudMainContent>
 
@@ -20,5 +17,10 @@
     {
         var authState = await AuthTask;
         _user = authState.User;
+
+        if (_user is null || !_user.IsInRole("Board"))
+        {
+            NavManager.NavigateTo("/");
+        }
     }
 }
