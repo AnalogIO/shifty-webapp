@@ -14,6 +14,7 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       publish_artifacts: true
+      environment: ${{ inputs.environment }}
     secrets: inherit
 
   deploy:

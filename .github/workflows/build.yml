@@ -7,6 +7,10 @@ on:
         description: "Publish workflow artifacts"
         type: boolean
         default: false
+      environment:
+        description: "Environment to deploy to"
+        type: string
+        default: "dev"
 
 jobs:
   shifty-build:
@@ -14,6 +18,7 @@ jobs:
     uses: ./.github/workflows/shifty-build.yml
     with:
       publish_artifacts: ${{ inputs.publish_artifacts }}
+      environment: ${{ inputs.environment }}
     secrets: inherit
 
   infra-build:
