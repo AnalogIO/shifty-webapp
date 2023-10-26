@@ -12,7 +12,6 @@ on:
       settings_file:
         description: "The filename of the appsettings file"
         type: string
-        default: "appsettings.json"
 
 jobs:
   build-test:

@@ -11,9 +11,6 @@ on:
         description: "The filename of the appsettings file"
         type: string
 
-  pull_request:
-    branches: [ main ]
-
 jobs:
   shifty-build:
     name: Build webapp
