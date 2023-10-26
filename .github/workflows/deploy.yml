@@ -7,6 +7,10 @@ on:
         type: string
         required: true
         description: "Target Environment. Can either be 'dev' or 'prd'"
+      settings_file:
+        type: string
+        required: true
+        description: "The filename of the appsettings file to use"
 
 jobs:
   build-all:
@@ -14,6 +18,7 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       publish_artifacts: true
+      settings_file: ${{ inputs.settings_file }}
     secrets: inherit
 
   deploy:

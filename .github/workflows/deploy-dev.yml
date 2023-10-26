@@ -11,3 +11,4 @@ jobs:
     secrets: inherit
     with:
       environment: dev
+      settings_file: "dev.appsettings.json"
