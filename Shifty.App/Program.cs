@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using Shifty.Api.Generated.AnalogCoreV1;
@@ -19,13 +20,12 @@ namespace Shifty.App
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
-
-            ConfigureServices(builder.Services);
+            ConfigureServices(builder.Services, builder.Configuration);
 
             await builder.Build().RunAsync();
         }
 
-        public static void ConfigureServices(IServiceCollection services)
+        public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddMudServices(config =>
             {
@@ -38,7 +38,7 @@ namespace Shifty.App
             services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
                 .CreateClient("AnalogCoreV1"));
             services.AddHttpClient("AnalogCoreV1",
-                    client => client.BaseAddress = new Uri("https://core.dev.analogio.dk/"))
+                    client => client.BaseAddress = new Uri(configuration["ApiHost"]))
                 .AddHttpMessageHandler<RequestAuthenticationHandler>();
             services.AddScoped(provider => 
                 new AnalogCoreV1(provider.GetRequiredService<IHttpClientFactory>().CreateClient("AnalogCoreV1")));
