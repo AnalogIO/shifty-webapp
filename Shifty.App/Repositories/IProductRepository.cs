@@ -7,6 +7,6 @@ namespace Shifty.App.Repositories
 {
     public interface IProductRepository
     {
-        public Task<Either<Error, System.Collections.Generic.ICollection<ProductDto>>> GetProducts();
+        public Task<Try<System.Collections.Generic.IEnumerable<ProductDto>>> GetProducts();
     }
 }

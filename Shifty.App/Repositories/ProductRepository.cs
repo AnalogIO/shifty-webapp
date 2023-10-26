@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using LanguageExt;
 using LanguageExt.Common;
@@ -18,9 +19,9 @@ namespace Shifty.App.Repositories
             _client = client;
         }
         
-        async Task<Either<Error, ICollection<ProductDto>>> IProductRepository.GetProducts()
+        async Task<Try<IEnumerable<ProductDto>>> IProductRepository.GetProducts()
         {
-            return await TryAsync(_client.ApiV1ProductsAsync()).ToEither();
+            return await TryAsync(async () => (await _client.ApiV1ProductsAsync()).AsEnumerable());
         }
     }
 }

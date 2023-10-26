@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
+using LanguageExt;
+using LanguageExt.Common;
 using LanguageExt.UnsafeValueAccess;
 using Shifty.Api.Generated.AnalogCoreV1;
 using Shifty.Api.Generated.AnalogCoreV2;
@@ -18,11 +20,9 @@ namespace Shifty.App.Services
             _voucherRepository = voucherRepository;
         }
 
-        public async Task<(bool, ICollection<IssueVoucherResponse>)> IssueVouchers(int amount, int productId, string description)
+        public async Task<Try<ICollection<IssueVoucherResponse>>> IssueVouchers(int amount, int productId, string description, string requester, string prefix)
         {
-            var either = await _voucherRepository.IssueAsync(amount: amount, productId: productId, description: description);
-
-            return either.IsLeft ? (false, null) : (true, either.ValueUnsafe());
+            return await _voucherRepository.IssueAsync(amount: amount, productId: productId, requester: requester, description: description, prefix: prefix);
         }
     }
 }

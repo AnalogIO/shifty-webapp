@@ -17,6 +17,7 @@ namespace Shifty.App
 {
     public class Program
     {
+        private const string apiUrl = "https://core.dev.analogio.dk/";
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -47,7 +48,7 @@ namespace Shifty.App
             services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
                 .CreateClient("AnalogCoreV2"));
             services.AddHttpClient("AnalogCoreV2",
-                    client => client.BaseAddress = new Uri("https://core.dev.analogio.dk/"))
+                    client => client.BaseAddress = new Uri(configuration["ApiHost"]))
                 .AddHttpMessageHandler<RequestAuthenticationHandler>();
             services.AddScoped(provider => 
                 new AnalogCoreV2(provider.GetRequiredService<IHttpClientFactory>().CreateClient("AnalogCoreV2")));

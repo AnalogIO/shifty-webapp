@@ -3,12 +3,14 @@
 @using Shifty.App.Services
 @using Shifty.Api.Generated.AnalogCoreV1
 @using Shifty.Api.Generated.AnalogCoreV2
+@using Shared
+@using LanguageExt.UnsafeValueAccess
 @inject IProductService _productService
 @inject IVoucherService _voucherService
 @inject ISnackbar Snackbar
 @inject IJSRuntime JSRuntime
 
-<MudContainer>
+<MudContainer Style="margin: 50px 15%;" >
     <MudCard Class="mb-auto" Width="40vw">
         <MudCardContent>
             <MudText Align="Align.Center" Class="mb-n4">Issue Voucher Form</MudText>
@@ -38,10 +40,22 @@
                                 Max="10" />
 
                 <MudTextField T="string"
+                    @bind-Value="_voucherForm.Requester"
+                    Label="Requester" 
+                    Required="true"
+                    RequiredError="Requester is required" />
+
+                <MudTextField T="string"
                     @bind-Value="_voucherForm.Description"
                     Label="Description" 
                     Required="true"
                     RequiredError="Description is required" />
+
+                <MudTextField T="string"
+                    @bind-Value="_voucherForm.Prefix"
+                    Label="Voucher prefix" 
+                    Required="true"
+                    RequiredError="Prefix is required" />
                 
                 <MudCardActions>
                     <MudButton  Variant="Variant.Filled"
@@ -56,8 +70,8 @@
             </MudForm>
             @if (_showProgressBar)
             {
-                <MudContainer class="d-flex justify-content-center">
-                    <MudProgressCircular hidden="@_showProgressBar" Color="Color.Default" Indeterminate="true" />
+                <MudContainer class="d-flex">
+                    <LoadingIndicator Height="100px"/>
                 </MudContainer>
             }
             @if (_showResult)
@@ -70,7 +84,7 @@
                             Outlined="true" 
                             AdornmentIcon="@Icons.Material.Outlined.ContentCopy"
                             OnAdornmentClick="@(async () => await CopyToClipboard())" 
-                            Lines="@_vouchers.Count" 
+                            Lines="@_vouchers.Count()" 
                             ReadOnly=true />
             }
         </MudCardContent>
@@ -79,34 +93,41 @@
 
 @code
 {
+    [Parameter]
+    public System.Security.Claims.ClaimsPrincipal User { get; set; }
     private VoucherForm _voucherForm = new();
     private bool _isFormValid = false;
-    private bool _productsLoaded = false;
     private bool _showResult = false;
     private bool _showProgressBar = false;
-    private ICollection<ProductDto> _products = new List<ProductDto>();
-    private ICollection<IssueVoucherResponse> _vouchers;
+    private IEnumerable<ProductDto> _products = new List<ProductDto>();
+    private IEnumerable<IssueVoucherResponse> _vouchers;
     private string _voucherCodes;
     private MudTextField<string> _multilineReference;
-    
+
     private class VoucherForm
     {
         [Required]
         public string Description { get; set; }
         public ProductDto Product { get; set; }
         public int Amount { get; set; } = 1;
+        public string Requester { get; set; }
+        public string Prefix { get; set; }
     }
 
     protected override async Task OnInitializedAsync()
     {
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
-        (_productsLoaded, _products) = await _productService.GetProducts();
+        var result = await _productService.GetProducts();
 
-        if (!_productsLoaded)
-        {
-            Snackbar.Add("Fatal error loading products", Severity.Error);
-            Console.WriteLine("Error happened while loading products...");
-        }
+        result.Match(
+            Succ: products => {
+                _products = products;
+                _voucherForm.Prefix = User.Claims.Single(el => el.Type.Contains("email")).Value[..3].ToUpper();
+            },
+            Fail: error => {
+                Snackbar.Add(error.Message, Severity.Error);
+            }
+        );
     }
 
     private async Task CopyToClipboard()
@@ -119,19 +140,26 @@
     {
         _showResult = false;
         _showProgressBar = true;
-        (var success, _vouchers) = await _voucherService.IssueVouchers(amount: _voucherForm.Amount, productId: _voucherForm.Product.Id, description: _voucherForm.Description);
-        if (success)
-        {
-            _showProgressBar = false;
-            _voucherCodes = string.Join("\n", _vouchers.Select(response => response.VoucherCode));
-            _showResult = true;
-        }
-        else
-        {
-            _showProgressBar = false;
-            _showResult = false;
-            Snackbar.Add("Fatal error issuing voucher(s).", Severity.Error);
-        }
+        var result = await _voucherService.IssueVouchers(
+                                                         amount: _voucherForm.Amount,
+                                                         productId: _voucherForm.Product.Id,
+                                                         description: _voucherForm.Description,
+                                                         requester: _voucherForm.Requester,
+                                                         prefix: _voucherForm.Prefix);
+
+        result.Match(
+            Succ: response => {
+                _showProgressBar = false;
+                _vouchers = response;
+                _voucherCodes = string.Join("\n", _vouchers.Select(response => response.VoucherCode));
+                _showResult = true;
+            },
+            Fail: ex => {
+                _showProgressBar = false;
+                _showResult = false;
+                Snackbar.Add(ex.Message, Severity.Error);
+            }
+        );
     }
     
     Func<ProductDto,string> _converter = p => p != null ? $"{p.Name} ({p.NumberOfTickets})" : "";

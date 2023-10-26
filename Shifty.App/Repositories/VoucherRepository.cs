@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Threading.Tasks;
 using LanguageExt;
 using LanguageExt.Common;
@@ -16,18 +18,18 @@ namespace Shifty.App.Repositories
             _client = client;
         }
         
-        public async Task<Either<Error, ICollection<IssueVoucherResponse>>> IssueAsync(int amount, int productId, string description)
+        public async Task<Try<ICollection<IssueVoucherResponse>>> IssueAsync(int amount, int productId, string description, string reqeuster, string prefix)
         {
-            var account = await _client.ApiV2AccountGetAsync();
             var request = new IssueVoucherRequest()
             {
                 Amount = amount,
                 Description = description,
                 ProductId = productId,
-                Requester = account.Name,
-                VoucherPrefix = account.Email[..3],
+                Requester = reqeuster,
+                VoucherPrefix = prefix,
             };
-            return await TryAsync(_client.ApiV2VouchersIssueVouchersAsync(request)).ToEither();
+
+            return await TryAsync(async () => await _client.ApiV2VouchersIssueVouchersAsync(request));
         }
     }
 }

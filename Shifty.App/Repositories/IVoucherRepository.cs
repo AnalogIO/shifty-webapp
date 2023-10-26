@@ -7,6 +7,6 @@ namespace Shifty.App.Repositories
 {
     public interface IVoucherRepository
     {
-        public Task<Either<Error, System.Collections.Generic.ICollection<IssueVoucherResponse>>> IssueAsync(int amount, int productId, string description);
+        public Task<Try<System.Collections.Generic.ICollection<IssueVoucherResponse>>> IssueAsync(int amount, int productId, string description, string requester, string prefix);
     }
 }

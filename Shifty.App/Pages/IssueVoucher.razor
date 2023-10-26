@@ -2,12 +2,10 @@
 @using Components
 @inject NavigationManager NavManager
 
-<MudMainContent>
-    @if (_user is not null && _user.IsInRole("Board"))
-    {
-        <Voucher/> 
-    }
-</MudMainContent>
+@if (_user is not null && _user.IsInRole("Board"))
+{
+    <Voucher User="@_user"/> 
+}
 
 @code {
     [CascadingParameter] public Task<AuthenticationState> AuthTask { get; set; }

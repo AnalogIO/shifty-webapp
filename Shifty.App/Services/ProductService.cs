@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using LanguageExt;
+using LanguageExt.Common;
 using LanguageExt.UnsafeValueAccess;
 using Shifty.Api.Generated.AnalogCoreV1;
 using Shifty.App.Authentication;
@@ -19,10 +20,9 @@ namespace Shifty.App.Services
             _productRepository = productRepository;
         }
 
-        public async Task<(bool, ICollection<ProductDto>)> GetProducts()
+        public async Task<Try<IEnumerable<ProductDto>>> GetProducts()
         {
-            var either = await _productRepository.GetProducts();
-            return either.IsLeft ? (false, null) : (true, either.ValueUnsafe());
+            return await _productRepository.GetProducts();
         }
     }
 }
