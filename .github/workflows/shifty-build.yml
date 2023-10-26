@@ -9,10 +9,10 @@ on:
         description: "Publish workflow artifacts"
         type: boolean
         default: false
-      environment:
-        description: "Environment to deploy to"
+      settings_file:
+        description: "The filename of the appsettings file"
         type: string
-        default: "dev"
+        default: "appsettings.json"
 
 jobs:
   build-test:
@@ -29,7 +29,7 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore .
       - name: Settings override
-        run: mv -f "infrastructure/${{ inputs.environment }}.appsettings.json" Shifty.App/wwwroot/appsettings.json
+        run: mv -f "infrastructure/${{ inputs.settings_file }}" Shifty.App/wwwroot/appsettings.json
       - name: Build Shifty App
         run: dotnet build . --no-restore /p:ContinuousIntegrationBuild=true --configuration Release
       - name: Run tests

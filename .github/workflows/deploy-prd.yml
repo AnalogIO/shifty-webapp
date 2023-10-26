@@ -10,3 +10,4 @@ jobs:
     secrets: inherit
     with:
       environment: prd
+      settings_file: "prd.appsettings.json"
