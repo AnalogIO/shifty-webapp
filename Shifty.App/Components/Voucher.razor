@@ -37,7 +37,7 @@
                                 Required="true"
                                 RequiredError="Product is required" 
                                 Min="1"
-                                Max="10" />
+                                Max="50" />
 
                 <MudTextField T="string"
                     @bind-Value="_voucherForm.Requester"
@@ -54,6 +54,7 @@
                 <MudTextField T="string"
                     @bind-Value="_voucherForm.Prefix"
                     Label="Voucher prefix" 
+                    Validation="@(new Func<string,string>(prefixValidation))"
                     Required="true"
                     RequiredError="Prefix is required" />
                 
@@ -74,7 +75,7 @@
                     <LoadingIndicator Height="100px"/>
                 </MudContainer>
             }
-            @if (_showResult)
+            @if (_vouchers is not null)
             {
                 <MudTextField Text="@_voucherCodes"  
                             @ref="_multilineReference"
@@ -84,7 +85,7 @@
                             Outlined="true" 
                             AdornmentIcon="@Icons.Material.Outlined.ContentCopy"
                             OnAdornmentClick="@(async () => await CopyToClipboard())" 
-                            Lines="@_vouchers.Count()" 
+                            Lines="@Math.Min(_vouchers.Count(), 10)" 
                             ReadOnly=true />
             }
         </MudCardContent>
@@ -97,7 +98,6 @@
     public System.Security.Claims.ClaimsPrincipal User { get; set; }
     private VoucherForm _voucherForm = new();
     private bool _isFormValid = false;
-    private bool _showResult = false;
     private bool _showProgressBar = false;
     private IEnumerable<ProductDto> _products = new List<ProductDto>();
     private IEnumerable<IssueVoucherResponse> _vouchers;
@@ -138,8 +138,9 @@
 
     private async Task IssueVoucher()
     {
-        _showResult = false;
         _showProgressBar = true;
+        _vouchers = null;
+        _voucherCodes = null;
         var result = await _voucherService.IssueVouchers(
                                                          amount: _voucherForm.Amount,
                                                          productId: _voucherForm.Product.Id,
@@ -152,15 +153,14 @@
                 _showProgressBar = false;
                 _vouchers = response;
                 _voucherCodes = string.Join("\n", _vouchers.Select(response => response.VoucherCode));
-                _showResult = true;
             },
             Fail: ex => {
                 _showProgressBar = false;
-                _showResult = false;
                 Snackbar.Add(ex.Message, Severity.Error);
             }
         );
     }
     
     Func<ProductDto,string> _converter = p => p != null ? $"{p.Name} ({p.NumberOfTickets})" : "";
+    Func<string, string> prefixValidation = str => str.Length == 3 ? null : "Prefix must be 3 letters";
 }
