@@ -11,7 +11,7 @@
 @inject IJSRuntime JSRuntime
 
 <MudContainer Style="margin: 50px 15%;" >
-    <MudCard Class="mb-auto" Width="40vw">
+    <MudCard Class="mb-auto" MinWidth="280px" Width="40vw">
         <MudCardContent>
             <MudText Align="Align.Center" Class="mb-n4">Issue Voucher Form</MudText>
             <MudForm @bind-IsValid="@_isFormValid" >
@@ -56,6 +56,8 @@
                     Label="Voucher prefix" 
                     Validation="@(new Func<string,string>(prefixValidation))"
                     Required="true"
+                    Counter="3"
+                    MaxLength="3"
                     RequiredError="Prefix is required" />
                 
                 <MudCardActions>
@@ -161,6 +163,6 @@
         );
     }
     
-    Func<ProductDto,string> _converter = p => p != null ? $"{p.Name} ({p.NumberOfTickets})" : "";
+    Func<ProductDto,string> _converter = p => p != null ? $"{p.Name} - {p.NumberOfTickets} ticket" + (p.NumberOfTickets == 1 ? "" : "s") : "";
     Func<string, string> prefixValidation = str => str.Length == 3 ? null : "Prefix must be 3 letters";
 }
