@@ -15,21 +15,18 @@
         <MudCardContent>
             <MudText Align="Align.Center" Class="mb-n4">Issue Voucher Form</MudText>
             <MudForm @bind-IsValid="@_isFormValid" >
-                <MudSelect  T="ProductDto" 
-                            Label="Product"
-                            Placeholder="Available products..."
-                            AnchorOrigin="Origin.BottomCenter"
-                            ToStringFunc="@_converter"
-                            Required="true"
-                            RequiredError="Product is required"
-                            @bind-Value=_voucherForm.Product>
-
-                    @foreach (var product in _products)
-                    {
-                        <MudSelectItem Value="@product" />
-                    }
-                </MudSelect>
-
+                <MudAutocomplete T="ProductDto"
+                                 Required="true"
+                                 RequiredError="Product is required"
+                                 Placeholder="Select product"
+                                 ResetValueOnEmptyText="true"
+                                 CoerceText="true" 
+                                 CoerceValue="true" 
+                                 Label="Product" 
+                                 SearchFunc="@Products" 
+                                 ToStringFunc="@_converter"
+                                 @bind-Value=_voucherForm.Product/>
+                
                 <MudNumericField @bind-Value="_voucherForm.Amount"
                                 Placeholder="1" 
                                 Label="Amount" 
@@ -58,6 +55,7 @@
                     Required="true"
                     Counter="3"
                     MaxLength="3"
+                    Immediate="true"
                     RequiredError="Prefix is required" />
                 
                 <MudCardActions>
@@ -130,6 +128,13 @@
                 Snackbar.Add(error.Message, Severity.Error);
             }
         );
+    }
+
+    private async Task<IEnumerable<ProductDto>> Products(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return _products;
+        return _products.Where(x => x.Name.StartsWith(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
     private async Task CopyToClipboard()
