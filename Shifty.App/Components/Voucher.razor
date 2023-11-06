@@ -1,0 +1,173 @@
+@namespace Components
+@using System.ComponentModel.DataAnnotations
+@using Shifty.App.Services
+@using Shifty.Api.Generated.AnalogCoreV1
+@using Shifty.Api.Generated.AnalogCoreV2
+@using Shared
+@using LanguageExt.UnsafeValueAccess
+@inject IProductService _productService
+@inject IVoucherService _voucherService
+@inject ISnackbar Snackbar
+@inject IJSRuntime JSRuntime
+
+<MudContainer Style="margin: 50px 15%;" >
+    <MudCard Class="mb-auto" MinWidth="280px" Width="40vw">
+        <MudCardContent>
+            <MudText Align="Align.Center" Class="mb-n4">Issue Voucher Form</MudText>
+            <MudForm @bind-IsValid="@_isFormValid" >
+                <MudAutocomplete T="ProductDto"
+                                 Required="true"
+                                 RequiredError="Product is required"
+                                 Placeholder="Select product"
+                                 ResetValueOnEmptyText="true"
+                                 CoerceText="true" 
+                                 CoerceValue="true" 
+                                 Label="Product" 
+                                 SearchFunc="@Products" 
+                                 ToStringFunc="@_converter"
+                                 @bind-Value=_voucherForm.Product/>
+                
+                <MudNumericField @bind-Value="_voucherForm.Amount"
+                                Placeholder="1" 
+                                Label="Amount" 
+                                Variant="Variant.Text" 
+                                Required="true"
+                                RequiredError="Product is required" 
+                                Min="1"
+                                Max="50" />
+
+                <MudTextField T="string"
+                    @bind-Value="_voucherForm.Requester"
+                    Label="Requester" 
+                    Required="true"
+                    RequiredError="Requester is required" />
+
+                <MudTextField T="string"
+                    @bind-Value="_voucherForm.Description"
+                    Label="Description" 
+                    Required="true"
+                    RequiredError="Description is required" />
+
+                <MudTextField T="string"
+                    @bind-Value="_voucherForm.Prefix"
+                    Label="Voucher prefix" 
+                    Validation="@(new Func<string,string>(prefixValidation))"
+                    Required="true"
+                    Counter="3"
+                    MaxLength="3"
+                    Immediate="true"
+                    RequiredError="Prefix is required" />
+                
+                <MudCardActions>
+                    <MudButton  Variant="Variant.Filled"
+                                Color="Color.Primary"
+                                Class="ml-auto"
+                                Disabled="@(!_isFormValid)"
+                                OnClick="@(async () => await IssueVoucher())"
+                                EndIcon="@Icons.Material.Filled.Sell">
+                        Issue Voucher
+                    </MudButton>
+                </MudCardActions>
+            </MudForm>
+            @if (_showProgressBar)
+            {
+                <MudContainer class="d-flex">
+                    <LoadingIndicator Height="100px"/>
+                </MudContainer>
+            }
+            @if (_vouchers is not null)
+            {
+                <MudTextField Text="@_voucherCodes"  
+                            @ref="_multilineReference"
+                            T="string"
+                            Adornment="Adornment.End" 
+                            Style="border-width: 2px; padding: 4px;" 
+                            Outlined="true" 
+                            AdornmentIcon="@Icons.Material.Outlined.ContentCopy"
+                            OnAdornmentClick="@(async () => await CopyToClipboard())" 
+                            Lines="@Math.Min(_vouchers.Count(), 10)" 
+                            ReadOnly=true />
+            }
+        </MudCardContent>
+    </MudCard>
+</MudContainer>
+
+@code
+{
+    [Parameter]
+    public System.Security.Claims.ClaimsPrincipal User { get; set; }
+    private VoucherForm _voucherForm = new();
+    private bool _isFormValid = false;
+    private bool _showProgressBar = false;
+    private IEnumerable<ProductDto> _products = new List<ProductDto>();
+    private IEnumerable<IssueVoucherResponse> _vouchers;
+    private string _voucherCodes;
+    private MudTextField<string> _multilineReference;
+
+    private class VoucherForm
+    {
+        [Required]
+        public string Description { get; set; }
+        public ProductDto Product { get; set; }
+        public int Amount { get; set; } = 1;
+        public string Requester { get; set; }
+        public string Prefix { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
+        var result = await _productService.GetProducts();
+
+        result.Match(
+            Succ: products => {
+                _products = products;
+                _voucherForm.Prefix = User.Claims.Single(el => el.Type.Contains("email")).Value[..3].ToUpper();
+            },
+            Fail: error => {
+                Snackbar.Add(error.Message, Severity.Error);
+            }
+        );
+    }
+
+    private async Task<IEnumerable<ProductDto>> Products(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return _products;
+        return _products.Where(x => x.Name.StartsWith(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task CopyToClipboard()
+    {
+        await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", _voucherCodes);
+        Snackbar.Add("Codes copied to clipboard", Severity.Success);
+    }
+
+    private async Task IssueVoucher()
+    {
+        _showProgressBar = true;
+        _vouchers = null;
+        _voucherCodes = null;
+        var result = await _voucherService.IssueVouchers(
+                                                         amount: _voucherForm.Amount,
+                                                         productId: _voucherForm.Product.Id,
+                                                         description: _voucherForm.Description,
+                                                         requester: _voucherForm.Requester,
+                                                         prefix: _voucherForm.Prefix);
+
+        result.Match(
+            Succ: response => {
+                _showProgressBar = false;
+                _vouchers = response;
+                _voucherCodes = string.Join("\n", _vouchers.Select(response => response.VoucherCode));
+            },
+            Fail: ex => {
+                _showProgressBar = false;
+                Snackbar.Add(ex.Message, Severity.Error);
+            }
+        );
+    }
+    
+    Func<ProductDto,string> _converter = p => p != null ? $"{p.Name} - {p.NumberOfTickets} ticket" + (p.NumberOfTickets == 1 ? "" : "s") : "";
+    Func<string, string> prefixValidation = str => str.Length == 3 ? null : "Prefix must be 3 letters";
+}

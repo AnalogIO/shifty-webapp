@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using Shifty.Api.Generated.AnalogCoreV1;
+using Shifty.Api.Generated.AnalogCoreV2;
 using Shifty.App.Authentication;
 using Shifty.App.Repositories;
 using Shifty.App.Services;
@@ -16,6 +17,7 @@ namespace Shifty.App
 {
     public class Program
     {
+        private const string apiUrl = "https://core.dev.analogio.dk/";
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -42,10 +44,22 @@ namespace Shifty.App
                 .AddHttpMessageHandler<RequestAuthenticationHandler>();
             services.AddScoped(provider => 
                 new AnalogCoreV1(provider.GetRequiredService<IHttpClientFactory>().CreateClient("AnalogCoreV1")));
+            
+            services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
+                .CreateClient("AnalogCoreV2"));
+            services.AddHttpClient("AnalogCoreV2",
+                    client => client.BaseAddress = new Uri(configuration["ApiHost"]))
+                .AddHttpMessageHandler<RequestAuthenticationHandler>();
+            services.AddScoped(provider => 
+                new AnalogCoreV2(provider.GetRequiredService<IHttpClientFactory>().CreateClient("AnalogCoreV2")));
             services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<IVoucherRepository, VoucherRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<CustomAuthStateProvider>();
             services.AddScoped<AuthenticationStateProvider>(s => s.GetService<CustomAuthStateProvider>());
             services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<IVoucherService, VoucherService>();
+            services.AddScoped<IProductService, ProductService>();
             services.AddScoped<RequestAuthenticationHandler>();
             
         }
