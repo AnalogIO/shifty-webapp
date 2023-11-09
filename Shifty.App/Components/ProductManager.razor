@@ -6,15 +6,31 @@
 @using Shared
 @using LanguageExt.UnsafeValueAccess
 @inject ISnackbar Snackbar
+@inject IProductService ProductService
 
 
 <MudDataGrid
     T="ProductResponse"
     Items="@_products"
-    EditMode="DataGridEditMode.Form">
-
+    EditMode="DataGridEditMode.Form"
+    ReadOnly="false"
+    StartedEditingItem="@StartedEditingItem"
+    CanceledEditingItem="@CanceledEditingItem"
+    CommittedItemChanges="@CommittedItemChanges"
+    EditTrigger="DataGridEditTrigger.Manual"
+    >
     <Columns>
-        <PropertyColumn Property="x -> x.id" Title="Id" IsEditable="false" />
+        <PropertyColumn Property="x => x.Id" Title="Id" IsEditable="false"/>
+        <PropertyColumn Property="x => x.Name" Title="Name" IsEditable="true"/>
+        <PropertyColumn Property="x => x.Description" Title="Description" IsEditable="true"/>
+        <PropertyColumn Property="x => x.Price" Title="Price" IsEditable="true"/>
+        <PropertyColumn Property="x => x.IsPerk" Title="IsPerk" IsEditable="true"/>
+        <PropertyColumn Property="x => x.NumberOfTickets" Title="NumberOfTickets" IsEditable="true"/>
+        <TemplateColumn CellClass="d-flex justify-end">
+            <CellTemplate>
+                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync"/>
+            </CellTemplate>
+        </TemplateColumn>
     </Columns>
 </MudDataGrid>
 @code
@@ -36,6 +52,7 @@
             IsPerk = true,
             NumberOfTickets = 1
         });
+        
 
     /*var result = await _productService.GetProducts();
 
@@ -48,5 +65,27 @@
                 Snackbar.Add(error.Message, Severity.Error);
             }
         );*/
+    }
+    
+    void StartedEditingItem(ProductResponse item)
+    {
+        Console.WriteLine("Started Editing Item!!");
+        var data = System.Text.Json.JsonSerializer.Serialize(item);
+        Console.WriteLine(data);
+        // _events.Insert(0, $"Event = StartedEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+    }
+
+    void CanceledEditingItem(ProductResponse item)
+    {
+        Console.WriteLine("Cancelled Editing Item!!");
+        // _events.Insert(0, $"Event = CanceledEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+    }
+
+    void CommittedItemChanges(ProductResponse item)
+    {
+        Console.WriteLine("Committed Editing Item!!");
+        var data = System.Text.Json.JsonSerializer.Serialize(item);
+        Console.WriteLine(data);
+    // _events.Insert(0, $"Event = CommittedItemChanges, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
     }
 }
