@@ -1,5 +1,5 @@
 {
-  "x-generator": "NSwag v13.15.5.0 (NJsonSchema v10.6.6.0 (Newtonsoft.Json v13.0.0.0))",
+  "x-generator": "NSwag v13.17.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))",
   "openapi": "3.0.0",
   "info": {
     "title": "Cafe Analog CoffeeCard API",
@@ -17,7 +17,7 @@
   },
   "servers": [
     {
-      "url": "https://localhost:5001"
+      "url": "https://core.dev.analogio.dk"
     }
   ],
   "paths": {
@@ -71,7 +71,7 @@
         "summary": "Request the deletion of the user coupled to the provided token",
         "operationId": "Account_Delete",
         "responses": {
-          "204": {
+          "202": {
             "description": "Successful initiation of account deletion process"
           },
           "401": {
@@ -90,7 +90,10 @@
         },
         "security": [
           {
-            "Bearer": []
+            "jwt": []
+          },
+          {
+            "apikey": []
           }
         ]
       },
@@ -117,7 +120,10 @@
         },
         "security": [
           {
-            "Bearer": []
+            "jwt": []
+          },
+          {
+            "apikey": []
           }
         ]
       },
@@ -157,7 +163,10 @@
         },
         "security": [
           {
-            "Bearer": []
+            "jwt": []
+          },
+          {
+            "apikey": []
           }
         ]
       }
@@ -199,6 +208,53 @@
         }
       }
     },
+    "/api/v2/account/resend-verification-email": {
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "Resend account verification email if account is not already verified",
+        "operationId": "Account_ResendVerificationEmail",
+        "requestBody": {
+          "x-name": "request",
+          "description": "Email to be verified",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResendAccountVerificationEmailRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Email has been sent"
+          },
+          "404": {
+            "description": "Email not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Account already verified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v2/appconfig": {
       "get": {
         "tags": [
@@ -218,6 +274,77 @@
             }
           }
         }
+      }
+    },
+    "/api/v2/health/ping": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Ping",
+        "operationId": "Health_Ping",
+        "responses": {
+          "200": {
+            "description": "Successful request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/api/v2/health/check": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Check service health",
+        "operationId": "Health_Healthcheck",
+        "responses": {
+          "200": {
+            "description": "Healthy service",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceHealthResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Unhealthy service",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceHealthResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
       }
     },
     "/api/v2/leaderboard/top": {
@@ -311,7 +438,10 @@
         },
         "security": [
           {
-            "Bearer": []
+            "jwt": []
+          },
+          {
+            "apikey": []
           }
         ]
       }
@@ -328,7 +458,7 @@
             "name": "x-mobilepay-signature",
             "x-originalName": "mpSignatureHeader",
             "in": "header",
-            "description": "Webhook mpSignatureHeader",
+            "description": "Webhook signature",
             "schema": {
               "type": "string"
             },
@@ -368,6 +498,110 @@
         }
       }
     },
+    "/api/v2/products": {
+      "post": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Adds a new product to the database.",
+        "operationId": "Products_AddProduct",
+        "requestBody": {
+          "x-name": "addProductRequest",
+          "description": "The request containing the details of the product to be added and allowed user groups.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddProductRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "The request was successful, and the product was added.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangedProductResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Updates a product with the specified changes.",
+        "operationId": "Products_UpdateProduct",
+        "requestBody": {
+          "x-name": "product",
+          "description": "The request containing the changes to be applied to the product.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProductRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "The request was successful, and the product was updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangedProductResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Returns a list of available products based on a account's user group",
+        "operationId": "Products_GetProducts",
+        "responses": {
+          "200": {
+            "description": "Successful request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v2/purchases": {
       "get": {
         "tags": [
@@ -377,7 +611,7 @@
         "operationId": "Purchases_GetAllPurchases",
         "responses": {
           "200": {
-            "description": "All purchases",
+            "description": "Purchases",
             "content": {
               "application/json": {
                 "schema": {
@@ -389,9 +623,6 @@
               }
             }
           },
-          "204": {
-            "description": "No purchases"
-          },
           "401": {
             "description": "Invalid credentials"
           },
@@ -401,7 +632,10 @@
         },
         "security": [
           {
-            "Bearer": []
+            "jwt": []
+          },
+          {
+            "apikey": []
           }
         ]
       },
@@ -444,7 +678,10 @@
         },
         "security": [
           {
-            "Bearer": []
+            "jwt": []
+          },
+          {
+            "apikey": []
           }
         ]
       }
@@ -496,7 +733,10 @@
         },
         "security": [
           {
-            "Bearer": []
+            "jwt": []
+          },
+          {
+            "apikey": []
           }
         ]
       }
@@ -539,7 +779,10 @@
         },
         "security": [
           {
-            "Bearer": []
+            "jwt": []
+          },
+          {
+            "apikey": []
           }
         ]
       }
@@ -597,7 +840,10 @@
         },
         "security": [
           {
-            "Bearer": []
+            "jwt": []
+          },
+          {
+            "apikey": []
           }
         ]
       }
@@ -658,7 +904,10 @@
         },
         "security": [
           {
-            "Bearer": []
+            "jwt": []
+          },
+          {
+            "apikey": []
           }
         ]
       }
@@ -677,6 +926,7 @@
           "message": {
             "type": "string",
             "description": "Message with API response",
+            "nullable": true,
             "example": "Successful completion"
           }
         }
@@ -888,12 +1138,14 @@
           "name": {
             "type": "string",
             "description": "Full Name of user",
+            "nullable": true,
             "example": "John Doe"
           },
           "email": {
             "type": "string",
             "description": "Email of user",
             "format": "email",
+            "nullable": true,
             "example": "john@doe.com"
           },
           "privacyActivated": {
@@ -912,6 +1164,7 @@
           "password": {
             "type": "string",
             "description": "Pin Code as first UTF8 encoded, then SHA256 hashed, and then Base64 encoded string",
+            "nullable": true,
             "example": "[no example provided]"
           }
         }
@@ -953,6 +1206,26 @@
           }
         }
       },
+      "ResendAccountVerificationEmailRequest": {
+        "type": "object",
+        "description": "Resend Invite email request",
+        "example": {
+          "email": "john@doe.com"
+        },
+        "additionalProperties": false,
+        "required": [
+          "email"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "format": "email",
+            "minLength": 1,
+            "example": "john@doe.com"
+          }
+        }
+      },
       "AppConfig": {
         "type": "object",
         "description": "App Configuration",
@@ -988,6 +1261,27 @@
           "Test",
           "LocalDevelopment"
         ]
+      },
+      "ServiceHealthResponse": {
+        "type": "object",
+        "description": "Service Health",
+        "example": {
+          "mobilePay": true,
+          "database": true
+        },
+        "additionalProperties": false,
+        "properties": {
+          "mobilePay": {
+            "type": "boolean",
+            "description": "MobilePay connected",
+            "example": true
+          },
+          "database": {
+            "type": "boolean",
+            "description": "Database connected",
+            "example": true
+          }
+        }
       },
       "LeaderboardEntry": {
         "type": "object",
@@ -1096,6 +1390,250 @@
             "type": "string",
             "description": "Internal MobilePay representation of a type.",
             "example": "payment"
+          }
+        }
+      },
+      "ChangedProductResponse": {
+        "type": "object",
+        "description": "Represents the product response.",
+        "additionalProperties": false,
+        "required": [
+          "price",
+          "numberOfTickets",
+          "name",
+          "description",
+          "visible"
+        ],
+        "properties": {
+          "price": {
+            "type": "integer",
+            "description": "Gets or sets the price of the product.",
+            "format": "int32",
+            "maximum": 2147483647.0,
+            "minimum": 0.0,
+            "example": 150
+          },
+          "numberOfTickets": {
+            "type": "integer",
+            "description": "Gets or sets the number of tickets associated with the product.",
+            "format": "int32",
+            "maximum": 2147483647.0,
+            "minimum": 0.0,
+            "example": 5
+          },
+          "name": {
+            "type": "string",
+            "description": "Gets or sets the name of the product.",
+            "minLength": 1,
+            "example": "Espresso "
+          },
+          "description": {
+            "type": "string",
+            "description": "Gets or sets the description of the product.",
+            "minLength": 1,
+            "example": "A homemade espresso from fresh beans "
+          },
+          "visible": {
+            "type": "boolean",
+            "description": "Gets or sets the visibility of the product.",
+            "example": true
+          }
+        }
+      },
+      "AddProductRequest": {
+        "type": "object",
+        "description": "Initiate a new product add request.",
+        "example": {
+          "Name": "Latte",
+          "Price": 25,
+          "NumberOfTickets": 10,
+          "Description": "xxx",
+          "Visible": true
+        },
+        "additionalProperties": false,
+        "required": [
+          "price",
+          "numberOfTickets",
+          "name",
+          "description",
+          "allowedUserGroups"
+        ],
+        "properties": {
+          "price": {
+            "type": "integer",
+            "description": "Gets or sets the price of the product.",
+            "format": "int32",
+            "maximum": 2147483647.0,
+            "minimum": 0.0,
+            "example": 10
+          },
+          "numberOfTickets": {
+            "type": "integer",
+            "description": "Gets or sets the number of tickets associated with the product.",
+            "format": "int32",
+            "maximum": 2147483647.0,
+            "minimum": 0.0,
+            "example": 5
+          },
+          "name": {
+            "type": "string",
+            "description": "Gets or sets the name of the product.",
+            "minLength": 1,
+            "example": "Latte "
+          },
+          "description": {
+            "type": "string",
+            "description": "Gets or sets the description of the product.",
+            "minLength": 1,
+            "example": "A homemade latte with soy milk "
+          },
+          "visible": {
+            "type": "boolean",
+            "description": "Gets or sets the visibility of the product. Default is true.",
+            "default": true,
+            "example": true
+          },
+          "allowedUserGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserGroup"
+            }
+          }
+        }
+      },
+      "UserGroup": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Customer",
+          "Barista",
+          "Manager",
+          "Board"
+        ],
+        "enum": [
+          "Customer",
+          "Barista",
+          "Manager",
+          "Board"
+        ]
+      },
+      "UpdateProductRequest": {
+        "type": "object",
+        "description": "Initiate an update product request.",
+        "example": {
+          "Id": 1,
+          "Price": 150,
+          "NumberOfTickets": 10,
+          "Name": "Espresso",
+          "Description": "A coffee made by forcing steam through ground coffee beans.",
+          "Visible": false
+        },
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "price",
+          "numberOfTickets",
+          "name",
+          "description"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Gets or sets the ID of the product to update.",
+            "format": "int32",
+            "example": 1
+          },
+          "price": {
+            "type": "integer",
+            "description": "Gets or sets the updated price of the product.",
+            "format": "int32",
+            "maximum": 2147483647.0,
+            "minimum": 0.0,
+            "example": 10
+          },
+          "numberOfTickets": {
+            "type": "integer",
+            "description": "Gets or sets the updated number of tickets associated with the product.",
+            "format": "int32",
+            "maximum": 2147483647.0,
+            "minimum": 0.0,
+            "example": 5
+          },
+          "name": {
+            "type": "string",
+            "description": "Gets or sets the updated name of the product.",
+            "minLength": 1,
+            "example": "Espresso "
+          },
+          "description": {
+            "type": "string",
+            "description": "Gets or sets the updated description of the product.",
+            "minLength": 1,
+            "example": "A homemade espresso from fresh beans "
+          },
+          "visible": {
+            "type": "boolean",
+            "description": "Gets or sets the updated visibility of the product. Default is true.",
+            "default": true,
+            "example": true
+          }
+        }
+      },
+      "ProductResponse": {
+        "type": "object",
+        "description": "Represents a purchasable product",
+        "example": {
+          "id": 1,
+          "price": 300,
+          "numberOfTickets": 10,
+          "name": "Coffee clip card",
+          "description": "Coffee clip card of 10 clips",
+          "isPerk": true
+        },
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "price",
+          "numberOfTickets",
+          "name",
+          "description",
+          "isPerk"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Id of product",
+            "format": "int32",
+            "example": 1
+          },
+          "price": {
+            "type": "integer",
+            "description": "Product price",
+            "format": "int32",
+            "example": 300
+          },
+          "numberOfTickets": {
+            "type": "integer",
+            "description": "Number of tickets in product",
+            "format": "int32",
+            "example": 10
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of product",
+            "minLength": 1,
+            "example": "Coffee clip card"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of products",
+            "minLength": 1,
+            "example": "Coffee clip card of 10 clips"
+          },
+          "isPerk": {
+            "type": "boolean",
+            "description": "Eligible due to a user perk privilege ",
+            "example": true
           }
         }
       },
@@ -1622,13 +2160,19 @@
       }
     },
     "securitySchemes": {
-      "Bearer": {
+      "jwt": {
         "type": "http",
-        "description": "Insert a JWT Bearer token: Bearer {token}",
+        "description": "JWT Bearer token",
         "name": "Authorization",
         "in": "header",
         "scheme": "bearer",
         "bearerFormat": "JWT"
+      },
+      "apikey": {
+        "type": "apiKey",
+        "description": "Api Key used for health endpoints",
+        "name": "x-api-key",
+        "in": "header"
       }
     }
   }

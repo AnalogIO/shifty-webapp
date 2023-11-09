@@ -261,9 +261,8 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// <summary>
         /// Returns basic data about the account
         /// </summary>
-        /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<UserDto> ApiV1AccountGetAsync()
+        public virtual System.Threading.Tasks.Task ApiV1AccountGetAsync()
         {
             return ApiV1AccountGetAsync(System.Threading.CancellationToken.None);
         }
@@ -272,9 +271,8 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// <summary>
         /// Returns basic data about the account
         /// </summary>
-        /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<UserDto> ApiV1AccountGetAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task ApiV1AccountGetAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/v1/Account");
@@ -286,7 +284,6 @@ namespace Shifty.Api.Generated.AnalogCoreV1
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -309,20 +306,17 @@ namespace Shifty.Api.Generated.AnalogCoreV1
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<UserDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 401)
+                        if (status_ == 410)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("Invalid credentials", status_, responseText_, headers_, null);
+                            throw new ApiException("Deprecated", status_, responseText_, headers_, null);
+                        }
+                        else
+
+                        if (status_ == 200 || status_ == 204)
+                        {
+
+                            return;
                         }
                         else
                         {
@@ -350,9 +344,8 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// </summary>
         /// <param name="updateUserDto">Update account information request. All properties are optional as the server only
         /// <br/>            updates the values of the properties which are present</param>
-        /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<UserDto> ApiV1AccountPutAsync(UpdateUserDto updateUserDto)
+        public virtual System.Threading.Tasks.Task ApiV1AccountPutAsync(UpdateUserDto updateUserDto)
         {
             return ApiV1AccountPutAsync(updateUserDto, System.Threading.CancellationToken.None);
         }
@@ -364,9 +357,8 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// </summary>
         /// <param name="updateUserDto">Update account information request. All properties are optional as the server only
         /// <br/>            updates the values of the properties which are present</param>
-        /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<UserDto> ApiV1AccountPutAsync(UpdateUserDto updateUserDto, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task ApiV1AccountPutAsync(UpdateUserDto updateUserDto, System.Threading.CancellationToken cancellationToken)
         {
             if (updateUserDto == null)
                 throw new System.ArgumentNullException("updateUserDto");
@@ -385,7 +377,6 @@ namespace Shifty.Api.Generated.AnalogCoreV1
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("PUT");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -408,20 +399,17 @@ namespace Shifty.Api.Generated.AnalogCoreV1
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<UserDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 401)
+                        if (status_ == 410)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("Invalid credentials", status_, responseText_, headers_, null);
+                            throw new ApiException("Deprecated", status_, responseText_, headers_, null);
+                        }
+                        else
+
+                        if (status_ == 200 || status_ == 204)
+                        {
+
+                            return;
                         }
                         else
                         {
@@ -539,9 +527,9 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// <summary>
         /// Get app configuration
         /// </summary>
-        /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<AppConfigDto> ApiV1AppConfigAsync()
+        [System.Obsolete]
+        public virtual System.Threading.Tasks.Task ApiV1AppConfigAsync()
         {
             return ApiV1AppConfigAsync(System.Threading.CancellationToken.None);
         }
@@ -550,9 +538,9 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// <summary>
         /// Get app configuration
         /// </summary>
-        /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<AppConfigDto> ApiV1AppConfigAsync(System.Threading.CancellationToken cancellationToken)
+        [System.Obsolete]
+        public virtual async System.Threading.Tasks.Task ApiV1AppConfigAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/v1/AppConfig");
@@ -564,7 +552,6 @@ namespace Shifty.Api.Generated.AnalogCoreV1
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -587,20 +574,17 @@ namespace Shifty.Api.Generated.AnalogCoreV1
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<AppConfigDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 401)
+                        if (status_ == 410)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("Invalid credentials", status_, responseText_, headers_, null);
+                            throw new ApiException("Deprecated", status_, responseText_, headers_, null);
+                        }
+                        else
+
+                        if (status_ == 200 || status_ == 204)
+                        {
+
+                            return;
                         }
                         else
                         {
@@ -713,9 +697,8 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// </summary>
         /// <param name="preset">Leaderboard preset. 0 - Monthly, 1 - Semester and 2 - Total</param>
         /// <param name="top">Number of results to return</param>
-        /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<LeaderboardDto>> ApiV1LeaderboardAsync(int? preset, int? top)
+        public virtual System.Threading.Tasks.Task ApiV1LeaderboardAsync(int? preset, int? top)
         {
             return ApiV1LeaderboardAsync(preset, top, System.Threading.CancellationToken.None);
         }
@@ -726,9 +709,8 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// </summary>
         /// <param name="preset">Leaderboard preset. 0 - Monthly, 1 - Semester and 2 - Total</param>
         /// <param name="top">Number of results to return</param>
-        /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<LeaderboardDto>> ApiV1LeaderboardAsync(int? preset, int? top, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task ApiV1LeaderboardAsync(int? preset, int? top, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/v1/Leaderboard?");
@@ -749,7 +731,6 @@ namespace Shifty.Api.Generated.AnalogCoreV1
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -772,20 +753,17 @@ namespace Shifty.Api.Generated.AnalogCoreV1
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<LeaderboardDto>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 401)
+                        if (status_ == 410)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("Invalid credentials", status_, responseText_, headers_, null);
+                            throw new ApiException("Deprecated", status_, responseText_, headers_, null);
+                        }
+                        else
+
+                        if (status_ == 200 || status_ == 204)
+                        {
+
+                            return;
                         }
                         else
                         {
@@ -811,9 +789,9 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// Initiates a purchase from the given productId and returns an orderId
         /// </summary>
         /// <param name="initiatePurchaseDto">Initiate purchase request</param>
-        /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<InitiatePurchaseResponseDto> ApiV1MobilePayInitiateAsync(InitiatePurchaseDto initiatePurchaseDto)
+        [System.Obsolete]
+        public virtual System.Threading.Tasks.Task ApiV1MobilePayInitiateAsync(InitiatePurchaseDto initiatePurchaseDto)
         {
             return ApiV1MobilePayInitiateAsync(initiatePurchaseDto, System.Threading.CancellationToken.None);
         }
@@ -823,9 +801,9 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// Initiates a purchase from the given productId and returns an orderId
         /// </summary>
         /// <param name="initiatePurchaseDto">Initiate purchase request</param>
-        /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<InitiatePurchaseResponseDto> ApiV1MobilePayInitiateAsync(InitiatePurchaseDto initiatePurchaseDto, System.Threading.CancellationToken cancellationToken)
+        [System.Obsolete]
+        public virtual async System.Threading.Tasks.Task ApiV1MobilePayInitiateAsync(InitiatePurchaseDto initiatePurchaseDto, System.Threading.CancellationToken cancellationToken)
         {
             if (initiatePurchaseDto == null)
                 throw new System.ArgumentNullException("initiatePurchaseDto");
@@ -844,7 +822,6 @@ namespace Shifty.Api.Generated.AnalogCoreV1
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -867,20 +844,17 @@ namespace Shifty.Api.Generated.AnalogCoreV1
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<InitiatePurchaseResponseDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 401)
+                        if (status_ == 410)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("Invalid credentials", status_, responseText_, headers_, null);
+                            throw new ApiException("Deprecated", status_, responseText_, headers_, null);
+                        }
+                        else
+
+                        if (status_ == 200 || status_ == 204)
+                        {
+
+                            return;
                         }
                         else
                         {
@@ -906,9 +880,9 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// Validates the purchase against MobilePay and delivers the tickets if succeeded
         /// </summary>
         /// <param name="dto">Complete purchase request with MobilePay reference</param>
-        /// <returns>Purchase successfully fulfilled</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<MessageResponseDto> ApiV1MobilePayCompleteAsync(CompletePurchaseDto dto)
+        [System.Obsolete]
+        public virtual System.Threading.Tasks.Task ApiV1MobilePayCompleteAsync(CompletePurchaseDto dto)
         {
             return ApiV1MobilePayCompleteAsync(dto, System.Threading.CancellationToken.None);
         }
@@ -918,9 +892,9 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// Validates the purchase against MobilePay and delivers the tickets if succeeded
         /// </summary>
         /// <param name="dto">Complete purchase request with MobilePay reference</param>
-        /// <returns>Purchase successfully fulfilled</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<MessageResponseDto> ApiV1MobilePayCompleteAsync(CompletePurchaseDto dto, System.Threading.CancellationToken cancellationToken)
+        [System.Obsolete]
+        public virtual async System.Threading.Tasks.Task ApiV1MobilePayCompleteAsync(CompletePurchaseDto dto, System.Threading.CancellationToken cancellationToken)
         {
             if (dto == null)
                 throw new System.ArgumentNullException("dto");
@@ -939,7 +913,6 @@ namespace Shifty.Api.Generated.AnalogCoreV1
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -962,20 +935,17 @@ namespace Shifty.Api.Generated.AnalogCoreV1
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<MessageResponseDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 401)
+                        if (status_ == 410)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("Invalid credentials", status_, responseText_, headers_, null);
+                            throw new ApiException("Deprecated", status_, responseText_, headers_, null);
+                        }
+                        else
+
+                        if (status_ == 200 || status_ == 204)
+                        {
+
+                            return;
                         }
                         else
                         {
@@ -1002,6 +972,7 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// </summary>
         /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual System.Threading.Tasks.Task<string> ApiV1PingAsync()
         {
             return ApiV1PingAsync(System.Threading.CancellationToken.None);
@@ -1013,6 +984,7 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// </summary>
         /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual async System.Threading.Tasks.Task<string> ApiV1PingAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -1326,9 +1298,9 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// <summary>
         /// Returns a list of purchases for the given user via the supplied token in the header
         /// </summary>
-        /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<PurchaseDto>> ApiV1PurchasesAsync()
+        [System.Obsolete]
+        public virtual System.Threading.Tasks.Task ApiV1PurchasesAsync()
         {
             return ApiV1PurchasesAsync(System.Threading.CancellationToken.None);
         }
@@ -1337,9 +1309,9 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// <summary>
         /// Returns a list of purchases for the given user via the supplied token in the header
         /// </summary>
-        /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<PurchaseDto>> ApiV1PurchasesAsync(System.Threading.CancellationToken cancellationToken)
+        [System.Obsolete]
+        public virtual async System.Threading.Tasks.Task ApiV1PurchasesAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/v1/Purchases");
@@ -1351,7 +1323,6 @@ namespace Shifty.Api.Generated.AnalogCoreV1
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1374,20 +1345,17 @@ namespace Shifty.Api.Generated.AnalogCoreV1
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<PurchaseDto>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 401)
+                        if (status_ == 410)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("Invalid credentials", status_, responseText_, headers_, null);
+                            throw new ApiException("Deprecated", status_, responseText_, headers_, null);
+                        }
+                        else
+
+                        if (status_ == 200 || status_ == 204)
+                        {
+
+                            return;
                         }
                         else
                         {
@@ -1476,7 +1444,7 @@ namespace Shifty.Api.Generated.AnalogCoreV1
                             return objectResponse_.Object;
                         }
                         else
-                        if (status_ == 400)
+                        if (status_ == 409)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ApiError>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
@@ -1524,9 +1492,9 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// <summary>
         /// Issue purchase used by the ipad in the cafe
         /// </summary>
-        /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<PurchaseDto> ApiV1PurchasesIssueproductAsync(IssueProductDto issueProduct)
+        [System.Obsolete]
+        public virtual System.Threading.Tasks.Task ApiV1PurchasesIssueproductAsync(IssueProductDto issueProduct)
         {
             return ApiV1PurchasesIssueproductAsync(issueProduct, System.Threading.CancellationToken.None);
         }
@@ -1535,9 +1503,9 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// <summary>
         /// Issue purchase used by the ipad in the cafe
         /// </summary>
-        /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<PurchaseDto> ApiV1PurchasesIssueproductAsync(IssueProductDto issueProduct, System.Threading.CancellationToken cancellationToken)
+        [System.Obsolete]
+        public virtual async System.Threading.Tasks.Task ApiV1PurchasesIssueproductAsync(IssueProductDto issueProduct, System.Threading.CancellationToken cancellationToken)
         {
             if (issueProduct == null)
                 throw new System.ArgumentNullException("issueProduct");
@@ -1556,7 +1524,6 @@ namespace Shifty.Api.Generated.AnalogCoreV1
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1579,20 +1546,17 @@ namespace Shifty.Api.Generated.AnalogCoreV1
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<PurchaseDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 401)
+                        if (status_ == 410)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("Invalid credentials", status_, responseText_, headers_, null);
+                            throw new ApiException("Deprecated", status_, responseText_, headers_, null);
+                        }
+                        else
+
+                        if (status_ == 200 || status_ == 204)
+                        {
+
+                            return;
                         }
                         else
                         {
@@ -1818,7 +1782,7 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// <param name="dto">Use ticket request</param>
         /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<TicketDto> ApiV1TicketsUseAsync(UseTicketDTO dto)
+        public virtual System.Threading.Tasks.Task<UsedTicketResponse> ApiV1TicketsUseAsync(UseTicketDTO dto)
         {
             return ApiV1TicketsUseAsync(dto, System.Threading.CancellationToken.None);
         }
@@ -1830,7 +1794,7 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// <param name="dto">Use ticket request</param>
         /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<TicketDto> ApiV1TicketsUseAsync(UseTicketDTO dto, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<UsedTicketResponse> ApiV1TicketsUseAsync(UseTicketDTO dto, System.Threading.CancellationToken cancellationToken)
         {
             if (dto == null)
                 throw new System.ArgumentNullException("dto");
@@ -1874,7 +1838,7 @@ namespace Shifty.Api.Generated.AnalogCoreV1
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<TicketDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<UsedTicketResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2029,7 +1993,7 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// <summary>
         /// Message with API response
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("message", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("message", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Message { get; set; }
 
     }
@@ -2072,7 +2036,7 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// <summary>
         /// Bearer JWT token used for authentication
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("token", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("token", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Token { get; set; }
 
     }
@@ -2115,76 +2079,6 @@ namespace Shifty.Api.Generated.AnalogCoreV1
     }
 
     /// <summary>
-    /// User information
-    /// </summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
-    public partial class UserDto
-    {
-        /// <summary>
-        /// User Id
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
-        public int Id { get; set; }
-
-        /// <summary>
-        /// Full Name of user
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Email of user
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        public string Email { get; set; }
-
-        /// <summary>
-        /// Privacy Activated
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("privacyActivated", Required = Newtonsoft.Json.Required.Always)]
-        public bool PrivacyActivated { get; set; }
-
-        /// <summary>
-        /// Study Programme Id of user
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("programmeId", Required = Newtonsoft.Json.Required.Always)]
-        public int ProgrammeId { get; set; }
-
-        /// <summary>
-        /// User Level
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("level", Required = Newtonsoft.Json.Required.Always)]
-        public int Level { get; set; }
-
-        /// <summary>
-        /// User Experience Level
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("requiredExp", Required = Newtonsoft.Json.Required.Always)]
-        public int RequiredExp { get; set; }
-
-        /// <summary>
-        /// User's Rank all time
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("rankAllTime", Required = Newtonsoft.Json.Required.Always)]
-        public int RankAllTime { get; set; }
-
-        /// <summary>
-        /// User's rank current semester
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("rankSemester", Required = Newtonsoft.Json.Required.Always)]
-        public int RankSemester { get; set; }
-
-        /// <summary>
-        /// User's rank current month
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("rankMonth", Required = Newtonsoft.Json.Required.Always)]
-        public int RankMonth { get; set; }
-
-    }
-
-    /// <summary>
     /// Update User information request object. All properties are optional as the server only updates the values of the properties which are present
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
@@ -2193,13 +2087,13 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// <summary>
         /// Full Name of user
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Name { get; set; }
 
         /// <summary>
         /// Email of user
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Email { get; set; }
 
         /// <summary>
@@ -2217,7 +2111,7 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// <summary>
         /// Pin Code as first UTF8 encoded, then SHA256 hashed, and then Base64 encoded string
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("password", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("password", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Password { get; set; }
 
     }
@@ -2234,44 +2128,6 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         public string Email { get; set; }
-
-    }
-
-    /// <summary>
-    /// App Configuration
-    /// </summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
-    public partial class AppConfigDto
-    {
-        /// <summary>
-        /// Environment type for indicating production or test system
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("environmentType", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public EnvironmentType EnvironmentType { get; set; }
-
-        /// <summary>
-        /// MobilePay MerchantId
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("merchantId", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        public string MerchantId { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
-    public enum EnvironmentType
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Production")]
-        Production = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Test")]
-        Test = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"LocalDevelopment")]
-        LocalDevelopment = 2,
 
     }
 
@@ -2311,41 +2167,6 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         /// </summary>
         [Newtonsoft.Json.JsonProperty("quantity", Required = Newtonsoft.Json.Required.Always)]
         public int Quantity { get; set; }
-
-    }
-
-    /// <summary>
-    /// A user on the leaderboard
-    /// </summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
-    public partial class LeaderboardDto
-    {
-        /// <summary>
-        /// Account name
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Account score
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("score", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int Score { get; set; }
-
-    }
-
-    /// <summary>
-    /// Initiation of a new purchase response
-    /// </summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
-    public partial class InitiatePurchaseResponseDto
-    {
-        /// <summary>
-        /// Order Id
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("orderId", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        public string OrderId { get; set; }
 
     }
 
@@ -2592,6 +2413,41 @@ namespace Shifty.Api.Generated.AnalogCoreV1
         [Newtonsoft.Json.JsonProperty("productIds", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         public System.Collections.Generic.ICollection<int> ProductIds { get; set; } = new System.Collections.ObjectModel.Collection<int>();
+
+    }
+
+    /// <summary>
+    /// Representing a used ticket for a product
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
+    public partial class UsedTicketResponse
+    {
+        /// <summary>
+        /// Ticket Id
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Issuing date time for ticket in Utc format
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("dateCreated", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.DateTimeOffset DateCreated { get; set; }
+
+        /// <summary>
+        /// Used date time for ticket in Utc format
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("dateUsed", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.DateTimeOffset DateUsed { get; set; }
+
+        /// <summary>
+        /// Name of product a ticket is for
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("productName", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        public string ProductName { get; set; }
 
     }
 
