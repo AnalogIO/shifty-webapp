@@ -33,6 +33,17 @@
         </TemplateColumn>
     </Columns>
 </MudDataGrid>
+
+<MudToolBar>
+    <MudSpacer />
+    <MudButton
+        Color="Color.Primary"
+        Variant="Variant.Filled"
+        EndIcon="@Icons.Material.Outlined.Add" 
+        OnClick="@AddItem">
+            Add Product
+        </MudButton>
+</MudToolBar>
 @code
 {
     [Parameter]
@@ -66,15 +77,61 @@
 
     void CanceledEditingItem(ProductResponse item)
     {
-        Console.WriteLine("Cancelled Editing Item!!");
-        // _events.Insert(0, $"Event = CanceledEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+        Snackbar.Add("Cancelled product changes", Severity.Warning);
     }
 
     void CommittedItemChanges(ProductResponse item)
     {
-        Console.WriteLine("Committed Editing Item!!");
-        var data = System.Text.Json.JsonSerializer.Serialize(item);
-        Console.WriteLine(data);
-    // _events.Insert(0, $"Event = CommittedItemChanges, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+        if (item.Id == 0)
+        {
+            // log new item
+            var result = ProductService.AddProduct(new AddProductRequest{
+                Name = item.Name,
+                Description = item.Description,
+                NumberOfTickets = item.NumberOfTickets,
+                Price = item.Price,
+                Visible = true,
+                AllowedUserGroups = new List<UserGroup>{UserGroup.Customer, UserGroup.Barista, UserGroup.Manager, UserGroup.Board}
+            });
+        }
+        else
+        {
+            // log previous and new item
+            var result = ProductService.UpdateProduct(new UpdateProductRequest{
+                Id = item.Id,
+                Name = item.Name,
+                Description = item.Description,
+                NumberOfTickets = item.NumberOfTickets,
+                Price = item.Price,
+                Visible = true/*,
+                IsPerk = item.IsPerk,
+                UserGroups = [0, 1, 2, 3, 4]*/
+            });
+
+            result.Match(
+                Succ: result =>
+                {
+                    Snackbar.Add("Product updated", Severity.Success);
+                },
+                Fail: error =>
+                {
+                    Snackbar.Add(error.Message, Severity.Warning);
+                }
+            );
+        }
+    }
+
+    void AddItem()
+    {
+        _products = _products.Append<ProductResponse>(new ProductResponse{
+            Id = 0,
+            Name = "",
+            Description = "",
+            IsPerk = false,
+            NumberOfTickets = 1,
+            Price = 0
+        });
+
+        Snackbar.Add(("Succes: " + _products.Count<ProductResponse>()), Severity.Success);
     }
 }

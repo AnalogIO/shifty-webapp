@@ -25,5 +25,15 @@ namespace Shifty.App.Services
         {
             return await _productRepository.GetProducts();
         }
+        
+        public async Task<Try<ChangedProductResponse>> UpdateProduct(UpdateProductRequest product)
+        {
+            return await _productRepository.UpdateProduct(product);
+        }
+
+        public async Task<Try<ChangedProductResponse>> AddProduct(AddProductRequest product)
+        {
+            return await _productRepository.AddProduct(product);
+        }
     }
 }
