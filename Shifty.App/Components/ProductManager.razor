@@ -24,7 +24,11 @@
         <PropertyColumn Property="x => x.Name" Title="Name" IsEditable="true"/>
         <PropertyColumn Property="x => x.Description" Title="Description" IsEditable="true"/>
         <PropertyColumn Property="x => x.Price" Title="Price" IsEditable="true"/>
-        <PropertyColumn Property="x => x.IsPerk" Title="IsPerk" IsEditable="true"/>
+        <PropertyColumn Property="x => x.IsPerk" Title="IsPerk" IsEditable="true">
+            <EditTemplate>
+                <MudSwitch T="bool" Label="IsPerk" @bind-Checked="context.Item.IsPerk" />
+            </EditTemplate>
+        </PropertyColumn>
         <PropertyColumn Property="x => x.NumberOfTickets" Title="NumberOfTickets" IsEditable="true"/>
         <TemplateColumn CellClass="d-flex justify-end">
             <CellTemplate>
@@ -53,8 +57,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
-        
         var result = await ProductService.GetProducts();
         result.Match(
             Succ: products => {
@@ -93,6 +95,30 @@
                 Visible = true,
                 AllowedUserGroups = new List<UserGroup>{UserGroup.Customer, UserGroup.Barista, UserGroup.Manager, UserGroup.Board}
             });
+
+            result.Match(
+                Succ: product =>
+                {
+                    // Succesfully added product
+                    Snackbar.Add("Product added", Severity.Success);
+                    
+                    // Retrieve all items again in order to update id 
+                    var retrieveItems = ProductService.GetProducts();
+
+                    retrieveItems.Match(
+                        Succ: items => {
+                            _products = items;
+                        },
+                        Fail: error => {
+                            // Errors while re-retrieving items, non-fatal (just means _products are slightly outdated)
+                            Snackbar.Add(error.Message, Severity.Warning);
+                        }
+                    );
+                },
+                Fail: error => {
+                    Snackbar.Add(error.Message, Severity.Error);
+                }
+            );
         }
         else
         {
