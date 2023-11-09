@@ -117,7 +117,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
         var result = await _productService.GetProducts();
 
         result.Match(
