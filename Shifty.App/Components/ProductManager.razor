@@ -1,0 +1,52 @@
+@namespace Components
+@using System.ComponentModel.DataAnnotations
+@using Shifty.App.Services
+@using Shifty.Api.Generated.AnalogCoreV1
+@using Shifty.Api.Generated.AnalogCoreV2
+@using Shared
+@using LanguageExt.UnsafeValueAccess
+@inject ISnackbar Snackbar
+
+
+<MudDataGrid
+    T="ProductResponse"
+    Items="@_products"
+    EditMode="DataGridEditMode.Form">
+
+    <Columns>
+        <PropertyColumn Property="x -> x.id" Title="Id" IsEditable="false" />
+    </Columns>
+</MudDataGrid>
+@code
+{
+    [Parameter]
+    public System.Security.Claims.ClaimsPrincipal User { get; set; }
+    private ICollection<ProductResponse> _products = new List<ProductResponse>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
+        
+        _products.Add(new ProductResponse
+        {
+            Id = 1,
+            Description = "My test",
+            Name = "Filter Coffee",
+            Price = 0,
+            IsPerk = true,
+            NumberOfTickets = 1
+        });
+
+    /*var result = await _productService.GetProducts();
+
+        result.Match(
+            Succ: products => {
+                _products = products;
+                _voucherForm.Prefix = User.Claims.Single(el => el.Type.Contains("email")).Value[..3].ToUpper();
+            },
+            Fail: error => {
+                Snackbar.Add(error.Message, Severity.Error);
+            }
+        );*/
+    }
+}
