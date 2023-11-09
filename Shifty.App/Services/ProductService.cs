@@ -6,6 +6,7 @@ using LanguageExt;
 using LanguageExt.Common;
 using LanguageExt.UnsafeValueAccess;
 using Shifty.Api.Generated.AnalogCoreV1;
+using Shifty.Api.Generated.AnalogCoreV2;
 using Shifty.App.Authentication;
 using Shifty.App.Repositories;
 
@@ -20,7 +21,7 @@ namespace Shifty.App.Services
             _productRepository = productRepository;
         }
 
-        public async Task<Try<IEnumerable<ProductDto>>> GetProducts()
+        public async Task<Try<IEnumerable<ProductResponse>>> GetProducts()
         {
             return await _productRepository.GetProducts();
         }

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using LanguageExt;
 using LanguageExt.Common;
 using Shifty.Api.Generated.AnalogCoreV1;
+using Shifty.Api.Generated.AnalogCoreV2;
 
 namespace Shifty.App.Services
 {
@@ -12,6 +13,6 @@ namespace Shifty.App.Services
         /// Gives products available to user
         /// </summary>
         /// <returns>Collection of products in the form of ProductDtos. The Collection is null if an error happens.</returns>
-        Task<Try<IEnumerable<ProductDto>>> GetProducts();
+        Task<Try<IEnumerable<ProductResponse>>> GetProducts();
     }
 }
