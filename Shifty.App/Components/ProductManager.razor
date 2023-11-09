@@ -37,34 +37,23 @@
 {
     [Parameter]
     public System.Security.Claims.ClaimsPrincipal User { get; set; }
-    private ICollection<ProductResponse> _products = new List<ProductResponse>();
+
+    private IEnumerable<ProductResponse> _products;
 
     protected override async Task OnInitializedAsync()
     {
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
         
-        _products.Add(new ProductResponse
-        {
-            Id = 1,
-            Description = "My test",
-            Name = "Filter Coffee",
-            Price = 0,
-            IsPerk = true,
-            NumberOfTickets = 1
-        });
-        
-
-    /*var result = await _productService.GetProducts();
-
+        var result = await ProductService.GetProducts();
         result.Match(
             Succ: products => {
-                _products = products;
-                _voucherForm.Prefix = User.Claims.Single(el => el.Type.Contains("email")).Value[..3].ToUpper();
+                                  _products = products;
+                                  Console.WriteLine(_products.Count());
             },
             Fail: error => {
                 Snackbar.Add(error.Message, Severity.Error);
             }
-        );*/
+        );
     }
     
     void StartedEditingItem(ProductResponse item)
