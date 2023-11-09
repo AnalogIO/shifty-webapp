@@ -17,7 +17,6 @@ namespace Shifty.App
 {
     public class Program
     {
-        private const string apiUrl = "https://core.dev.analogio.dk/";
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
