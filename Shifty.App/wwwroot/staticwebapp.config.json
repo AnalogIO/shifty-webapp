@@ -1,0 +1,16 @@
+{
+  "trailingSlash": "auto",
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/images/*.{png,jpg,gif}", "/css/*"]
+  },
+  "responseOverrides": {
+    "401": {
+      "redirect": "/Login",
+      "statusCode": 302
+    },
+    "404": {
+      "rewrite": "/index.html"
+    }
+  }
+}
