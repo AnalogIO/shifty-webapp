@@ -15,7 +15,7 @@ resource staticwebapp 'Microsoft.Web/staticSites@2022-03-01' = {
     tier: 'Free'
   }
   properties: {
-    allowConfigFileUpdates: false
+    allowConfigFileUpdates: true
     repositoryUrl: 'https://github.com/AnalogIO/shifty-webapp'
     branch: 'main'
     provider: 'GitHub'
