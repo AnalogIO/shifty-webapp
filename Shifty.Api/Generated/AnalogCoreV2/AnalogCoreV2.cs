@@ -2574,6 +2574,31 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         [Newtonsoft.Json.JsonProperty("visible", Required = Newtonsoft.Json.Required.Always)]
         public bool Visible { get; set; }
 
+        /// <summary>
+        /// Gets or sets the user groups that can access the product.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("allowedUserGroups", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<UserGroup> AllowedUserGroups { get; set; } = new System.Collections.ObjectModel.Collection<UserGroup>();
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
+    public enum UserGroup
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Customer")]
+        Customer = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Barista")]
+        Barista = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Manager")]
+        Manager = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Board")]
+        Board = 3,
+
     }
 
     /// <summary>
@@ -2616,27 +2641,12 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         [Newtonsoft.Json.JsonProperty("visible", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool Visible { get; set; } = true;
 
+        /// <summary>
+        /// Gets or sets the user groups that can access the product.
+        /// </summary>
         [Newtonsoft.Json.JsonProperty("allowedUserGroups", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         public System.Collections.Generic.ICollection<UserGroup> AllowedUserGroups { get; set; } = new System.Collections.ObjectModel.Collection<UserGroup>();
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
-    public enum UserGroup
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Customer")]
-        Customer = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Barista")]
-        Barista = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Manager")]
-        Manager = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Board")]
-        Board = 3,
 
     }
 
@@ -2686,6 +2696,13 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         [Newtonsoft.Json.JsonProperty("visible", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool Visible { get; set; } = true;
 
+        /// <summary>
+        /// Gets or sets the user groups that can access the product.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("allowedUserGroups", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<UserGroup> AllowedUserGroups { get; set; } = new System.Collections.ObjectModel.Collection<UserGroup>();
+
     }
 
     /// <summary>
@@ -2731,6 +2748,13 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         /// </summary>
         [Newtonsoft.Json.JsonProperty("isPerk", Required = Newtonsoft.Json.Required.Always)]
         public bool IsPerk { get; set; }
+
+        /// <summary>
+        /// Decides the user groups that can access the product.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("allowedUserGroups", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<UserGroup> AllowedUserGroups { get; set; } = new System.Collections.ObjectModel.Collection<UserGroup>();
 
     }
 

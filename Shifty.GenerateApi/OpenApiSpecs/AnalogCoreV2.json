@@ -1402,7 +1402,8 @@
           "numberOfTickets",
           "name",
           "description",
-          "visible"
+          "visible",
+          "allowedUserGroups"
         ],
         "properties": {
           "price": {
@@ -1437,8 +1438,32 @@
             "type": "boolean",
             "description": "Gets or sets the visibility of the product.",
             "example": true
+          },
+          "allowedUserGroups": {
+            "type": "array",
+            "description": "Gets or sets the user groups that can access the product.",
+            "example": "Manager, Board ",
+            "items": {
+              "$ref": "#/components/schemas/UserGroup"
+            }
           }
         }
+      },
+      "UserGroup": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Customer",
+          "Barista",
+          "Manager",
+          "Board"
+        ],
+        "enum": [
+          "Customer",
+          "Barista",
+          "Manager",
+          "Board"
+        ]
       },
       "AddProductRequest": {
         "type": "object",
@@ -1448,7 +1473,11 @@
           "Price": 25,
           "NumberOfTickets": 10,
           "Description": "xxx",
-          "Visible": true
+          "Visible": true,
+          "AllowedUserGroups": [
+            "Manager",
+            "Board"
+          ]
         },
         "additionalProperties": false,
         "required": [
@@ -1495,27 +1524,13 @@
           },
           "allowedUserGroups": {
             "type": "array",
+            "description": "Gets or sets the user groups that can access the product.",
+            "example": "Manager, Board ",
             "items": {
               "$ref": "#/components/schemas/UserGroup"
             }
           }
         }
-      },
-      "UserGroup": {
-        "type": "string",
-        "description": "",
-        "x-enumNames": [
-          "Customer",
-          "Barista",
-          "Manager",
-          "Board"
-        ],
-        "enum": [
-          "Customer",
-          "Barista",
-          "Manager",
-          "Board"
-        ]
       },
       "UpdateProductRequest": {
         "type": "object",
@@ -1526,7 +1541,11 @@
           "NumberOfTickets": 10,
           "Name": "Espresso",
           "Description": "A coffee made by forcing steam through ground coffee beans.",
-          "Visible": false
+          "Visible": false,
+          "AllowedUserGroups": [
+            "Manager",
+            "Board"
+          ]
         },
         "additionalProperties": false,
         "required": [
@@ -1534,7 +1553,8 @@
           "price",
           "numberOfTickets",
           "name",
-          "description"
+          "description",
+          "allowedUserGroups"
         ],
         "properties": {
           "id": {
@@ -1576,6 +1596,14 @@
             "description": "Gets or sets the updated visibility of the product. Default is true.",
             "default": true,
             "example": true
+          },
+          "allowedUserGroups": {
+            "type": "array",
+            "description": "Gets or sets the user groups that can access the product.",
+            "example": "Manager, Board ",
+            "items": {
+              "$ref": "#/components/schemas/UserGroup"
+            }
           }
         }
       },
@@ -1588,7 +1616,11 @@
           "numberOfTickets": 10,
           "name": "Coffee clip card",
           "description": "Coffee clip card of 10 clips",
-          "isPerk": true
+          "isPerk": true,
+          "AllowedUserGroups": [
+            "Manager",
+            "Board"
+          ]
         },
         "additionalProperties": false,
         "required": [
@@ -1597,7 +1629,8 @@
           "numberOfTickets",
           "name",
           "description",
-          "isPerk"
+          "isPerk",
+          "allowedUserGroups"
         ],
         "properties": {
           "id": {
@@ -1634,6 +1667,14 @@
             "type": "boolean",
             "description": "Eligible due to a user perk privilege ",
             "example": true
+          },
+          "allowedUserGroups": {
+            "type": "array",
+            "description": "Decides the user groups that can access the product.",
+            "example": "Manager, Board ",
+            "items": {
+              "$ref": "#/components/schemas/UserGroup"
+            }
           }
         }
       },
