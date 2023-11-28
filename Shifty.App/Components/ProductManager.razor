@@ -20,6 +20,7 @@
         Items="@_products"
         EditMode="DataGridEditMode.Form"
         ReadOnly="false"
+        StartedEditingItem="@StartedEditingItem"
         CanceledEditingItem="@CanceledEditingItem"
         CommittedItemChanges="@CommittedItemChanges"
         EditTrigger="DataGridEditTrigger.Manual"
@@ -43,21 +44,29 @@
             <PropertyColumn Property="x => x.Name" Title="Name" IsEditable="true"/>
             <PropertyColumn Property="x => x.Description" Title="Description" IsEditable="true"/>
             <PropertyColumn Property="x => x.Price" Title="Price" IsEditable="true"/>
-            <PropertyColumn Property="x => x.Name" Title="User groups" IsEditable="true"> 
-                @code { /* TODO: Property="x => x.AllowedUserGroups" once exposed by API */ }
+            <PropertyColumn 
+                Property='x => string.Join(", ", x.AllowedUserGroups.Select(e => e.ToString()))' 
+                Title="User groups" 
+                IsEditable="true"> 
                 <EditTemplate>
-                    <MudSelect T="UserGroup" Label="User group" MultiSelection="true">
-                        @foreach (var group in Enum.GetValues<UserGroup>())
-                        {
-                            <MudSelectItem T="UserGroup" Value="@group">@group</MudSelectItem>
-                        }
+                    <MudSelect 
+                        T="UserGroup" 
+                        Label="User group" 
+                        @bind-SelectedValues="SelectedUserGroups"
+                        MultiSelection="true">
+                        @foreach (var group in Enum.GetValues<UserGroup>()) {
+                                <MudSelectItem T="UserGroup" Value="@group">@group</MudSelectItem>
+                            }
                     </MudSelect>
                 </EditTemplate>
             </PropertyColumn>
             <PropertyColumn Property="x => x.NumberOfTickets" Title="NumberOfTickets" IsEditable="true"/>
             <TemplateColumn>
                 <CellTemplate>
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync"/>
+                    <MudIconButton
+                        Size="@Size.Small" 
+                        Icon="@Icons.Material.Outlined.Edit"
+                        OnClick="@context.Actions.StartEditingItemAsync"/>
                 </CellTemplate>
             </TemplateColumn>
         </Columns>
@@ -80,7 +89,7 @@
     public System.Security.Claims.ClaimsPrincipal User { get; set; }
 
     private IEnumerable<ProductResponse> _products;
-    private IEnumerable<UserGroup> userGroups { get; set; } = new HashSet<UserGroup>();
+    private IEnumerable<UserGroup> SelectedUserGroups { get; set; } = new HashSet<UserGroup>();
 
     private bool _loading = true;
     protected override async Task OnInitializedAsync()
@@ -89,13 +98,18 @@
         _loading = false;
         result.Match(
             Succ: products => {
-                                  _products = products;
-                                  Console.WriteLine(_products.Count());
+                _products = products;
+                _products.First().AllowedUserGroups = new HashSet<UserGroup>(){UserGroup.Board, UserGroup.Customer};
             },
             Fail: error => {
                 Snackbar.Add(error.Message, Severity.Error);
             }
         );
+    }
+
+    void StartedEditingItem(ProductResponse item)
+    {
+        SelectedUserGroups = item.AllowedUserGroups;
     }
 
     void CanceledEditingItem(ProductResponse item)
@@ -113,7 +127,7 @@
                 NumberOfTickets = item.NumberOfTickets,
                 Price = item.Price,
                 Visible = true,
-                AllowedUserGroups = new List<UserGroup>{UserGroup.Customer, UserGroup.Barista, UserGroup.Manager, UserGroup.Board}
+                AllowedUserGroups = SelectedUserGroups.ToList()
             });
 
             result.Match(
@@ -148,8 +162,8 @@
                 Description = item.Description,
                 NumberOfTickets = item.NumberOfTickets,
                 Price = item.Price,
-                Visible = true/*,
-                UserGroups = [0, 1, 2, 3, 4]*/ // TODO: When UserGroups are exposed by API, enable here
+                Visible = true,
+                AllowedUserGroups = SelectedUserGroups.ToList()
             });
 
             result.Match(
