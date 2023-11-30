@@ -20,7 +20,6 @@
         Items="@_products"
         EditMode="DataGridEditMode.Form"
         ReadOnly="false"
-        StartedEditingItem="@StartedEditingItem"
         CanceledEditingItem="@CanceledEditingItem"
         CommittedItemChanges="@CommittedItemChanges"
         EditTrigger="DataGridEditTrigger.Manual"
@@ -51,9 +50,8 @@
                 <EditTemplate>
                     <MudSelect 
                         T="UserGroup" 
-                        Label="User group" 
-                        @bind-SelectedValues="SelectedUserGroups"
-                        MultiSelection="true">
+                        Label="Minimum user group"
+                        @bind-Value="SelectedUserGroup">
                         @foreach (var group in Enum.GetValues<UserGroup>()) {
                                 <MudSelectItem T="UserGroup" Value="@group">@group</MudSelectItem>
                             }
@@ -89,7 +87,7 @@
     public System.Security.Claims.ClaimsPrincipal User { get; set; }
 
     private IEnumerable<ProductResponse> _products;
-    private IEnumerable<UserGroup> SelectedUserGroups { get; set; } = new HashSet<UserGroup>();
+    private UserGroup SelectedUserGroup { get; set; }
 
     private bool _loading = true;
     protected override async Task OnInitializedAsync()
@@ -99,7 +97,6 @@
         result.Match(
             Succ: products => {
                 _products = products;
-                _products.First().AllowedUserGroups = new HashSet<UserGroup>(){UserGroup.Board, UserGroup.Customer};
             },
             Fail: error => {
                 Snackbar.Add(error.Message, Severity.Error);
@@ -107,17 +104,12 @@
         );
     }
 
-    void StartedEditingItem(ProductResponse item)
-    {
-        SelectedUserGroups = item.AllowedUserGroups;
-    }
-
     void CanceledEditingItem(ProductResponse item)
     {
-        Snackbar.Add("Cancelled product changes", Severity.Warning);
+        Snackbar.Add("Cancelled product changes", Severity.Info);
     }
 
-    void CommittedItemChanges(ProductResponse item)
+    async Task CommittedItemChanges(ProductResponse item)
     {
         if (item.Id == 0)
         {
@@ -127,18 +119,17 @@
                 NumberOfTickets = item.NumberOfTickets,
                 Price = item.Price,
                 Visible = true,
-                AllowedUserGroups = SelectedUserGroups.ToList()
+                AllowedUserGroups = Enum.GetValues<UserGroup>().Where(e => e >= SelectedUserGroup ).ToList()
             });
 
-            result.Match(
-                Succ: product =>
+            await result.Match(
+                Succ: async product =>
                 {
                     // Succesfully added product
                     Snackbar.Add("Product added", Severity.Success);
                     
                     // Retrieve all items again in order to update id 
-                    var retrieveItems = ProductService.GetProducts();
-
+                    var retrieveItems = await ProductService.GetProducts();
                     retrieveItems.Match(
                         Succ: items => {
                             _products = items;
@@ -163,13 +154,24 @@
                 NumberOfTickets = item.NumberOfTickets,
                 Price = item.Price,
                 Visible = true,
-                AllowedUserGroups = SelectedUserGroups.ToList()
+                AllowedUserGroups = Enum.GetValues<UserGroup>().Where(e => e >= SelectedUserGroup ).ToList()
             });
 
-            result.Match(
-                Succ: result =>
+            await result.Match(
+                Succ: async result =>
                 {
                     Snackbar.Add("Product updated", Severity.Success);
+
+                    var retrieveItems = await ProductService.GetProducts();
+                    retrieveItems.Match(
+                        Succ: items => {
+                            _products = items;
+                        },
+                        Fail: error => {
+                            // Errors while re-retrieving items, non-fatal (just means _products are slightly outdated)
+                            Snackbar.Add(error.Message, Severity.Warning);
+                        }
+                    );
                 },
                 Fail: error =>
                 {
@@ -187,14 +189,14 @@
             Description = "",
             IsPerk = false,
             NumberOfTickets = 1,
-            Price = 0
+            Price = 0,
+            AllowedUserGroups = Enum.GetValues<UserGroup>()
         });
-
-        Snackbar.Add(("Succes: " + _products.Count<ProductResponse>()), Severity.Success);
     }
 
     private Func<ProductResponse, int, string> _RowStyleFunc => (x, i) =>
     {
+        // Proof of Concept: Style based on row contents, e.g. clearly indicate non-visible products.
         if (x.NumberOfTickets == 10) // TODO: should be changed based on Visible property when exposed by API
         {
             return "background-color:#ebebeb;font-style:italic;font-color:#8a8686;";
