@@ -41,6 +41,14 @@
                 </CellTemplate>
             </PropertyColumn>
             <PropertyColumn Property="x => x.Name" Title="Name" IsEditable="true"/>
+            <PropertyColumn Property="x => x.Visible" Title="Visibility" IsEditable="true">
+                <EditTemplate>
+                    <MudSwitch
+                        Label="Visible"
+                        Color="Color.Primary" 
+                        @bind-Checked="context.Item.Visible" />
+                </EditTemplate>
+            </PropertyColumn>
             <PropertyColumn Property="x => x.Description" Title="Description" IsEditable="true"/>
             <PropertyColumn Property="x => x.Price" Title="Price" IsEditable="true"/>
             <PropertyColumn 
@@ -86,7 +94,7 @@
     [Parameter]
     public System.Security.Claims.ClaimsPrincipal User { get; set; }
 
-    private IEnumerable<ProductResponse> _products;
+    private IEnumerable<ProductResponse> _products = new List<ProductResponse>();
     private UserGroup SelectedUserGroup { get; set; }
 
     private bool _loading = true;
@@ -196,8 +204,7 @@
 
     private Func<ProductResponse, int, string> _RowStyleFunc => (x, i) =>
     {
-        // Proof of Concept: Style based on row contents, e.g. clearly indicate non-visible products.
-        if (x.NumberOfTickets == 10) // TODO: should be changed based on Visible property when exposed by API
+        if (!x.Visible)
         {
             return "background-color:#ebebeb;font-style:italic;font-color:#8a8686;";
         }
