@@ -32,7 +32,7 @@ namespace Shifty.App.Repositories
 
         async Task<Try<IEnumerable<ProductResponse>>> IProductRepository.GetProducts()
         {
-            return await TryAsync(async () => (await _client.ApiV2ProductsGetAsync()).AsEnumerable());
+            return await TryAsync(async () => (await _client.ApiV2ProductsAllAsync()).AsEnumerable());
         }
     }
 }
