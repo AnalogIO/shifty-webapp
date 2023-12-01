@@ -602,6 +602,38 @@
         }
       }
     },
+    "/api/v2/products/all": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Returns a list of all products",
+        "operationId": "Products_GetAllProducts",
+        "responses": {
+          "200": {
+            "description": "Successful request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
     "/api/v2/purchases": {
       "get": {
         "tags": [
@@ -1630,6 +1662,7 @@
           "name",
           "description",
           "isPerk",
+          "visible",
           "allowedUserGroups"
         ],
         "properties": {
@@ -1666,6 +1699,11 @@
           "isPerk": {
             "type": "boolean",
             "description": "Eligible due to a user perk privilege ",
+            "example": true
+          },
+          "visible": {
+            "type": "boolean",
+            "description": "Visibility of products for users ",
             "example": true
           },
           "allowedUserGroups": {
