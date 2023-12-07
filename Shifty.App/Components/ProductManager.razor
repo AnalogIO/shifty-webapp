@@ -15,6 +15,7 @@
             <LoadingIndicator Height="400px" />
         </MudContainer>
     }
+    <MudSwitch @bind-Checked="_showNonvisible" Label="Show non-visible products" Color="Color.Primary" Class="mt-5 ml-2" />
     <MudDataGrid
         T="ProductResponse"
         Items="@_products"
@@ -24,6 +25,7 @@
         CanceledEditingItem="@CanceledEditingItem"
         CommittedItemChanges="@CommittedItemChanges"
         EditTrigger="DataGridEditTrigger.Manual"
+        QuickFilter="e => _showNonvisible || e.Visible"
         RowStyleFunc="@_RowStyleFunc">
         <Columns>
             <PropertyColumn Property="x => x.Id" Title="Id" IsEditable="false"/>
@@ -113,6 +115,7 @@
     }
 
     private bool _loading = true;
+    private bool _showNonvisible = true;
     protected override async Task OnInitializedAsync()
     {
         var result = await ProductService.GetProducts();
