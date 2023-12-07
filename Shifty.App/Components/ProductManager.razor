@@ -57,8 +57,9 @@
                 Title="User groups" 
                 IsEditable="true"> 
                 <EditTemplate>
+                    <MudText Typo="Typo.subtitle1">Visible to:</MudText>
                 @foreach (var group in Enum.GetValues<UserGroup>()) {
-                    <MudCheckBox @bind-Checked="UserGroupDict[group]" Value="@group">@group</MudCheckBox>
+                    <MudCheckBox Dense="true" Color="Color.Primary" @bind-Checked="UserGroupDict[group]" Value="@group">@group</MudCheckBox>
                 }
                 </EditTemplate>
             </PropertyColumn>
