@@ -20,6 +20,7 @@
         Items="@_products"
         EditMode="DataGridEditMode.Form"
         ReadOnly="false"
+        StartedEditingItem="@StartedEditingItem"
         CanceledEditingItem="@CanceledEditingItem"
         CommittedItemChanges="@CommittedItemChanges"
         EditTrigger="DataGridEditTrigger.Manual"
@@ -56,14 +57,9 @@
                 Title="User groups" 
                 IsEditable="true"> 
                 <EditTemplate>
-                    <MudSelect 
-                        T="UserGroup" 
-                        Label="Minimum user group"
-                        @bind-Value="SelectedUserGroup">
-                        @foreach (var group in Enum.GetValues<UserGroup>()) {
-                                <MudSelectItem T="UserGroup" Value="@group">@group</MudSelectItem>
-                            }
-                    </MudSelect>
+                @foreach (var group in Enum.GetValues<UserGroup>()) {
+                    <MudCheckBox @bind-Checked="UserGroupDict[group]" Value="@group">@group</MudCheckBox>
+                }
                 </EditTemplate>
             </PropertyColumn>
             <PropertyColumn Property="x => x.NumberOfTickets" Title="NumberOfTickets" IsEditable="true"/>
@@ -95,7 +91,16 @@
     public System.Security.Claims.ClaimsPrincipal User { get; set; }
 
     private IEnumerable<ProductResponse> _products = new List<ProductResponse>();
-    private UserGroup SelectedUserGroup { get; set; }
+    private Dictionary<UserGroup, bool> UserGroupDict = new();
+
+    private void StartedEditingItem(ProductResponse item)
+    {
+        UserGroupDict = new();
+        foreach (var group in Enum.GetValues<UserGroup>())
+        {
+            UserGroupDict.Add(group, item.AllowedUserGroups.Contains(group));
+        }
+    }
 
     private bool _loading = true;
     protected override async Task OnInitializedAsync()
@@ -119,6 +124,12 @@
 
     async Task CommittedItemChanges(ProductResponse item)
     {
+        List<UserGroup> AllowedUserGroups = 
+                UserGroupDict.Where(e => e.Value)
+                             .ToDictionary(kv => kv.Key, kv => kv.Value)
+                             .Keys
+                             .ToList();
+
         if (item.Id == 0)
         {
             var result = ProductService.AddProduct(new AddProductRequest{
@@ -127,7 +138,7 @@
                 NumberOfTickets = item.NumberOfTickets,
                 Price = item.Price,
                 Visible = true,
-                AllowedUserGroups = Enum.GetValues<UserGroup>().Where(e => e >= SelectedUserGroup ).ToList()
+                AllowedUserGroups = AllowedUserGroups
             });
 
             await result.Match(
@@ -162,7 +173,7 @@
                 NumberOfTickets = item.NumberOfTickets,
                 Price = item.Price,
                 Visible = true,
-                AllowedUserGroups = Enum.GetValues<UserGroup>().Where(e => e >= SelectedUserGroup ).ToList()
+                AllowedUserGroups = AllowedUserGroups
             });
 
             await result.Match(
@@ -198,7 +209,7 @@
             IsPerk = false,
             NumberOfTickets = 1,
             Price = 0,
-            AllowedUserGroups = Enum.GetValues<UserGroup>()
+            AllowedUserGroups = new List<UserGroup>()
         });
     }
 
