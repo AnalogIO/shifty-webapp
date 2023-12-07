@@ -43,6 +43,18 @@
             </PropertyColumn>
             <PropertyColumn Property="x => x.Name" Title="Name" IsEditable="true"/>
             <PropertyColumn Property="x => x.Visible" Title="Visibility" IsEditable="true">
+                <CellTemplate>
+                    @{
+                        if (context.Item.Visible)
+                        {
+                            <MudIcon Icon="@Icons.Material.Filled.Visibility" />
+                        }
+                        else
+                        {
+                            <MudIcon Icon="@Icons.Material.Filled.VisibilityOff" />
+                        }
+                    }
+                </CellTemplate>
                 <EditTemplate>
                     <MudSwitch
                         Label="Visible"
@@ -135,7 +147,7 @@
                 Description = item.Description,
                 NumberOfTickets = item.NumberOfTickets,
                 Price = item.Price,
-                Visible = true,
+                Visible = item.Visible,
                 AllowedUserGroups = AllowedUserGroups
             });
 
@@ -170,7 +182,7 @@
                 Description = item.Description,
                 NumberOfTickets = item.NumberOfTickets,
                 Price = item.Price,
-                Visible = true,
+                Visible = item.Visible,
                 AllowedUserGroups = AllowedUserGroups
             });
 
