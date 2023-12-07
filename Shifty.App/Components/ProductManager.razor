@@ -87,9 +87,6 @@
 </MudPaper>
 @code
 {
-    [Parameter]
-    public System.Security.Claims.ClaimsPrincipal User { get; set; }
-
     private IEnumerable<ProductResponse> _products = new List<ProductResponse>();
     private Dictionary<UserGroup, bool> UserGroupDict = new();
 
