@@ -8,7 +8,7 @@
 @inject ISnackbar Snackbar
 @inject IProductService ProductService
 
-<MudPaper Elevation="15" Style="margin: 40px auto; border-radius: 5px;" MaxWidth="1200px">
+<MudPaper Elevation="15" Style="margin: 40px auto; border-radius: 5px; max-width: 90%;">
     @if (_loading)
     {
         <MudContainer Style="width: 100%; display: flex;">
@@ -17,6 +17,7 @@
     }
     <MudSwitch @bind-Checked="_showNonvisible" Label="Show non-visible products" Color="Color.Primary" Class="mt-5 ml-2" />
     <MudDataGrid
+        @ref="_dataGrid"
         T="ProductResponse"
         Items="@_products"
         EditMode="DataGridEditMode.Form"
@@ -26,9 +27,54 @@
         CommittedItemChanges="@CommittedItemChanges"
         EditTrigger="DataGridEditTrigger.Manual"
         QuickFilter="e => _showNonvisible || e.Visible"
-        RowStyleFunc="@_RowStyleFunc">
+        RowStyleFunc="@_RowStyleFunc"
+        FixedHeader="true"
+        Height="calc(100vh - 250px)"
+        HorizontalScrollbar="false">
         <Columns>
-            <PropertyColumn Property="x => x.Id" Title="Id" IsEditable="false"/>
+            <TemplateColumn>
+                <CellTemplate>
+                    <MudIconButton
+                        Size="@Size.Small" 
+                        Icon="@Icons.Material.Outlined.Edit"
+                        OnClick="@context.Actions.StartEditingItemAsync"/>
+                </CellTemplate>
+            </TemplateColumn>
+            <PropertyColumn Property="x => x.Visible" Title="" IsEditable="true" InitialDirection="SortDirection.Descending">
+                <CellTemplate>
+                    @{
+                        if (context.Item.Visible)
+                        {
+                            <MudIcon Color="Color.Primary" Icon="@Icons.Material.Filled.Visibility" />
+                        }
+                        else
+                        {
+                            <MudIcon Style="@($"color:{Colors.Grey.Default};")" Icon="@Icons.Material.Filled.VisibilityOff" />
+                        }
+                    }
+                </CellTemplate>
+                <EditTemplate>
+                    <MudSwitch
+                        Label="Visible"
+                        Color="Color.Primary" 
+                        @bind-Checked="context.Item.Visible" />
+                </EditTemplate>
+            </PropertyColumn>
+            <PropertyColumn HeaderStyle="Width: 3px" Property="x => x.Id" Title="Id" IsEditable="false"/>
+            <PropertyColumn Property="x => x.Name" Title="Name" IsEditable="true"/>
+            <PropertyColumn Property="x => x.NumberOfTickets" Title="NumberOfTickets" IsEditable="true"/>
+            <PropertyColumn Property="x => x.Price" Title="Price" IsEditable="true"/>
+            <PropertyColumn 
+                Property='x => string.Join(", ", x.AllowedUserGroups.Select(e => e.ToString()))' 
+                Title="User groups" 
+                IsEditable="true"> 
+                <EditTemplate>
+                    <MudText Typo="Typo.subtitle1">Visible to:</MudText>
+                @foreach (var group in Enum.GetValues<UserGroup>()) {
+                    <MudCheckBox Dense="true" Color="Color.Primary" @bind-Checked="UserGroupDict[group]" Value="@group">@group</MudCheckBox>
+                }
+                </EditTemplate>
+            </PropertyColumn>
             <PropertyColumn Property="x => x.IsPerk" Title="IsPerk" IsEditable="false">
                 <CellTemplate>
                     @{
@@ -43,49 +89,7 @@
                     }
                 </CellTemplate>
             </PropertyColumn>
-            <PropertyColumn Property="x => x.Name" Title="Name" IsEditable="true"/>
-            <PropertyColumn Property="x => x.Visible" Title="Visibility" IsEditable="true">
-                <CellTemplate>
-                    @{
-                        if (context.Item.Visible)
-                        {
-                            <MudIcon Icon="@Icons.Material.Filled.Visibility" />
-                        }
-                        else
-                        {
-                            <MudIcon Icon="@Icons.Material.Filled.VisibilityOff" />
-                        }
-                    }
-                </CellTemplate>
-                <EditTemplate>
-                    <MudSwitch
-                        Label="Visible"
-                        Color="Color.Primary" 
-                        @bind-Checked="context.Item.Visible" />
-                </EditTemplate>
-            </PropertyColumn>
             <PropertyColumn Property="x => x.Description" Title="Description" IsEditable="true"/>
-            <PropertyColumn Property="x => x.Price" Title="Price" IsEditable="true"/>
-            <PropertyColumn 
-                Property='x => string.Join(", ", x.AllowedUserGroups.Select(e => e.ToString()))' 
-                Title="User groups" 
-                IsEditable="true"> 
-                <EditTemplate>
-                    <MudText Typo="Typo.subtitle1">Visible to:</MudText>
-                @foreach (var group in Enum.GetValues<UserGroup>()) {
-                    <MudCheckBox Dense="true" Color="Color.Primary" @bind-Checked="UserGroupDict[group]" Value="@group">@group</MudCheckBox>
-                }
-                </EditTemplate>
-            </PropertyColumn>
-            <PropertyColumn Property="x => x.NumberOfTickets" Title="NumberOfTickets" IsEditable="true"/>
-            <TemplateColumn>
-                <CellTemplate>
-                    <MudIconButton
-                        Size="@Size.Small" 
-                        Icon="@Icons.Material.Outlined.Edit"
-                        OnClick="@context.Actions.StartEditingItemAsync"/>
-                </CellTemplate>
-            </TemplateColumn>
         </Columns>
     </MudDataGrid>
 
@@ -95,13 +99,14 @@
             Color="Color.Primary"
             Variant="Variant.Filled"
             EndIcon="@Icons.Material.Outlined.Add" 
-            OnClick="@AddItem">
+            OnClick="@AddItemToDataGrid">
                 Add Product
             </MudButton>
     </MudToolBar>
 </MudPaper>
 @code
 {
+    private MudDataGrid<ProductResponse> _dataGrid;
     private IEnumerable<ProductResponse> _products = new List<ProductResponse>();
     private Dictionary<UserGroup, bool> UserGroupDict = new();
 
@@ -122,7 +127,7 @@
         _loading = false;
         result.Match(
             Succ: products => {
-                _products = products;
+                _products = products; 
             },
             Fail: error => {
                 Snackbar.Add(error.Message, Severity.Error);
@@ -145,16 +150,9 @@
 
         if (item.Id == 0)
         {
-            var result = ProductService.AddProduct(new AddProductRequest{
-                Name = item.Name,
-                Description = item.Description,
-                NumberOfTickets = item.NumberOfTickets,
-                Price = item.Price,
-                Visible = item.Visible,
-                AllowedUserGroups = AllowedUserGroups
-            });
+            var result = await addProduct(item, AllowedUserGroups);
 
-            await result.Match(
+            result.Match(
                 Succ: async product =>
                 {
                     // Succesfully added product
@@ -179,17 +177,9 @@
         }
         else
         {
-            var result = ProductService.UpdateProduct(new UpdateProductRequest{
-                Id = item.Id,
-                Name = item.Name,
-                Description = item.Description,
-                NumberOfTickets = item.NumberOfTickets,
-                Price = item.Price,
-                Visible = item.Visible,
-                AllowedUserGroups = AllowedUserGroups
-            });
+            var result = await updateProduct(item, AllowedUserGroups);
 
-            await result.Match(
+            result.Match(
                 Succ: async result =>
                 {
                     Snackbar.Add("Product updated", Severity.Success);
@@ -213,7 +203,32 @@
         }
     }
 
-    void AddItem()
+    async Task<LanguageExt.Try<ChangedProductResponse>> updateProduct(ProductResponse item, List<UserGroup> AllowedUserGroups)
+    {
+        return await ProductService.UpdateProduct(new UpdateProductRequest{
+                Id = item.Id,
+                Name = item.Name,
+                Description = item.Description,
+                NumberOfTickets = item.NumberOfTickets,
+                Price = item.Price,
+                Visible = item.Visible,
+                AllowedUserGroups = AllowedUserGroups
+            });
+    }
+
+    async Task<LanguageExt.Try<ChangedProductResponse>> addProduct(ProductResponse item, List<UserGroup> AllowedUserGroups)
+    {
+        return await ProductService.AddProduct(new AddProductRequest{
+                Name = item.Name,
+                Description = item.Description,
+                NumberOfTickets = item.NumberOfTickets,
+                Price = item.Price,
+                Visible = item.Visible,
+                AllowedUserGroups = AllowedUserGroups
+            });
+    }
+
+    void AddItemToDataGrid()
     {
         _products = _products.Append<ProductResponse>(new ProductResponse{
             Id = 0,
@@ -222,8 +237,10 @@
             IsPerk = false,
             NumberOfTickets = 1,
             Price = 0,
+            Visible = true,
             AllowedUserGroups = new List<UserGroup>()
         });
+        _dataGrid.SetEditingItemAsync(_products.Last());
     }
 
     private Func<ProductResponse, int, string> _RowStyleFunc => (x, i) =>
