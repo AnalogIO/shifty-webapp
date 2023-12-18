@@ -1,0 +1,24 @@
+@page "/Users"
+@using Components
+@inject NavigationManager NavManager
+
+@if (_user is not null && _user.IsInRole("Board"))
+{
+    <UserTable /> 
+}
+
+@code {
+    [CascadingParameter] public Task<AuthenticationState> AuthTask { get; set; }
+    private System.Security.Claims.ClaimsPrincipal _user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthTask;
+        _user = authState.User;
+
+        if (_user is null || !_user.IsInRole("Board"))
+        {
+            NavManager.NavigateTo("/");
+        }
+    }
+}

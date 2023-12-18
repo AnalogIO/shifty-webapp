@@ -1,0 +1,139 @@
+@namespace Components
+@using System.ComponentModel.DataAnnotations
+@using Shifty.App.Services
+@using Shifty.Api.Generated.AnalogCoreV1
+@using Shifty.Api.Generated.AnalogCoreV2
+@using Shared
+@using LanguageExt.UnsafeValueAccess
+@inject IUserService _userService
+@inject ISnackbar Snackbar
+
+<MudContainer MaxWidth="MaxWidth.Medium" Style="margin-top: 20px;">
+    <MudTable 
+        T="UserSearchResponse" 
+        ServerData="@(new Func<TableState, Task<TableData<UserSearchResponse>>>(LoadUsers))" 
+            @ref="_table"
+            EditTrigger="TableEditTrigger.EditButton"
+            ApplyButtonPosition="TableApplyButtonPosition.End"
+            EditButtonPosition="TableEditButtonPosition.End"
+            CanCancelEdit="true"
+            RowEditCancel="ResetUserOnCancel"
+            RowEditCommit="UpdateUserGroup"
+            RowEditPreview="BackupUser"
+            IsEditRowSwitchingBlocked="true">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Users</MudText>
+            <MudSpacer />
+            <MudTextField 
+                T="string"
+                ValueChanged="@(s => OnSearch(s))" 
+                Placeholder="Search" 
+                Adornment="Adornment.Start" 
+                AdornmentIcon="Icons.Material.Filled.Search" 
+                IconSize="Size.Medium" />
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Id</MudTh>
+            <MudTh>Name</MudTh>
+            <MudTh>Email</MudTh>
+            <MudTh>Role</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Id">@context.Id</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Email">@context.Email</MudTd>
+            <MudTd DataLabel="Role">@context.Role</MudTd>
+        </RowTemplate>
+        <RowEditingTemplate>
+            <MudTd DataLabel="Id">@context.Id</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Email">@context.Email</MudTd>
+            <MudTd DataLabel="Role">
+                <MudSelect T="UserRole" Label="UserRole" @bind-Value="context.Role">
+                    @foreach (var role in Enum.GetValues<UserRole>()) {
+                        <MudSelectItem T="UserRole" Value="@role">@role</MudSelectItem>    
+                    }
+                </MudSelect>
+            </MudTd>
+        </RowEditingTemplate>
+        <NoRecordsContent>No matching records found</NoRecordsContent>
+        <PagerContent><MudTablePager /></PagerContent>
+        <EditButtonContent Context="button">
+            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
+        </EditButtonContent>
+    </MudTable>
+</MudContainer>
+
+@code
+{
+    private MudTable<UserSearchResponse> _table;
+    private string searchString = "";
+    UserRole RoleBeforeEdit;
+
+    private async Task<TableData<UserSearchResponse>> LoadUsers(TableState state)
+    {
+        var result = await _userService.SearchUsers(searchString, state.Page, state.PageSize);
+
+        return result.Match(
+            Succ: users => {
+                return new TableData<UserSearchResponse>(){ Items = users.ToList(), TotalItems = 15};;
+            },
+            Fail: error => {
+                Snackbar.Add(error.Message, Severity.Error);
+                return new TableData<UserSearchResponse>(){ Items = new List<UserSearchResponse>(), TotalItems = 0};
+            }
+        );
+    }
+
+    private void OnSearch(string search)
+    {
+        searchString = search;
+        _table.ReloadServerData();
+    }
+
+    private void UpdateUserGroup(object element)
+    {
+        var user = (UserSearchResponse)element;
+
+        var result = _userService.UpdateUserGroupAsync(user.Id, UserRoleToUserGroup(user.Role));
+
+        result.Match(
+            Succ: user => {
+                Snackbar.Add("User updated", Severity.Success);
+            },
+            Fail: error => {
+                Snackbar.Add(error.Message, Severity.Error);
+            }
+        );
+
+        StateHasChanged();
+    }
+
+
+    private void BackupUser(object element)
+    {
+        RoleBeforeEdit = ((UserSearchResponse)element).Role;
+        StateHasChanged();
+        Snackbar.Add(RoleBeforeEdit.ToString(), Severity.Info);
+    }
+
+    private void ResetUserOnCancel(object user)
+    {
+        Snackbar.Add(RoleBeforeEdit.ToString(), Severity.Info);
+        ((UserSearchResponse)user).Role = RoleBeforeEdit;
+        StateHasChanged();
+        Snackbar.Add("Canceled editing", Severity.Warning);
+    }
+
+    public static UserGroup UserRoleToUserGroup(UserRole role)
+    {
+        return role switch
+        {
+            UserRole.Board => UserGroup.Board,
+            UserRole.Manager => UserGroup.Manager,
+            UserRole.Barista => UserGroup.Barista,
+            UserRole.Customer => UserGroup.Customer,
+            _ => throw new Exception("Invalid user role")
+        };
+    }
+}
