@@ -5,17 +5,22 @@
 @using Shifty.Api.Generated.AnalogCoreV2
 @using Shared
 @using LanguageExt.UnsafeValueAccess
+@using Components
 @inject ISnackbar Snackbar
 @inject IProductService ProductService
 
-<MudPaper Elevation="15" Style="margin: 40px auto; border-radius: 5px; max-width: 90%;">
+<style>
+    .mud-table-cell {
+        padding: 0.5em 0.75em !important;
+    }
+</style>
+<MudPaper Elevation="15" Style="margin: 2em; border-radius: 5px;">
     @if (_loading)
     {
         <MudContainer Style="width: 100%; display: flex;">
             <LoadingIndicator Height="400px" />
         </MudContainer>
     }
-    <MudSwitch @bind-Checked="_showNonvisible" Label="Show non-visible products" Color="Color.Primary" Class="mt-5 ml-2" />
     <MudDataGrid
         @ref="_dataGrid"
         T="ProductResponse"
@@ -30,52 +35,53 @@
         RowStyleFunc="@_RowStyleFunc"
         FixedHeader="true"
         Height="calc(100vh - 250px)"
-        HorizontalScrollbar="false">
+        Dense="true"
+        SortMode="MudBlazor.SortMode.None">
         <Columns>
-            <TemplateColumn>
+            <TemplateColumn Title="Edit">
                 <CellTemplate>
                     <MudIconButton
-                        Size="@Size.Small" 
+                        Size="@Size.Medium"
                         Icon="@Icons.Material.Outlined.Edit"
-                        OnClick="@context.Actions.StartEditingItemAsync"/>
+                        Color="Color.Primary"
+                        OnClick="@context.Actions.StartEditingItemAsync" />
                 </CellTemplate>
             </TemplateColumn>
-            <PropertyColumn Property="x => x.Visible" Title="" IsEditable="true" InitialDirection="SortDirection.Descending">
+            <PropertyColumn Property="x => x.Visible" Title="" InitialDirection="SortDirection.Descending">
                 <CellTemplate>
                     @{
                         if (context.Item.Visible)
                         {
-                            <MudIcon Color="Color.Primary" Icon="@Icons.Material.Filled.Visibility" />
+                            <MudIcon Size="@Size.Small" Style="@($"color:{Colors.Grey.Darken3};")"
+                                Icon="@Icons.Material.Filled.Visibility" />
                         }
                         else
                         {
-                            <MudIcon Style="@($"color:{Colors.Grey.Default};")" Icon="@Icons.Material.Filled.VisibilityOff" />
+                            <MudIcon Size="@Size.Small" Style="@($"color:{Colors.Grey.Default};")"
+                                Icon="@Icons.Material.Filled.VisibilityOff" />
                         }
                     }
                 </CellTemplate>
                 <EditTemplate>
-                    <MudSwitch
-                        Label="Visible"
-                        Color="Color.Primary" 
-                        @bind-Checked="context.Item.Visible" />
+                    <MudSwitch Label="Visible" Color="Color.Primary" @bind-Checked="context.Item.Visible" />
                 </EditTemplate>
             </PropertyColumn>
-            <PropertyColumn Property="x => x.Id" Title="Id" IsEditable="false"/>
-            <PropertyColumn Property="x => x.Name" Title="Name" IsEditable="true"/>
-            <PropertyColumn Property="x => x.NumberOfTickets" Title="NumberOfTickets" IsEditable="true"/>
-            <PropertyColumn Property="x => x.Price" Title="Price" IsEditable="true"/>
-            <PropertyColumn 
-                Property='x => string.Join(", ", x.AllowedUserGroups.Select(e => e.ToString()))' 
-                Title="User groups" 
-                IsEditable="true"> 
+            <PropertyColumn Property="x => x.Id" Title="Id" IsEditable="false" />
+            <PropertyColumn Property="x => x.Name" Title="Name" IsEditable="true" />
+            <PropertyColumn Property="x => x.NumberOfTickets" Title="Tickets" IsEditable="true" />
+            <PropertyColumn Property="x => x.Price" Title="Price" IsEditable="true" />
+            <PropertyColumn Property='x => string.Join(", ", x.AllowedUserGroups.Select(e => e.ToString()))'
+                Title="User groups" IsEditable="true">
                 <EditTemplate>
                     <MudText Typo="Typo.subtitle1">Visible to:</MudText>
-                @foreach (var group in Enum.GetValues<UserGroup>()) {
-                    <MudCheckBox Dense="true" Color="Color.Primary" @bind-Checked="UserGroupDict[group]" Value="@group">@group</MudCheckBox>
-                }
+                    @foreach (var group in Enum.GetValues<UserGroup>())
+                    {
+                        <MudCheckBox Dense="true" Color="Color.Primary" @bind-Checked="UserGroupDict[group]" Value="@group">
+                            @group</MudCheckBox>
+                    }
                 </EditTemplate>
             </PropertyColumn>
-            <PropertyColumn Property="x => x.IsPerk" Title="IsPerk" IsEditable="false">
+            <PropertyColumn Property="x => x.IsPerk" Title="Perk?" IsEditable="false">
                 <CellTemplate>
                     @{
                         if (context.Item.IsPerk)
@@ -89,7 +95,7 @@
                     }
                 </CellTemplate>
             </PropertyColumn>
-            <PropertyColumn Property="x => x.Description" Title="Description" IsEditable="true"/>
+            <PropertyColumn Property="x => x.Description" Title="Description" IsEditable="true" />
         </Columns>
     </MudDataGrid>
 
@@ -98,10 +104,10 @@
         <MudButton
             Color="Color.Primary"
             Variant="Variant.Filled"
-            EndIcon="@Icons.Material.Outlined.Add" 
+            EndIcon="@Icons.Material.Outlined.Add"
             OnClick="@AddItemToDataGrid">
                 Add Product
-            </MudButton>
+        </MudButton>
     </MudToolBar>
 </MudPaper>
 @code
@@ -127,7 +133,7 @@
         _loading = false;
         result.Match(
             Succ: products => {
-                _products = products; 
+                _products = products;
             },
             Fail: error => {
                 Snackbar.Add(error.Message, Severity.Error);
@@ -142,7 +148,7 @@
 
     async Task CommittedItemChanges(ProductResponse item)
     {
-        List<UserGroup> AllowedUserGroups = 
+        List<UserGroup> AllowedUserGroups =
                 UserGroupDict.Where(e => e.Value)
                              .ToDictionary(kv => kv.Key, kv => kv.Value)
                              .Keys
@@ -157,8 +163,8 @@
                 {
                     // Succesfully added product
                     Snackbar.Add("Product added", Severity.Success);
-                    
-                    // Retrieve all items again in order to update id 
+
+                    // Retrieve all items again in order to update id
                     var retrieveItems = await ProductService.GetProducts();
                     retrieveItems.Match(
                         Succ: items => {
@@ -203,7 +209,8 @@
         }
     }
 
-    async Task<LanguageExt.Try<ChangedProductResponse>> updateProduct(ProductResponse item, List<UserGroup> AllowedUserGroups)
+    async Task<LanguageExt.Try<ChangedProductResponse>> updateProduct(ProductResponse item, List<UserGroup>
+    AllowedUserGroups)
     {
         return await ProductService.UpdateProduct(new UpdateProductRequest{
                 Id = item.Id,
@@ -216,7 +223,8 @@
             });
     }
 
-    async Task<LanguageExt.Try<ChangedProductResponse>> addProduct(ProductResponse item, List<UserGroup> AllowedUserGroups)
+    async Task<LanguageExt.Try<ChangedProductResponse>> addProduct(ProductResponse item, List<UserGroup>
+    AllowedUserGroups)
     {
         return await ProductService.AddProduct(new AddProductRequest{
                 Name = item.Name,
