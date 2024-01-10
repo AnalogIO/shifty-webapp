@@ -114,12 +114,10 @@
     {
         RoleBeforeEdit = ((UserSearchResponse)element).Role;
         StateHasChanged();
-        Snackbar.Add(RoleBeforeEdit.ToString(), Severity.Info);
     }
 
     private void ResetUserOnCancel(object user)
     {
-        Snackbar.Add(RoleBeforeEdit.ToString(), Severity.Info);
         ((UserSearchResponse)user).Role = RoleBeforeEdit;
         StateHasChanged();
         Snackbar.Add("Canceled editing", Severity.Warning);
