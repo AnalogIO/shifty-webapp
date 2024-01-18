@@ -383,7 +383,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SimpleUserResponse"
+                  "$ref": "#/components/schemas/UserSearchResponse"
                 }
               }
             }
@@ -1451,25 +1451,81 @@
           }
         }
       },
+      "UserSearchResponse": {
+        "type": "object",
+        "description": "Represents a search result",
+        "example": {
+          "users": [
+            {
+              "id": 12232,
+              "name": "John Doe",
+              "email": "johndoe@itu.dk",
+              "userGroup": "Barista",
+              "state": "Active"
+            }
+          ],
+          "totalUsers": 1
+        },
+        "additionalProperties": false,
+        "required": [
+          "users",
+          "totalUsers"
+        ],
+        "properties": {
+          "users": {
+            "type": "array",
+            "description": "The users that match the query",
+            "example": "[\n   {\n     \"id\": 12232,\n     \"name\": \"John Doe\",\n     \"email\": \"johndoe@itu.dk\",\n     \"userGroup\": \"Barista\",\n     \"state\": \"Active\"\n   }\n ],",
+            "items": {
+              "$ref": "#/components/schemas/SimpleUserResponse"
+            }
+          },
+          "totalUsers": {
+            "type": "integer",
+            "description": "The number of users that match the query",
+            "format": "int32",
+            "example": 1
+          }
+        }
+      },
       "SimpleUserResponse": {
         "type": "object",
+        "description": "Basic User details",
         "additionalProperties": false,
         "properties": {
           "id": {
             "type": "integer",
-            "format": "int32"
+            "description": "User Id",
+            "format": "int32",
+            "example": 1
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "User's Display Name",
+            "example": "Name"
           },
           "email": {
-            "type": "string"
+            "type": "string",
+            "description": "User's Email",
+            "example": "john@doe.test"
           },
           "userGroup": {
-            "$ref": "#/components/schemas/UserGroup"
+            "description": "User's User group relationship",
+            "example": "Barista",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/UserGroup"
+              }
+            ]
           },
           "state": {
-            "$ref": "#/components/schemas/UserState"
+            "description": "User's State",
+            "example": "Active",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/UserState"
+              }
+            ]
           }
         }
       },

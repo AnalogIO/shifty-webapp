@@ -17,7 +17,7 @@ namespace Shifty.App.Services
             _accountRepository = accountRepository;
         }
 
-        public Task<Try<ICollection<UserSearchResponse>>> SearchUsers(string query, int pageNumber = 0, int pageSize = 10)
+        public Task<Try<UserSearchResponse>> SearchUsers(string query, int pageNumber = 0, int pageSize = 10)
         {
             return _accountRepository.SearchUserAsync(query, pageNumber, pageSize);
         }

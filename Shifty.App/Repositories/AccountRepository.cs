@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LanguageExt;
+using LanguageExt.ClassInstances.Pred;
 using LanguageExt.Common;
 using Shifty.Api.Generated.AnalogCoreV1;
 using Shifty.Api.Generated.AnalogCoreV2;
@@ -30,9 +31,9 @@ namespace Shifty.App.Repositories
             return await TryAsync(_v1client.ApiV1AccountLoginAsync(loginDto: dto)).ToEither();
         }
 
-        public async Task<Try<ICollection<UserSearchResponse>>> SearchUserAsync(string query, int page, int pageSize)
+        public async Task<Try<UserSearchResponse>> SearchUserAsync(string query, int page, int pageSize)
         {
-            return await TryAsync(_v2client.ApiV2AccountSearchAsync(query, page, pageSize));
+            return await TryAsync(_v2client.ApiV2AccountSearchAsync(filter: query, pageNum: page, pageLength: pageSize));
         }
 
         public async Task<Try<Task>> UpdateUserGroupAsync(int userId, UserGroup group)

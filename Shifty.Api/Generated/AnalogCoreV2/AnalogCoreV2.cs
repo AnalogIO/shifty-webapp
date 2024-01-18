@@ -733,7 +733,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         /// <param name="pageLength">The length of a page</param>
         /// <returns>Users, possible with filter applied</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<SimpleUserResponse> ApiV2AccountSearchAsync(int? pageNum, string filter, int? pageLength)
+        public virtual System.Threading.Tasks.Task<UserSearchResponse> ApiV2AccountSearchAsync(int? pageNum, string filter, int? pageLength)
         {
             return ApiV2AccountSearchAsync(pageNum, filter, pageLength, System.Threading.CancellationToken.None);
         }
@@ -747,7 +747,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         /// <param name="pageLength">The length of a page</param>
         /// <returns>Users, possible with filter applied</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SimpleUserResponse> ApiV2AccountSearchAsync(int? pageNum, string filter, int? pageLength, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<UserSearchResponse> ApiV2AccountSearchAsync(int? pageNum, string filter, int? pageLength, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/v2/account/search?");
@@ -807,7 +807,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
                         else
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<SimpleUserResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<UserSearchResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2705,22 +2705,61 @@ namespace Shifty.Api.Generated.AnalogCoreV2
 
     }
 
+    /// <summary>
+    /// Represents a search result
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
+    public partial class UserSearchResponse
+    {
+        /// <summary>
+        /// The users that match the query
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("users", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<SimpleUserResponse> Users { get; set; } = new System.Collections.ObjectModel.Collection<SimpleUserResponse>();
+
+        /// <summary>
+        /// The number of users that match the query
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("totalUsers", Required = Newtonsoft.Json.Required.Always)]
+        public int TotalUsers { get; set; }
+
+    }
+
+    /// <summary>
+    /// Basic User details
+    /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
     public partial class SimpleUserResponse
     {
+        /// <summary>
+        /// User Id
+        /// </summary>
         [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int Id { get; set; }
 
+        /// <summary>
+        /// User's Display Name
+        /// </summary>
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Name { get; set; }
 
+        /// <summary>
+        /// User's Email
+        /// </summary>
         [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Email { get; set; }
 
+        /// <summary>
+        /// User's User group relationship
+        /// </summary>
         [Newtonsoft.Json.JsonProperty("userGroup", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public UserGroup UserGroup { get; set; }
 
+        /// <summary>
+        /// User's State
+        /// </summary>
         [Newtonsoft.Json.JsonProperty("state", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public UserState State { get; set; }

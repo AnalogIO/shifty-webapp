@@ -8,7 +8,7 @@ namespace Shifty.App.Services
 {
     public interface IUserService
     {
-        Task<Try<ICollection<UserSearchResponse>>> SearchUsers(string query, int pageNumber = 0, int pageSize = 10);
+        Task<Try<UserSearchResponse>> SearchUsers(string query, int pageNumber = 0, int pageSize = 10);
         Task<Try<Task>> UpdateUserGroupAsync(int userId, UserGroup group);
     }
 }

@@ -10,8 +10,8 @@
 
 <MudContainer MaxWidth="MaxWidth.Medium" Style="margin-top: 20px;">
     <MudTable 
-        T="UserSearchResponse" 
-        ServerData="@(new Func<TableState, Task<TableData<UserSearchResponse>>>(LoadUsers))" 
+        T="SimpleUserResponse" 
+        ServerData="@(new Func<TableState, Task<TableData<SimpleUserResponse>>>(LoadUsers))" 
             @ref="_table"
             EditTrigger="TableEditTrigger.EditButton"
             ApplyButtonPosition="TableApplyButtonPosition.End"
@@ -36,22 +36,22 @@
             <MudTh>Id</MudTh>
             <MudTh>Name</MudTh>
             <MudTh>Email</MudTh>
-            <MudTh>Role</MudTh>
+            <MudTh>UserGroup</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Id">@context.Id</MudTd>
             <MudTd DataLabel="Name">@context.Name</MudTd>
             <MudTd DataLabel="Email">@context.Email</MudTd>
-            <MudTd DataLabel="Role">@context.Role</MudTd>
+            <MudTd DataLabel="UserGroup">@context.UserGroup</MudTd>
         </RowTemplate>
         <RowEditingTemplate>
             <MudTd DataLabel="Id">@context.Id</MudTd>
             <MudTd DataLabel="Name">@context.Name</MudTd>
             <MudTd DataLabel="Email">@context.Email</MudTd>
-            <MudTd DataLabel="Role">
-                <MudSelect T="UserRole" Label="UserRole" @bind-Value="context.Role">
-                    @foreach (var role in Enum.GetValues<UserRole>()) {
-                        <MudSelectItem T="UserRole" Value="@role">@role</MudSelectItem>    
+            <MudTd DataLabel="UserGroup">
+                <MudSelect T="UserGroup" Label="UserGroup" @bind-Value="context.UserGroup">
+                    @foreach (var group in Enum.GetValues<UserGroup>()) {
+                        <MudSelectItem T="UserGroup" Value="@group">@group</MudSelectItem>    
                     }
                 </MudSelect>
             </MudTd>
@@ -66,21 +66,21 @@
 
 @code
 {
-    private MudTable<UserSearchResponse> _table;
+    private MudTable<SimpleUserResponse> _table;
     private string searchString = "";
-    UserRole RoleBeforeEdit;
+    UserGroup UserGroupBeforeEdit;
 
-    private async Task<TableData<UserSearchResponse>> LoadUsers(TableState state)
+    private async Task<TableData<SimpleUserResponse>> LoadUsers(TableState state)
     {
         var result = await _userService.SearchUsers(searchString, state.Page, state.PageSize);
 
         return result.Match(
-            Succ: users => {
-                return new TableData<UserSearchResponse>(){ Items = users.ToList(), TotalItems = 15};;
+            Succ: res => {
+                return new TableData<SimpleUserResponse>(){ Items = res.Users.AsEnumerable(), TotalItems = res.TotalUsers};;
             },
             Fail: error => {
                 Snackbar.Add(error.Message, Severity.Error);
-                return new TableData<UserSearchResponse>(){ Items = new List<UserSearchResponse>(), TotalItems = 0};
+                return new TableData<SimpleUserResponse>(){ Items = new List<SimpleUserResponse>(), TotalItems = 0};
             }
         );
     }
@@ -93,9 +93,9 @@
 
     private void UpdateUserGroup(object element)
     {
-        var user = (UserSearchResponse)element;
+        var user = (SimpleUserResponse)element;
 
-        var result = _userService.UpdateUserGroupAsync(user.Id, UserRoleToUserGroup(user.Role));
+        var result = _userService.UpdateUserGroupAsync(user.Id, user.UserGroup);
 
         result.Match(
             Succ: user => {
@@ -112,26 +112,14 @@
 
     private void BackupUser(object element)
     {
-        RoleBeforeEdit = ((UserSearchResponse)element).Role;
+        UserGroupBeforeEdit = ((SimpleUserResponse)element).UserGroup;
         StateHasChanged();
     }
 
     private void ResetUserOnCancel(object user)
     {
-        ((UserSearchResponse)user).Role = RoleBeforeEdit;
+        ((SimpleUserResponse)user).UserGroup = UserGroupBeforeEdit;
         StateHasChanged();
         Snackbar.Add("Canceled editing", Severity.Warning);
-    }
-
-    public static UserGroup UserRoleToUserGroup(UserRole role)
-    {
-        return role switch
-        {
-            UserRole.Board => UserGroup.Board,
-            UserRole.Manager => UserGroup.Manager,
-            UserRole.Barista => UserGroup.Barista,
-            UserRole.Customer => UserGroup.Customer,
-            _ => throw new Exception("Invalid user role")
-        };
     }
 }
