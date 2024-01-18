@@ -5,6 +5,7 @@
 @using Shifty.Api.Generated.AnalogCoreV2
 @using Shared
 @using LanguageExt.UnsafeValueAccess
+@using Shifty.App.Repositories
 @inject IProductService _productService
 @inject IVoucherService _voucherService
 @inject ISnackbar Snackbar
@@ -15,7 +16,7 @@
         <MudCardContent>
             <MudText Align="Align.Center" Class="mb-n4">Issue Voucher Form</MudText>
             <MudForm @bind-IsValid="@_isFormValid" >
-                <MudAutocomplete T="ProductDto"
+                <MudAutocomplete T="ProductResponse"
                                  Required="true"
                                  RequiredError="Product is required"
                                  Placeholder="Select product"
@@ -25,7 +26,7 @@
                                  Label="Product" 
                                  SearchFunc="@Products" 
                                  ToStringFunc="@_converter"
-                                 @bind-Value=_voucherForm.Product/>
+                                 @bind-Value="_voucherForm.Product"/>
                 
                 <MudNumericField @bind-Value="_voucherForm.Amount"
                                 Placeholder="1" 
@@ -51,7 +52,7 @@
                 <MudTextField T="string"
                     @bind-Value="_voucherForm.Prefix"
                     Label="Voucher prefix" 
-                    Validation="@(new Func<string,string>(prefixValidation))"
+                    Validation="@(new Func<string,string>(_prefixValidation))"
                     Required="true"
                     Counter="3"
                     MaxLength="3"
@@ -99,7 +100,7 @@
     private VoucherForm _voucherForm = new();
     private bool _isFormValid = false;
     private bool _showProgressBar = false;
-    private IEnumerable<ProductDto> _products = new List<ProductDto>();
+    private IEnumerable<ProductResponse> _products = new List<ProductResponse>();
     private IEnumerable<IssueVoucherResponse> _vouchers;
     private string _voucherCodes;
     private MudTextField<string> _multilineReference;
@@ -108,7 +109,7 @@
     {
         [Required]
         public string Description { get; set; }
-        public ProductDto Product { get; set; }
+        public ProductResponse Product { get; set; }
         public int Amount { get; set; } = 1;
         public string Requester { get; set; }
         public string Prefix { get; set; }
@@ -116,7 +117,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
         var result = await _productService.GetProducts();
 
         result.Match(
@@ -130,7 +130,7 @@
         );
     }
 
-    private async Task<IEnumerable<ProductDto>> Products(string value)
+    private async Task<IEnumerable<ProductResponse>> Products(string value)
     {
         if (string.IsNullOrEmpty(value))
             return _products;
@@ -159,7 +159,7 @@
             Succ: response => {
                 _showProgressBar = false;
                 _vouchers = response;
-                _voucherCodes = string.Join("\n", _vouchers.Select(response => response.VoucherCode));
+                _voucherCodes = string.Join("\n", _vouchers.Select(issueVoucherResponse => issueVoucherResponse.VoucherCode));
             },
             Fail: ex => {
                 _showProgressBar = false;
@@ -168,6 +168,6 @@
         );
     }
     
-    Func<ProductDto,string> _converter = p => p != null ? $"{p.Name} - {p.NumberOfTickets} ticket" + (p.NumberOfTickets == 1 ? "" : "s") : "";
-    Func<string, string> prefixValidation = str => str.Length == 3 ? null : "Prefix must be 3 letters";
+    Func<ProductResponse,string> _converter = p => p != null ? $"{p.Name} - {p.NumberOfTickets} ticket" + (p.NumberOfTickets == 1 ? "" : "s") : "";
+    Func<string, string> _prefixValidation = str => str.Length == 3 ? null : "Prefix must be 3 letters";
 }

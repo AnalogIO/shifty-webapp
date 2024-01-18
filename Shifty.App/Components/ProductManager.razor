@@ -1,0 +1,262 @@
+@namespace Components
+@using System.ComponentModel.DataAnnotations
+@using Shifty.App.Services
+@using Shifty.Api.Generated.AnalogCoreV1
+@using Shifty.Api.Generated.AnalogCoreV2
+@using Shared
+@using LanguageExt.UnsafeValueAccess
+@using Components
+@inject ISnackbar Snackbar
+@inject IProductService ProductService
+
+<style>
+    .mud-table-cell {
+        padding: 0.5em 0.75em !important;
+    }
+</style>
+<MudPaper Elevation="15" Style="margin: 2em; border-radius: 5px;">
+    @if (_loading)
+    {
+        <MudContainer Style="width: 100%; display: flex;">
+            <LoadingIndicator Height="400px" />
+        </MudContainer>
+    }
+    <MudDataGrid
+        @ref="_dataGrid"
+        T="ProductResponse"
+        Items="@_products"
+        EditMode="DataGridEditMode.Form"
+        ReadOnly="false"
+        StartedEditingItem="@StartedEditingItem"
+        CanceledEditingItem="@CanceledEditingItem"
+        CommittedItemChanges="@CommittedItemChanges"
+        EditTrigger="DataGridEditTrigger.Manual"
+        QuickFilter="e => _showNonvisible || e.Visible"
+        RowStyleFunc="@_RowStyleFunc"
+        FixedHeader="true"
+        Height="calc(100vh - 250px)"
+        Dense="true"
+        SortMode="MudBlazor.SortMode.None">
+        <Columns>
+            <TemplateColumn Title="Edit">
+                <CellTemplate>
+                    <MudIconButton
+                        Size="@Size.Medium"
+                        Icon="@Icons.Material.Outlined.Edit"
+                        Color="Color.Primary"
+                        OnClick="@context.Actions.StartEditingItemAsync" />
+                </CellTemplate>
+            </TemplateColumn>
+            <PropertyColumn Property="x => x.Visible" Title="" InitialDirection="SortDirection.Descending">
+                <CellTemplate>
+                    @{
+                        if (context.Item.Visible)
+                        {
+                            <MudIcon Size="@Size.Small" Color="Color.Dark"
+                                Icon="@Icons.Material.Filled.Visibility" />
+                        }
+                        else
+                        {
+                            <MudIcon Size="@Size.Small" Style="@($"color:{Colors.Grey.Default};")"
+                                Icon="@Icons.Material.Filled.VisibilityOff" />
+                        }
+                    }
+                </CellTemplate>
+                <EditTemplate>
+                    <MudSwitch Label="Visible" Color="Color.Primary" @bind-Checked="context.Item.Visible" />
+                </EditTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Id" Title="Id" IsEditable="false" />
+            <PropertyColumn Property="x => x.Name" Title="Name" IsEditable="true" />
+            <PropertyColumn Property="x => x.NumberOfTickets" Title="Tickets" IsEditable="true" />
+            <PropertyColumn Property="x => x.Price" Title="Price" IsEditable="true" />
+            <PropertyColumn Property='x => string.Join(", ", x.AllowedUserGroups.Select(e => e.ToString()))'
+                Title="User groups" IsEditable="true">
+                <EditTemplate>
+                    <MudText Typo="Typo.subtitle1">Visible to:</MudText>
+                    @foreach (var group in Enum.GetValues<UserGroup>())
+                    {
+                        <MudCheckBox Dense="true" Color="Color.Primary" @bind-Checked="UserGroupDict[group]" Value="@group">
+                            @group</MudCheckBox>
+                    }
+                </EditTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.IsPerk" Title="Perk?" IsEditable="false">
+                <CellTemplate>
+                    @{
+                        if (context.Item.IsPerk)
+                        {
+                            <MudIcon Style="color:gold;" Icon="@Icons.Material.Filled.Star" Title="IsPerk" />
+                        }
+                        else
+                        {
+                            <MudIcon Icon="@Icons.Material.Filled.StarOutline" Title="IsPerk" />
+                        }
+                    }
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Description" Title="Description" IsEditable="true" />
+        </Columns>
+    </MudDataGrid>
+
+    <MudToolBar>
+        <MudSpacer />
+        <MudButton
+            Color="Color.Primary"
+            Variant="Variant.Filled"
+            EndIcon="@Icons.Material.Outlined.Add"
+            OnClick="@AddItemToDataGrid">
+                Add Product
+        </MudButton>
+    </MudToolBar>
+</MudPaper>
+@code
+{
+    private MudDataGrid<ProductResponse> _dataGrid;
+    private IEnumerable<ProductResponse> _products = new List<ProductResponse>();
+    private Dictionary<UserGroup, bool> UserGroupDict = new();
+
+    private void StartedEditingItem(ProductResponse item)
+    {
+        UserGroupDict = new();
+        foreach (var group in Enum.GetValues<UserGroup>())
+        {
+            UserGroupDict.Add(group, item.AllowedUserGroups.Contains(group));
+        }
+    }
+
+    private bool _loading = true;
+    private bool _showNonvisible = true;
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await ProductService.GetProducts();
+        _loading = false;
+        result.Match(
+            Succ: products => {
+                _products = products;
+            },
+            Fail: error => {
+                Snackbar.Add(error.Message, Severity.Error);
+            }
+        );
+    }
+
+    void CanceledEditingItem(ProductResponse item)
+    {
+        Snackbar.Add("Cancelled product changes", Severity.Info);
+    }
+
+    async Task CommittedItemChanges(ProductResponse item)
+    {
+        List<UserGroup> AllowedUserGroups =
+                UserGroupDict.Where(e => e.Value)
+                             .ToDictionary(kv => kv.Key, kv => kv.Value)
+                             .Keys
+                             .ToList();
+
+        if (item.Id == 0)
+        {
+            var result = await addProduct(item, AllowedUserGroups);
+
+            result.Match(
+                Succ: async product =>
+                {
+                    // Succesfully added product
+                    Snackbar.Add("Product added", Severity.Success);
+
+                    // Retrieve all items again in order to update id
+                    var retrieveItems = await ProductService.GetProducts();
+                    retrieveItems.Match(
+                        Succ: items => {
+                            _products = items;
+                        },
+                        Fail: error => {
+                            // Errors while re-retrieving items, non-fatal (just means _products are slightly outdated)
+                            Snackbar.Add(error.Message, Severity.Warning);
+                        }
+                    );
+                },
+                Fail: error => {
+                    Snackbar.Add(error.Message, Severity.Error);
+                }
+            );
+        }
+        else
+        {
+            var result = await updateProduct(item, AllowedUserGroups);
+
+            result.Match(
+                Succ: async result =>
+                {
+                    Snackbar.Add("Product updated", Severity.Success);
+
+                    var retrieveItems = await ProductService.GetProducts();
+                    retrieveItems.Match(
+                        Succ: items => {
+                            _products = items;
+                        },
+                        Fail: error => {
+                            // Errors while re-retrieving items, non-fatal (just means _products are slightly outdated)
+                            Snackbar.Add(error.Message, Severity.Warning);
+                        }
+                    );
+                },
+                Fail: error =>
+                {
+                    Snackbar.Add(error.Message, Severity.Warning);
+                }
+            );
+        }
+    }
+
+    async Task<LanguageExt.Try<ChangedProductResponse>> updateProduct(ProductResponse item, List<UserGroup>
+    AllowedUserGroups)
+    {
+        return await ProductService.UpdateProduct(new UpdateProductRequest{
+                Id = item.Id,
+                Name = item.Name,
+                Description = item.Description,
+                NumberOfTickets = item.NumberOfTickets,
+                Price = item.Price,
+                Visible = item.Visible,
+                AllowedUserGroups = AllowedUserGroups
+            });
+    }
+
+    async Task<LanguageExt.Try<ChangedProductResponse>> addProduct(ProductResponse item, List<UserGroup>
+    AllowedUserGroups)
+    {
+        return await ProductService.AddProduct(new AddProductRequest{
+                Name = item.Name,
+                Description = item.Description,
+                NumberOfTickets = item.NumberOfTickets,
+                Price = item.Price,
+                Visible = item.Visible,
+                AllowedUserGroups = AllowedUserGroups
+            });
+    }
+
+    void AddItemToDataGrid()
+    {
+        _products = _products.Append<ProductResponse>(new ProductResponse{
+            Id = 0,
+            Name = "",
+            Description = "",
+            IsPerk = false,
+            NumberOfTickets = 1,
+            Price = 0,
+            Visible = true,
+            AllowedUserGroups = new List<UserGroup>()
+        });
+        _dataGrid.SetEditingItemAsync(_products.Last());
+    }
+
+    private Func<ProductResponse, int, string> _RowStyleFunc => (x, i) =>
+    {
+        if (!x.Visible)
+        {
+            return "background-color:#ebebeb;font-style:italic;font-color:#8a8686;";
+        }
+        return "";
+    };
+}
