@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 using System;
+=======
+>>>>>>> 6cf5857 (Adds MenuItem service and repository)
 using System.Data.Common;
 using Shifty.Api.Generated.AnalogCoreV1;
 using Shifty.Api.Generated.AnalogCoreV2;
