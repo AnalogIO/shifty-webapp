@@ -8,6 +8,7 @@
 @using Components
 @inject ISnackbar Snackbar
 @inject IProductService ProductService
+@inject IJSRuntime JSRuntime
 
 <style>
     .mud-table-cell {
@@ -63,7 +64,7 @@
                     }
                 </CellTemplate>
                 <EditTemplate>
-                    <MudSwitch Label="Visible" Color="Color.Primary" @bind-Checked="context.Item.Visible" />
+                    <MudSwitch id="first-edit-element" Label="Visible" Color="Color.Primary" @bind-Checked="context.Item.Visible" />
                 </EditTemplate>
             </PropertyColumn>
             <PropertyColumn Property="x => x.Id" Title="Id" IsEditable="false" />
@@ -123,6 +124,7 @@
         {
             UserGroupDict.Add(group, item.AllowedUserGroups.Contains(group));
         }
+        FocusFirst();
     }
 
     private bool _loading = true;
@@ -144,6 +146,11 @@
     void CanceledEditingItem(ProductResponse item)
     {
         Snackbar.Add("Cancelled product changes", Severity.Info);
+    }
+
+    async Task FocusFirst()
+    {
+        await JSRuntime.InvokeVoidAsync("window.focusElement", "first-edit-element");
     }
 
     async Task CommittedItemChanges(ProductResponse item)
