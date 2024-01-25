@@ -1,10 +1,11 @@
 ﻿<MudNavMenu>
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
     @if (_user is not null && _user.IsInRole("Board"))
-    {     
+    {
         <MudNavLink Href="Voucher" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Sell">Issue vouchers</MudNavLink>
         <MudNavLink Href="Products" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Inventory">Product Management</MudNavLink>
         <MudNavLink Href="Users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.ManageAccounts">Manage users</MudNavLink>
+        <MudNavLink Href="MenuItems" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Coffee">Menu Item Management</MudNavLink>
     }
 </MudNavMenu>
 
