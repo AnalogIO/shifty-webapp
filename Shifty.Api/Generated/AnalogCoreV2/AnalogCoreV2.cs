@@ -514,6 +514,115 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         }
 
         /// <summary>
+        /// Updates the user group of a user
+        /// </summary>
+        /// <param name="id">id of the user whose userGroup will be updated</param>
+        /// <param name="updateUserGroupRequest">Update User Group information request</param>
+        /// <returns>The update was processed</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task ApiV2AccountUserGroupAsync(int id, UpdateUserGroupRequest updateUserGroupRequest)
+        {
+            return ApiV2AccountUserGroupAsync(id, updateUserGroupRequest, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Updates the user group of a user
+        /// </summary>
+        /// <param name="id">id of the user whose userGroup will be updated</param>
+        /// <param name="updateUserGroupRequest">Update User Group information request</param>
+        /// <returns>The update was processed</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task ApiV2AccountUserGroupAsync(int id, UpdateUserGroupRequest updateUserGroupRequest, System.Threading.CancellationToken cancellationToken)
+        {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+
+            if (updateUserGroupRequest == null)
+                throw new System.ArgumentNullException("updateUserGroupRequest");
+
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append("api/v2/account/{id}/user-group");
+            urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(updateUserGroupRequest, _settings.Value);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PATCH");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 204)
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ApiError>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<ApiError>(" Invalid credentials ", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ApiError>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<ApiError>(" User not found ", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
         /// Resend account verification email if account is not already verified
         /// </summary>
         /// <param name="request">Email to be verified</param>
@@ -595,6 +704,115 @@ namespace Shifty.Api.Generated.AnalogCoreV2
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ApiError>("Account already verified", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Searches a user in the database
+        /// </summary>
+        /// <param name="pageNum">The page number</param>
+        /// <param name="filter">A filter to search by Id, Name or Email. When an empty string is given, all users will be returned</param>
+        /// <param name="pageLength">The length of a page</param>
+        /// <returns>Users, possible with filter applied</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<UserSearchResponse> ApiV2AccountSearchAsync(int? pageNum, string filter, int? pageLength)
+        {
+            return ApiV2AccountSearchAsync(pageNum, filter, pageLength, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Searches a user in the database
+        /// </summary>
+        /// <param name="pageNum">The page number</param>
+        /// <param name="filter">A filter to search by Id, Name or Email. When an empty string is given, all users will be returned</param>
+        /// <param name="pageLength">The length of a page</param>
+        /// <returns>Users, possible with filter applied</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UserSearchResponse> ApiV2AccountSearchAsync(int? pageNum, string filter, int? pageLength, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append("api/v2/account/search?");
+            if (pageNum != null)
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("pageNum") + "=").Append(System.Uri.EscapeDataString(ConvertToString(pageNum, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (filter != null)
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("filter") + "=").Append(System.Uri.EscapeDataString(ConvertToString(filter, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (pageLength != null)
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("pageLength") + "=").Append(System.Uri.EscapeDataString(ConvertToString(pageLength, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            urlBuilder_.Length--;
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ApiError>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<ApiError>(" Invalid credentials ", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UserSearchResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -1329,7 +1547,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         }
 
         /// <summary>
-        /// Returns a list of available products based on a account's user group
+        /// Returns a list of available products based on a account's user group.
         /// </summary>
         /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -1340,7 +1558,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Returns a list of available products based on a account's user group
+        /// Returns a list of available products based on a account's user group.
         /// </summary>
         /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -1387,6 +1605,12 @@ namespace Shifty.Api.Generated.AnalogCoreV2
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("Invalid credentials", status_, responseText_, headers_, null);
                         }
                         else
                         {
@@ -2433,6 +2657,40 @@ namespace Shifty.Api.Generated.AnalogCoreV2
     }
 
     /// <summary>
+    /// Update the UserGroup property of a user
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
+    public partial class UpdateUserGroupRequest
+    {
+        /// <summary>
+        /// The UserGroup of a user
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("userGroup", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public UserGroup UserGroup { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
+    public enum UserGroup
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Customer")]
+        Customer = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Barista")]
+        Barista = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Manager")]
+        Manager = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Board")]
+        Board = 3,
+
+    }
+
+    /// <summary>
     /// Resend Invite email request
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
@@ -2444,6 +2702,82 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         public string Email { get; set; }
+
+    }
+
+    /// <summary>
+    /// Represents a search result
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
+    public partial class UserSearchResponse
+    {
+        /// <summary>
+        /// The users that match the query
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("users", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<SimpleUserResponse> Users { get; set; } = new System.Collections.ObjectModel.Collection<SimpleUserResponse>();
+
+        /// <summary>
+        /// The number of users that match the query
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("totalUsers", Required = Newtonsoft.Json.Required.Always)]
+        public int TotalUsers { get; set; }
+
+    }
+
+    /// <summary>
+    /// Basic User details
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
+    public partial class SimpleUserResponse
+    {
+        /// <summary>
+        /// User Id
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Id { get; set; }
+
+        /// <summary>
+        /// User's Display Name
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// User's Email
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Email { get; set; }
+
+        /// <summary>
+        /// User's User group relationship
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("userGroup", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public UserGroup UserGroup { get; set; }
+
+        /// <summary>
+        /// User's State
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("state", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public UserState State { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
+    public enum UserState
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Active")]
+        Active = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Deleted")]
+        Deleted = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PendingActivition")]
+        PendingActivition = 2,
 
     }
 
@@ -2663,24 +2997,6 @@ namespace Shifty.Api.Generated.AnalogCoreV2
 
     }
 
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
-    public enum UserGroup
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Customer")]
-        Customer = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Barista")]
-        Barista = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Manager")]
-        Manager = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Board")]
-        Board = 3,
-
-    }
-
     /// <summary>
     /// Initiate a new product add request.
     /// </summary>
@@ -2830,7 +3146,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         public bool IsPerk { get; set; }
 
         /// <summary>
-        /// Visibility of products for users 
+        /// Visibility of products for users
         /// </summary>
         [Newtonsoft.Json.JsonProperty("visible", Required = Newtonsoft.Json.Required.Always)]
         public bool Visible { get; set; }

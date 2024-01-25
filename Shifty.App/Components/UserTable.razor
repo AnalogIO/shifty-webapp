@@ -1,0 +1,125 @@
+@namespace Components
+@using System.ComponentModel.DataAnnotations
+@using Shifty.App.Services
+@using Shifty.Api.Generated.AnalogCoreV1
+@using Shifty.Api.Generated.AnalogCoreV2
+@using Shared
+@using LanguageExt.UnsafeValueAccess
+@inject IUserService _userService
+@inject ISnackbar Snackbar
+
+<MudContainer MaxWidth="MaxWidth.Medium" Style="margin-top: 20px;">
+    <MudTable 
+        T="SimpleUserResponse" 
+        ServerData="@(new Func<TableState, Task<TableData<SimpleUserResponse>>>(LoadUsers))" 
+            @ref="_table"
+            EditTrigger="TableEditTrigger.EditButton"
+            ApplyButtonPosition="TableApplyButtonPosition.End"
+            EditButtonPosition="TableEditButtonPosition.End"
+            CanCancelEdit="true"
+            RowEditCancel="ResetUserOnCancel"
+            RowEditCommit="UpdateUserGroup"
+            RowEditPreview="BackupUser"
+            IsEditRowSwitchingBlocked="true">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Users</MudText>
+            <MudSpacer />
+            <MudTextField 
+                T="string"
+                ValueChanged="@(s => OnSearch(s))" 
+                Placeholder="Search" 
+                Adornment="Adornment.Start" 
+                AdornmentIcon="Icons.Material.Filled.Search" 
+                IconSize="Size.Medium" />
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Id</MudTh>
+            <MudTh>Name</MudTh>
+            <MudTh>Email</MudTh>
+            <MudTh>UserGroup</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Id">@context.Id</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Email">@context.Email</MudTd>
+            <MudTd DataLabel="UserGroup">@context.UserGroup</MudTd>
+        </RowTemplate>
+        <RowEditingTemplate>
+            <MudTd DataLabel="Id">@context.Id</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Email">@context.Email</MudTd>
+            <MudTd DataLabel="UserGroup">
+                <MudSelect T="UserGroup" Label="UserGroup" @bind-Value="context.UserGroup">
+                    @foreach (var group in Enum.GetValues<UserGroup>()) {
+                        <MudSelectItem T="UserGroup" Value="@group">@group</MudSelectItem>    
+                    }
+                </MudSelect>
+            </MudTd>
+        </RowEditingTemplate>
+        <NoRecordsContent>No matching records found</NoRecordsContent>
+        <PagerContent><MudTablePager /></PagerContent>
+        <EditButtonContent Context="button">
+            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
+        </EditButtonContent>
+    </MudTable>
+</MudContainer>
+
+@code
+{
+    private MudTable<SimpleUserResponse> _table;
+    private string searchString = "";
+    UserGroup UserGroupBeforeEdit;
+
+    private async Task<TableData<SimpleUserResponse>> LoadUsers(TableState state)
+    {
+        var result = await _userService.SearchUsers(searchString, state.Page, state.PageSize);
+
+        return result.Match(
+            Succ: res => {
+                return new TableData<SimpleUserResponse>(){ Items = res.Users.AsEnumerable(), TotalItems = res.TotalUsers};;
+            },
+            Fail: error => {
+                Snackbar.Add(error.Message, Severity.Error);
+                return new TableData<SimpleUserResponse>(){ Items = new List<SimpleUserResponse>(), TotalItems = 0};
+            }
+        );
+    }
+
+    private void OnSearch(string search)
+    {
+        searchString = search;
+        _table.ReloadServerData();
+    }
+
+    private void UpdateUserGroup(object element)
+    {
+        var user = (SimpleUserResponse)element;
+
+        var result = _userService.UpdateUserGroupAsync(user.Id, user.UserGroup);
+
+        result.Match(
+            Succ: user => {
+                Snackbar.Add("User updated", Severity.Success);
+            },
+            Fail: error => {
+                Snackbar.Add(error.Message, Severity.Error);
+            }
+        );
+
+        StateHasChanged();
+    }
+
+
+    private void BackupUser(object element)
+    {
+        UserGroupBeforeEdit = ((SimpleUserResponse)element).UserGroup;
+        StateHasChanged();
+    }
+
+    private void ResetUserOnCancel(object user)
+    {
+        ((SimpleUserResponse)user).UserGroup = UserGroupBeforeEdit;
+        StateHasChanged();
+        Snackbar.Add("Canceled editing", Severity.Warning);
+    }
+}

@@ -60,6 +60,7 @@ namespace Shifty.App
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IVoucherService, VoucherService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<RequestAuthenticationHandler>();
 
             services.AddMudServices(config =>

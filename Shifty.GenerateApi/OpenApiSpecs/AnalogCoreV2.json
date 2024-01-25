@@ -208,6 +208,74 @@
         }
       }
     },
+    "/api/v2/account/{id}/user-group": {
+      "patch": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "Updates the user group of a user",
+        "operationId": "Account_UpdateAccountUserGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id of the user whose userGroup will be updated ",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "updateUserGroupRequest",
+          "description": "Update User Group information request  ",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserGroupRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "204": {
+            "description": " The update was processed "
+          },
+          "401": {
+            "description": " Invalid credentials ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": " User not found ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
     "/api/v2/account/resend-verification-email": {
       "post": {
         "tags": [
@@ -253,6 +321,82 @@
             }
           }
         }
+      }
+    },
+    "/api/v2/account/search": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "Searches a user in the database",
+        "operationId": "Account_SearchUsers",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "description": "The page number",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "maximum": 2147483647.0,
+              "minimum": 0.0
+            },
+            "x-position": 1
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "A filter to search by Id, Name or Email. When an empty string is given, all users will be returned",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "x-position": 2
+          },
+          {
+            "name": "pageLength",
+            "in": "query",
+            "description": "The length of a page",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 30,
+              "maximum": 100.0,
+              "minimum": 1.0
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": " Invalid credentials ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Users, possible with filter applied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSearchResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
       }
     },
     "/api/v2/appconfig": {
@@ -583,7 +727,7 @@
         "tags": [
           "Products"
         ],
-        "summary": "Returns a list of available products based on a account's user group",
+        "summary": "Returns a list of available products based on a account's user group.",
         "operationId": "Products_GetProducts",
         "responses": {
           "200": {
@@ -598,8 +742,19 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Invalid credentials"
           }
-        }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
       }
     },
     "/api/v2/products/all": {
@@ -970,7 +1125,7 @@
           "name": "John Doe",
           "email": "john@doe.com",
           "password": "[no example provided]",
-          "programme": 1
+          "programmeId": 1
         },
         "additionalProperties": false,
         "required": [
@@ -1238,6 +1393,44 @@
           }
         }
       },
+      "UpdateUserGroupRequest": {
+        "type": "object",
+        "description": "Update the UserGroup property of a user",
+        "example": {
+          "UserGroup": "Barista"
+        },
+        "additionalProperties": false,
+        "required": [
+          "userGroup"
+        ],
+        "properties": {
+          "userGroup": {
+            "description": "The UserGroup of a user",
+            "example": "UserGroup.Barista ",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/UserGroup"
+              }
+            ]
+          }
+        }
+      },
+      "UserGroup": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Customer",
+          "Barista",
+          "Manager",
+          "Board"
+        ],
+        "enum": [
+          "Customer",
+          "Barista",
+          "Manager",
+          "Board"
+        ]
+      },
       "ResendAccountVerificationEmailRequest": {
         "type": "object",
         "description": "Resend Invite email request",
@@ -1257,6 +1450,98 @@
             "example": "john@doe.com"
           }
         }
+      },
+      "UserSearchResponse": {
+        "type": "object",
+        "description": "Represents a search result",
+        "example": {
+          "users": [
+            {
+              "id": 12232,
+              "name": "John Doe",
+              "email": "johndoe@itu.dk",
+              "userGroup": "Barista",
+              "state": "Active"
+            }
+          ],
+          "totalUsers": 1
+        },
+        "additionalProperties": false,
+        "required": [
+          "users",
+          "totalUsers"
+        ],
+        "properties": {
+          "users": {
+            "type": "array",
+            "description": "The users that match the query",
+            "example": "[\n   {\n     \"id\": 12232,\n     \"name\": \"John Doe\",\n     \"email\": \"johndoe@itu.dk\",\n     \"userGroup\": \"Barista\",\n     \"state\": \"Active\"\n   }\n ],",
+            "items": {
+              "$ref": "#/components/schemas/SimpleUserResponse"
+            }
+          },
+          "totalUsers": {
+            "type": "integer",
+            "description": "The number of users that match the query",
+            "format": "int32",
+            "example": 1
+          }
+        }
+      },
+      "SimpleUserResponse": {
+        "type": "object",
+        "description": "Basic User details",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "User Id",
+            "format": "int32",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "User's Display Name",
+            "example": "Name"
+          },
+          "email": {
+            "type": "string",
+            "description": "User's Email",
+            "example": "john@doe.test"
+          },
+          "userGroup": {
+            "description": "User's User group relationship",
+            "example": "Barista",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/UserGroup"
+              }
+            ]
+          },
+          "state": {
+            "description": "User's State",
+            "example": "Active",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/UserState"
+              }
+            ]
+          }
+        }
+      },
+      "UserState": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Active",
+          "Deleted",
+          "PendingActivition"
+        ],
+        "enum": [
+          "Active",
+          "Deleted",
+          "PendingActivition"
+        ]
       },
       "AppConfig": {
         "type": "object",
@@ -1481,22 +1766,6 @@
           }
         }
       },
-      "UserGroup": {
-        "type": "string",
-        "description": "",
-        "x-enumNames": [
-          "Customer",
-          "Barista",
-          "Manager",
-          "Board"
-        ],
-        "enum": [
-          "Customer",
-          "Barista",
-          "Manager",
-          "Board"
-        ]
-      },
       "AddProductRequest": {
         "type": "object",
         "description": "Initiate a new product add request.",
@@ -1649,6 +1918,7 @@
           "name": "Coffee clip card",
           "description": "Coffee clip card of 10 clips",
           "isPerk": true,
+          "visible": true,
           "AllowedUserGroups": [
             "Manager",
             "Board"
@@ -1703,7 +1973,7 @@
           },
           "visible": {
             "type": "boolean",
-            "description": "Visibility of products for users ",
+            "description": "Visibility of products for users",
             "example": true
           },
           "allowedUserGroups": {
