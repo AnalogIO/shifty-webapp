@@ -590,6 +590,132 @@
         ]
       }
     },
+    "/api/v2/menuitems": {
+      "get": {
+        "tags": [
+          "MenuItems"
+        ],
+        "summary": "Returns a list of all menu items",
+        "operationId": "MenuItems_GetAllMenuItems",
+        "responses": {
+          "200": {
+            "description": "Successful request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MenuItemResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "MenuItems"
+        ],
+        "summary": "Adds a menu item",
+        "operationId": "MenuItems_AddMenuItem",
+        "requestBody": {
+          "x-name": "menuItem",
+          "description": "Menu item to add",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddMenuItemRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "Menu item successfully added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MenuItemResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/api/v2/menuitems/{id}": {
+      "put": {
+        "tags": [
+          "MenuItems"
+        ],
+        "summary": "Updates a menu item",
+        "operationId": "MenuItems_UpdateMenuItem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "menuItem",
+          "description": "Menu item to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMenuItemRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "Menu item successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MenuItemResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
     "/api/v2/mobilepay/webhook": {
       "post": {
         "tags": [
@@ -745,6 +871,61 @@
           },
           "401": {
             "description": "Invalid credentials"
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/api/v2/products/{id}": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Returns a product with the specified id",
+        "operationId": "Products_GetProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the product to be returned",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          },
+          "404": {
+            "description": "The product with the specified id could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -962,6 +1143,71 @@
           },
           "401": {
             "description": "Invalid credentials"
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/api/v2/tickets/use": {
+      "post": {
+        "tags": [
+          "Tickets"
+        ],
+        "summary": "Uses a ticket (for the given product) on the given menu item",
+        "operationId": "Tickets_UseTicket",
+        "requestBody": {
+          "x-name": "request",
+          "description": "The product id and menu item id to use a ticket for",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UseTicketRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Successful request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsedTicketResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          },
+          "403": {
+            "description": "User has no tickets for the product or the menu item is not eligible for the ticket",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The product or menu item could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1454,18 +1700,6 @@
       "UserSearchResponse": {
         "type": "object",
         "description": "Represents a search result",
-        "example": {
-          "users": [
-            {
-              "id": 12232,
-              "name": "John Doe",
-              "email": "johndoe@itu.dk",
-              "userGroup": "Barista",
-              "state": "Active"
-            }
-          ],
-          "totalUsers": 1
-        },
         "additionalProperties": false,
         "required": [
           "users",
@@ -1475,7 +1709,15 @@
           "users": {
             "type": "array",
             "description": "The users that match the query",
-            "example": "[\n   {\n     \"id\": 12232,\n     \"name\": \"John Doe\",\n     \"email\": \"johndoe@itu.dk\",\n     \"userGroup\": \"Barista\",\n     \"state\": \"Active\"\n   }\n ],",
+            "example": [
+              {
+                "id": 12232,
+                "name": "John Doe",
+                "email": "johndoe@itu.dk",
+                "userGroup": "Barista",
+                "state": "Active"
+              }
+            ],
             "items": {
               "$ref": "#/components/schemas/SimpleUserResponse"
             }
@@ -1650,6 +1892,65 @@
           "Total"
         ]
       },
+      "MenuItemResponse": {
+        "type": "object",
+        "description": "Represents a menu item that can be redeemed with a ticket",
+        "example": {
+          "id": 1,
+          "name": "Cappuccino"
+        },
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Id of menu item",
+            "format": "int32",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of menu item",
+            "minLength": 1,
+            "example": "Cappuccino"
+          }
+        }
+      },
+      "AddMenuItemRequest": {
+        "type": "object",
+        "description": "Initiate a new menuitem add request.",
+        "additionalProperties": false,
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Gets or sets the name of the product.",
+            "minLength": 1,
+            "example": "Latte"
+          }
+        }
+      },
+      "UpdateMenuItemRequest": {
+        "type": "object",
+        "description": "Initiate an update product request.",
+        "additionalProperties": false,
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Gets or sets the updated name of the product.",
+            "minLength": 1,
+            "example": "Espresso"
+          }
+        }
+      },
       "MobilePayWebhook": {
         "type": "object",
         "description": "MobilePay webhook invocation request \nCode documentation based on MobilePay Developer: Webhooks",
@@ -1720,7 +2021,8 @@
           "name",
           "description",
           "visible",
-          "allowedUserGroups"
+          "allowedUserGroups",
+          "menuItems"
         ],
         "properties": {
           "price": {
@@ -1743,13 +2045,13 @@
             "type": "string",
             "description": "Gets or sets the name of the product.",
             "minLength": 1,
-            "example": "Espresso "
+            "example": "Espresso"
           },
           "description": {
             "type": "string",
             "description": "Gets or sets the description of the product.",
             "minLength": 1,
-            "example": "A homemade espresso from fresh beans "
+            "example": "A homemade espresso from fresh beans"
           },
           "visible": {
             "type": "boolean",
@@ -1759,9 +2061,23 @@
           "allowedUserGroups": {
             "type": "array",
             "description": "Gets or sets the user groups that can access the product.",
-            "example": "Manager, Board ",
+            "example": [
+              "Manager",
+              "Board"
+            ],
             "items": {
               "$ref": "#/components/schemas/UserGroup"
+            }
+          },
+          "menuItems": {
+            "type": "array",
+            "description": "Gets or sets the eligibible menu items for the product.",
+            "example": [
+              "Espresso",
+              "Cappuccino"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/MenuItemResponse"
             }
           }
         }
@@ -1769,24 +2085,15 @@
       "AddProductRequest": {
         "type": "object",
         "description": "Initiate a new product add request.",
-        "example": {
-          "Name": "Latte",
-          "Price": 25,
-          "NumberOfTickets": 10,
-          "Description": "xxx",
-          "Visible": true,
-          "AllowedUserGroups": [
-            "Manager",
-            "Board"
-          ]
-        },
         "additionalProperties": false,
         "required": [
           "price",
           "numberOfTickets",
           "name",
           "description",
-          "allowedUserGroups"
+          "visible",
+          "allowedUserGroups",
+          "menuItemIds"
         ],
         "properties": {
           "price": {
@@ -1809,13 +2116,13 @@
             "type": "string",
             "description": "Gets or sets the name of the product.",
             "minLength": 1,
-            "example": "Latte "
+            "example": "Latte"
           },
           "description": {
             "type": "string",
             "description": "Gets or sets the description of the product.",
             "minLength": 1,
-            "example": "A homemade latte with soy milk "
+            "example": "A homemade latte with soy milk"
           },
           "visible": {
             "type": "boolean",
@@ -1826,9 +2133,24 @@
           "allowedUserGroups": {
             "type": "array",
             "description": "Gets or sets the user groups that can access the product.",
-            "example": "Manager, Board ",
+            "example": [
+              "Manager",
+              "Board"
+            ],
             "items": {
               "$ref": "#/components/schemas/UserGroup"
+            }
+          },
+          "menuItemIds": {
+            "type": "array",
+            "description": "Gets or sets the menu items that are eligible for the product.",
+            "example": [
+              1,
+              2
+            ],
+            "items": {
+              "type": "integer",
+              "format": "int32"
             }
           }
         }
@@ -1836,18 +2158,6 @@
       "UpdateProductRequest": {
         "type": "object",
         "description": "Initiate an update product request.",
-        "example": {
-          "Id": 1,
-          "Price": 150,
-          "NumberOfTickets": 10,
-          "Name": "Espresso",
-          "Description": "A coffee made by forcing steam through ground coffee beans.",
-          "Visible": false,
-          "AllowedUserGroups": [
-            "Manager",
-            "Board"
-          ]
-        },
         "additionalProperties": false,
         "required": [
           "id",
@@ -1855,7 +2165,9 @@
           "numberOfTickets",
           "name",
           "description",
-          "allowedUserGroups"
+          "visible",
+          "allowedUserGroups",
+          "menuItemIds"
         ],
         "properties": {
           "id": {
@@ -1884,13 +2196,13 @@
             "type": "string",
             "description": "Gets or sets the updated name of the product.",
             "minLength": 1,
-            "example": "Espresso "
+            "example": "Espresso"
           },
           "description": {
             "type": "string",
             "description": "Gets or sets the updated description of the product.",
             "minLength": 1,
-            "example": "A homemade espresso from fresh beans "
+            "example": "A homemade espresso from fresh beans"
           },
           "visible": {
             "type": "boolean",
@@ -1901,9 +2213,24 @@
           "allowedUserGroups": {
             "type": "array",
             "description": "Gets or sets the user groups that can access the product.",
-            "example": "Manager, Board ",
+            "example": [
+              "Manager",
+              "Board"
+            ],
             "items": {
               "$ref": "#/components/schemas/UserGroup"
+            }
+          },
+          "menuItemIds": {
+            "type": "array",
+            "description": "Gets or sets the eligible menu items for the product.",
+            "example": [
+              1,
+              2
+            ],
+            "items": {
+              "type": "integer",
+              "format": "int32"
             }
           }
         }
@@ -1919,9 +2246,19 @@
           "description": "Coffee clip card of 10 clips",
           "isPerk": true,
           "visible": true,
-          "AllowedUserGroups": [
+          "allowedUserGroups": [
             "Manager",
             "Board"
+          ],
+          "eligibleMenuItems": [
+            {
+              "id": 1,
+              "name": "Cappuccino"
+            },
+            {
+              "id": 2,
+              "name": "Caffe Latte"
+            }
           ]
         },
         "additionalProperties": false,
@@ -1982,6 +2319,17 @@
             "example": "Manager, Board ",
             "items": {
               "$ref": "#/components/schemas/UserGroup"
+            }
+          },
+          "eligibleMenuItems": {
+            "type": "array",
+            "description": "The menu items that this product can be used on.",
+            "example": [
+              "Cappuccino",
+              "Caffe Latte"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/MenuItemResponse"
             }
           }
         }
@@ -2371,7 +2719,6 @@
       "TicketResponse": {
         "type": "object",
         "description": "Representing a ticket for a product",
-        "example": "{\n    \"id\": 122,\n    \"dateCreated\": \"2022-01-09T21:03:52.2283208Z\",\n    \"dateUsed\": \"2022-01-09T21:03:52.2283208Z\",\n    \"productId\": 1,\n    \"productName: \"Coffee\"\n}",
         "additionalProperties": false,
         "required": [
           "id",
@@ -2412,6 +2759,80 @@
             "description": "Name of product a ticket is for",
             "minLength": 1,
             "example": "Coffee"
+          },
+          "usedOnMenuItemName": {
+            "type": "string",
+            "description": "The name of the menu item that this ticket was used on",
+            "nullable": true,
+            "example": "Cappuccino"
+          }
+        }
+      },
+      "UsedTicketResponse": {
+        "type": "object",
+        "description": "Representing a used ticket for a product",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "dateCreated",
+          "dateUsed",
+          "productName"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Ticket Id",
+            "format": "int32",
+            "example": 122
+          },
+          "dateCreated": {
+            "type": "string",
+            "description": "Issuing date time for ticket in Utc format",
+            "format": "date-time",
+            "minLength": 1,
+            "example": "2022-01-09T21:03:52.2283208Z"
+          },
+          "dateUsed": {
+            "type": "string",
+            "description": "Used date time for ticket in Utc format",
+            "format": "date-time",
+            "minLength": 1,
+            "example": "2022-01-09T21:03:52.2283208Z"
+          },
+          "productName": {
+            "type": "string",
+            "description": "Name of product a ticket is for",
+            "minLength": 1,
+            "example": "Small drink"
+          },
+          "menuItemName": {
+            "type": "string",
+            "description": "Name of the menu item that this ticket was used on",
+            "nullable": true,
+            "example": "Cappuccino"
+          }
+        }
+      },
+      "UseTicketRequest": {
+        "type": "object",
+        "description": "Represents a request to use a ticket.",
+        "additionalProperties": false,
+        "required": [
+          "productId",
+          "menuItemId"
+        ],
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "description": "The id of the product the ticket is for.",
+            "format": "int32",
+            "example": 1
+          },
+          "menuItemId": {
+            "type": "integer",
+            "description": "The id of the menu item to use the ticket on.",
+            "format": "int32",
+            "example": 1
           }
         }
       },
