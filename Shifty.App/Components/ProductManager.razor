@@ -182,16 +182,12 @@
         Snackbar.Add("Cancelled product changes", Severity.Info);
     }
 
-<<<<<<< HEAD
     async Task FocusFirst()
     {
         await JSRuntime.InvokeVoidAsync("window.focusElement", "first-edit-element");
     }
 
-    async Task CommittedItemChanges(ProductResponse item)
-=======
     async Task CommittedItemChanges(Product item)
->>>>>>> 59310e7 (Adds menu items property to products)
     {
         List<UserGroup> AllowedUserGroups =
                 UserGroupDict.Where(e => e.Value)

@@ -3844,7 +3844,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
     [JsonInheritanceAttribute("MobilePayPaymentDetails", typeof(MobilePayPaymentDetails))]
     [JsonInheritanceAttribute("FreePurchasePaymentDetails", typeof(FreePurchasePaymentDetails))]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
-    public abstract partial class PaymentDetails
+    public partial class PaymentDetails
     {
         /// <summary>
         /// Payment type
