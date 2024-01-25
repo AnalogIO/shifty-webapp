@@ -55,12 +55,14 @@ namespace Shifty.App
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IVoucherRepository, VoucherRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IMenuItemRepository, MenuItemRepository>();
             services.AddScoped<CustomAuthStateProvider>();
             services.AddScoped<AuthenticationStateProvider>(s => s.GetService<CustomAuthStateProvider>());
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IVoucherService, VoucherService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IMenuItemService, MenuItemService>();
             services.AddScoped<RequestAuthenticationHandler>();
 
             services.AddMudServices(config =>
