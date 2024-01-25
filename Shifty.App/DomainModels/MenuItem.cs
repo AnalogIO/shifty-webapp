@@ -40,6 +40,10 @@ namespace Shifty.App.DomainModels
 
         public override bool Equals(object obj)
         {
+            if (obj is not MenuItem)
+            {
+                return false;
+            }
             return ((MenuItem)obj).Id == Id;
         }
 

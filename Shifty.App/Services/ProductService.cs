@@ -25,7 +25,6 @@ namespace Shifty.App.Services
 
         public async Task<Try<IEnumerable<Product>>> GetProducts()
         {
-            Console.WriteLine("I'm in the ProductService.GetProducts() method");
             return await _productRepository
                             .GetProducts()
                             .Map(x => x.Map(p => Product.FromDto(p)));

@@ -13,6 +13,7 @@ using Shifty.Api.Generated.AnalogCoreV2;
 using Shifty.App.Authentication;
 using Shifty.App.Repositories;
 using Shifty.App.Services;
+using MudExtensions.Services;
 
 namespace Shifty.App
 {
@@ -22,6 +23,7 @@ namespace Shifty.App
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
+            builder.Services.AddMudExtensions();
             ConfigureServices(builder.Services, builder.Configuration);
 
             await builder.Build().RunAsync();

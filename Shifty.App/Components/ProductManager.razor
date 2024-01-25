@@ -1,5 +1,6 @@
 @namespace Components
 @using System.ComponentModel.DataAnnotations
+@using MudExtensions
 @using Shifty.App.Services
 @using Shifty.Api.Generated.AnalogCoreV1
 @using Shifty.Api.Generated.AnalogCoreV2
@@ -101,12 +102,12 @@
             <PropertyColumn Property="x => x.Description" Title="Description" IsEditable="true" />
             <PropertyColumn Property="x => x.EligibleMenuItems" Title="Eligible menu items" IsEditable="true" Hidden>
                 <EditTemplate>
-                    <MudText Typo="Typo.subtitle1">Eligible menu items:</MudText>
-                    @foreach (var mi in _allMenuItems)
-                    {
-                        <MudCheckBox Dense="true" Color="Color.Primary" @bind-Checked="SelectedMenuItems[mi]" Value="@mi">
-                            @mi.Name</MudCheckBox>
-                    }
+                    <MudComboBox Label="Eligible menu items" T="MenuItem" MultiSelection="true" Editable="true" @bind-SelectedValues="context.Item.EligibleMenuItems">
+                        @foreach (var mi in _allMenuItems)
+                        {
+                            <MudComboBoxItem Text="@mi.Name" Value="@mi">@mi.Name</MudComboBoxItem>
+                        }
+                    </MudComboBox>
                 </EditTemplate>
             </PropertyColumn>
         </Columns>
@@ -137,11 +138,6 @@
         {
             UserGroupDict.Add(group, item.AllowedUserGroups.Contains(group));
         }
-
-        foreach (var mi in _allMenuItems)
-        {
-            SelectedMenuItems[mi] = item.EligibleMenuItems.Contains(mi);
-        }
         FocusFirst();
     }
 
@@ -164,10 +160,6 @@
         menuItemsResult.Match(
             Succ: menuItems => {
                 _allMenuItems = menuItems;
-                foreach (var mi in menuItems)
-                {
-                    SelectedMenuItems.Add(mi, false);
-                }
             },
             Fail: error => {
                 Snackbar.Add(error.Message, Severity.Error);
@@ -196,15 +188,6 @@
                              .ToList();
         
         item.AllowedUserGroups = AllowedUserGroups;
-
-        List<MenuItem> EligibleMenuItems =
-                SelectedMenuItems.Where(e => e.Value)
-                                 .ToDictionary(kv => kv.Key, kv => kv.Value)
-                                 .Keys
-                                 .ToList();
-
-        item.EligibleMenuItems = EligibleMenuItems;
-
 
         if (item.Id == 0)
         {
