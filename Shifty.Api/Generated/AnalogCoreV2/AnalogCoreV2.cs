@@ -18,7 +18,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
     using System = global::System;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
-    public partial class AnalogCoreV2 
+    public partial class AnalogCoreV2
     {
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
@@ -2867,7 +2867,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
                     var field = System.Reflection.IntrospectionExtensions.GetTypeInfo(value.GetType()).GetDeclaredField(name);
                     if (field != null)
                     {
-                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute)) 
+                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute))
                             as System.Runtime.Serialization.EnumMemberAttribute;
                         if (attribute != null)
                         {
@@ -2879,7 +2879,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
                     return converted == null ? string.Empty : converted;
                 }
             }
-            else if (value is bool) 
+            else if (value is bool)
             {
                 return System.Convert.ToString((bool)value, cultureInfo).ToLowerInvariant();
             }
@@ -3413,7 +3413,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
     }
 
     /// <summary>
-    /// MobilePay webhook invocation request 
+    /// MobilePay webhook invocation request
     /// <br/>Code documentation based on MobilePay Developer: Webhooks
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
@@ -3428,18 +3428,18 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         /// <summary>
         /// Type of event
         /// <br/>
-        /// <br/>    
+        /// <br/>
         /// <br/>        payment.reserved
         /// <br/>        Published when payment has been approved by MobilePay user and is ready to be captured
-        /// <br/>    
-        /// <br/>    
+        /// <br/>
+        /// <br/>
         /// <br/>        payment.cancelled_by_user
         /// <br/>        Published when payment has been cancelled by user inside MobilePay app
-        /// <br/>    
-        /// <br/>    
+        /// <br/>
+        /// <br/>
         /// <br/>        payment.expired
         /// <br/>        Published when either initiated payment didn't have any user interactions for 5-10 minutes or payment was reserved, but 7 days have passed and the reservation has expired.
-        /// <br/>    
+        /// <br/>
         /// </summary>
         [Newtonsoft.Json.JsonProperty("eventType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string EventType { get; set; }
@@ -3691,7 +3691,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         public string Description { get; set; }
 
         /// <summary>
-        /// Eligible due to a user perk privilege 
+        /// Eligible due to a user perk privilege
         /// </summary>
         [Newtonsoft.Json.JsonProperty("isPerk", Required = Newtonsoft.Json.Required.Always)]
         public bool IsPerk { get; set; }
@@ -3844,7 +3844,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
     [JsonInheritanceAttribute("MobilePayPaymentDetails", typeof(MobilePayPaymentDetails))]
     [JsonInheritanceAttribute("FreePurchasePaymentDetails", typeof(FreePurchasePaymentDetails))]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
-    public abstract partial class PaymentDetails
+    public partial class PaymentDetails
     {
         /// <summary>
         /// Payment type
