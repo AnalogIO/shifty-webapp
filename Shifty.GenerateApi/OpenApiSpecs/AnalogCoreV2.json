@@ -17,7 +17,7 @@
   },
   "servers": [
     {
-      "url": "https://core.dev.analogio.dk"
+      "url": "http://localhost:5001"
     }
   ],
   "paths": {
@@ -773,11 +773,11 @@
         "tags": [
           "Products"
         ],
-        "summary": "Adds a new product to the database.",
+        "summary": "Adds a new product",
         "operationId": "Products_AddProduct",
         "requestBody": {
           "x-name": "addProductRequest",
-          "description": "The request containing the details of the product to be added and allowed user groups.",
+          "description": "The request containing the details of the product to be added and allowed user groups",
           "content": {
             "application/json": {
               "schema": {
@@ -789,52 +789,12 @@
           "x-position": 1
         },
         "responses": {
-          "200": {
-            "description": "The request was successful, and the product was added.",
+          "201": {
+            "description": "The newly added product",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChangedProductResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "jwt": []
-          },
-          {
-            "apikey": []
-          }
-        ]
-      },
-      "put": {
-        "tags": [
-          "Products"
-        ],
-        "summary": "Updates a product with the specified changes.",
-        "operationId": "Products_UpdateProduct",
-        "requestBody": {
-          "x-name": "product",
-          "description": "The request containing the changes to be applied to the product.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateProductRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "The request was successful, and the product was updated.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ChangedProductResponse"
+                  "$ref": "#/components/schemas/ProductResponse"
                 }
               }
             }
@@ -884,6 +844,60 @@
       }
     },
     "/api/v2/products/{id}": {
+      "put": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Updates a product with the specified changes.",
+        "operationId": "Products_UpdateProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "x-originalName": "productId",
+            "in": "path",
+            "required": true,
+            "description": "Product Id",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "product",
+          "description": "The request containing the changes to be applied to the product",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProductRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "The product was updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      },
       "get": {
         "tags": [
           "Products"
@@ -893,6 +907,7 @@
         "parameters": [
           {
             "name": "id",
+            "x-originalName": "productId",
             "in": "path",
             "required": true,
             "description": "The id of the product to be returned",
@@ -2011,230 +2026,6 @@
           }
         }
       },
-      "ChangedProductResponse": {
-        "type": "object",
-        "description": "Represents the product response.",
-        "additionalProperties": false,
-        "required": [
-          "price",
-          "numberOfTickets",
-          "name",
-          "description",
-          "visible",
-          "allowedUserGroups",
-          "menuItems"
-        ],
-        "properties": {
-          "price": {
-            "type": "integer",
-            "description": "Gets or sets the price of the product.",
-            "format": "int32",
-            "maximum": 2147483647.0,
-            "minimum": 0.0,
-            "example": 150
-          },
-          "numberOfTickets": {
-            "type": "integer",
-            "description": "Gets or sets the number of tickets associated with the product.",
-            "format": "int32",
-            "maximum": 2147483647.0,
-            "minimum": 0.0,
-            "example": 5
-          },
-          "name": {
-            "type": "string",
-            "description": "Gets or sets the name of the product.",
-            "minLength": 1,
-            "example": "Espresso"
-          },
-          "description": {
-            "type": "string",
-            "description": "Gets or sets the description of the product.",
-            "minLength": 1,
-            "example": "A homemade espresso from fresh beans"
-          },
-          "visible": {
-            "type": "boolean",
-            "description": "Gets or sets the visibility of the product.",
-            "example": true
-          },
-          "allowedUserGroups": {
-            "type": "array",
-            "description": "Gets or sets the user groups that can access the product.",
-            "example": [
-              "Manager",
-              "Board"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/UserGroup"
-            }
-          },
-          "menuItems": {
-            "type": "array",
-            "description": "Gets or sets the eligibible menu items for the product.",
-            "example": [
-              "Espresso",
-              "Cappuccino"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/MenuItemResponse"
-            }
-          }
-        }
-      },
-      "AddProductRequest": {
-        "type": "object",
-        "description": "Initiate a new product add request.",
-        "additionalProperties": false,
-        "required": [
-          "price",
-          "numberOfTickets",
-          "name",
-          "description",
-          "visible",
-          "allowedUserGroups",
-          "menuItemIds"
-        ],
-        "properties": {
-          "price": {
-            "type": "integer",
-            "description": "Gets or sets the price of the product.",
-            "format": "int32",
-            "maximum": 2147483647.0,
-            "minimum": 0.0,
-            "example": 10
-          },
-          "numberOfTickets": {
-            "type": "integer",
-            "description": "Gets or sets the number of tickets associated with the product.",
-            "format": "int32",
-            "maximum": 2147483647.0,
-            "minimum": 0.0,
-            "example": 5
-          },
-          "name": {
-            "type": "string",
-            "description": "Gets or sets the name of the product.",
-            "minLength": 1,
-            "example": "Latte"
-          },
-          "description": {
-            "type": "string",
-            "description": "Gets or sets the description of the product.",
-            "minLength": 1,
-            "example": "A homemade latte with soy milk"
-          },
-          "visible": {
-            "type": "boolean",
-            "description": "Gets or sets the visibility of the product. Default is true.",
-            "default": true,
-            "example": true
-          },
-          "allowedUserGroups": {
-            "type": "array",
-            "description": "Gets or sets the user groups that can access the product.",
-            "example": [
-              "Manager",
-              "Board"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/UserGroup"
-            }
-          },
-          "menuItemIds": {
-            "type": "array",
-            "description": "Gets or sets the menu items that are eligible for the product.",
-            "example": [
-              1,
-              2
-            ],
-            "items": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        }
-      },
-      "UpdateProductRequest": {
-        "type": "object",
-        "description": "Initiate an update product request.",
-        "additionalProperties": false,
-        "required": [
-          "id",
-          "price",
-          "numberOfTickets",
-          "name",
-          "description",
-          "visible",
-          "allowedUserGroups",
-          "menuItemIds"
-        ],
-        "properties": {
-          "id": {
-            "type": "integer",
-            "description": "Gets or sets the ID of the product to update.",
-            "format": "int32",
-            "example": 1
-          },
-          "price": {
-            "type": "integer",
-            "description": "Gets or sets the updated price of the product.",
-            "format": "int32",
-            "maximum": 2147483647.0,
-            "minimum": 0.0,
-            "example": 10
-          },
-          "numberOfTickets": {
-            "type": "integer",
-            "description": "Gets or sets the updated number of tickets associated with the product.",
-            "format": "int32",
-            "maximum": 2147483647.0,
-            "minimum": 0.0,
-            "example": 5
-          },
-          "name": {
-            "type": "string",
-            "description": "Gets or sets the updated name of the product.",
-            "minLength": 1,
-            "example": "Espresso"
-          },
-          "description": {
-            "type": "string",
-            "description": "Gets or sets the updated description of the product.",
-            "minLength": 1,
-            "example": "A homemade espresso from fresh beans"
-          },
-          "visible": {
-            "type": "boolean",
-            "description": "Gets or sets the updated visibility of the product. Default is true.",
-            "default": true,
-            "example": true
-          },
-          "allowedUserGroups": {
-            "type": "array",
-            "description": "Gets or sets the user groups that can access the product.",
-            "example": [
-              "Manager",
-              "Board"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/UserGroup"
-            }
-          },
-          "menuItemIds": {
-            "type": "array",
-            "description": "Gets or sets the eligible menu items for the product.",
-            "example": [
-              1,
-              2
-            ],
-            "items": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        }
-      },
       "ProductResponse": {
         "type": "object",
         "description": "Represents a purchasable product",
@@ -2330,6 +2121,152 @@
             ],
             "items": {
               "$ref": "#/components/schemas/MenuItemResponse"
+            }
+          }
+        }
+      },
+      "AddProductRequest": {
+        "type": "object",
+        "description": "Initiate a new product add request.",
+        "additionalProperties": false,
+        "required": [
+          "price",
+          "numberOfTickets",
+          "name",
+          "description",
+          "visible",
+          "allowedUserGroups",
+          "menuItemIds"
+        ],
+        "properties": {
+          "price": {
+            "type": "integer",
+            "description": "Gets or sets the price of the product.",
+            "format": "int32",
+            "maximum": 2147483647.0,
+            "minimum": 0.0,
+            "example": 10
+          },
+          "numberOfTickets": {
+            "type": "integer",
+            "description": "Gets or sets the number of tickets associated with the product.",
+            "format": "int32",
+            "maximum": 2147483647.0,
+            "minimum": 0.0,
+            "example": 5
+          },
+          "name": {
+            "type": "string",
+            "description": "Gets or sets the name of the product.",
+            "minLength": 1,
+            "example": "Latte"
+          },
+          "description": {
+            "type": "string",
+            "description": "Gets or sets the description of the product.",
+            "minLength": 1,
+            "example": "A homemade latte with soy milk"
+          },
+          "visible": {
+            "type": "boolean",
+            "description": "Gets or sets the visibility of the product. Default is true.",
+            "default": true,
+            "example": true
+          },
+          "allowedUserGroups": {
+            "type": "array",
+            "description": "Gets or sets the user groups that can access the product.",
+            "example": [
+              "Manager",
+              "Board"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/UserGroup"
+            }
+          },
+          "menuItemIds": {
+            "type": "array",
+            "description": "Gets or sets the menu items that are eligible for the product.",
+            "example": [
+              1,
+              2
+            ],
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      },
+      "UpdateProductRequest": {
+        "type": "object",
+        "description": "Initiate an update product request.",
+        "additionalProperties": false,
+        "required": [
+          "price",
+          "numberOfTickets",
+          "name",
+          "description",
+          "visible",
+          "allowedUserGroups",
+          "menuItemIds"
+        ],
+        "properties": {
+          "price": {
+            "type": "integer",
+            "description": "Gets or sets the updated price of the product.",
+            "format": "int32",
+            "maximum": 2147483647.0,
+            "minimum": 0.0,
+            "example": 10
+          },
+          "numberOfTickets": {
+            "type": "integer",
+            "description": "Gets or sets the updated number of tickets associated with the product.",
+            "format": "int32",
+            "maximum": 2147483647.0,
+            "minimum": 0.0,
+            "example": 5
+          },
+          "name": {
+            "type": "string",
+            "description": "Gets or sets the updated name of the product.",
+            "minLength": 1,
+            "example": "Espresso"
+          },
+          "description": {
+            "type": "string",
+            "description": "Gets or sets the updated description of the product.",
+            "minLength": 1,
+            "example": "A homemade espresso from fresh beans"
+          },
+          "visible": {
+            "type": "boolean",
+            "description": "Gets or sets the updated visibility of the product. Default is true.",
+            "default": true,
+            "example": true
+          },
+          "allowedUserGroups": {
+            "type": "array",
+            "description": "Gets or sets the user groups that can access the product.",
+            "example": [
+              "Manager",
+              "Board"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/UserGroup"
+            }
+          },
+          "menuItemIds": {
+            "type": "array",
+            "description": "Gets or sets the eligible menu items for the product.",
+            "example": [
+              1,
+              2
+            ],
+            "items": {
+              "type": "integer",
+              "format": "int32"
             }
           }
         }

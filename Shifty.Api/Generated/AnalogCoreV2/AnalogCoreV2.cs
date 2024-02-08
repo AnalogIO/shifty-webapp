@@ -1631,24 +1631,24 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         }
 
         /// <summary>
-        /// Adds a new product to the database.
+        /// Adds a new product
         /// </summary>
-        /// <param name="addProductRequest">The request containing the details of the product to be added and allowed user groups.</param>
-        /// <returns>The request was successful, and the product was added.</returns>
+        /// <param name="addProductRequest">The request containing the details of the product to be added and allowed user groups</param>
+        /// <returns>The newly added product</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ChangedProductResponse> ApiV2ProductsPostAsync(AddProductRequest addProductRequest)
+        public virtual System.Threading.Tasks.Task<ProductResponse> ApiV2ProductsPostAsync(AddProductRequest addProductRequest)
         {
             return ApiV2ProductsPostAsync(addProductRequest, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Adds a new product to the database.
+        /// Adds a new product
         /// </summary>
-        /// <param name="addProductRequest">The request containing the details of the product to be added and allowed user groups.</param>
-        /// <returns>The request was successful, and the product was added.</returns>
+        /// <param name="addProductRequest">The request containing the details of the product to be added and allowed user groups</param>
+        /// <returns>The newly added product</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ChangedProductResponse> ApiV2ProductsPostAsync(AddProductRequest addProductRequest, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ProductResponse> ApiV2ProductsPostAsync(AddProductRequest addProductRequest, System.Threading.CancellationToken cancellationToken)
         {
             if (addProductRequest == null)
                 throw new System.ArgumentNullException("addProductRequest");
@@ -1690,98 +1690,9 @@ namespace Shifty.Api.Generated.AnalogCoreV2
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
+                        if (status_ == 201)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<ChangedProductResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Updates a product with the specified changes.
-        /// </summary>
-        /// <param name="product">The request containing the changes to be applied to the product.</param>
-        /// <returns>The request was successful, and the product was updated.</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ChangedProductResponse> ApiV2ProductsPutAsync(UpdateProductRequest product)
-        {
-            return ApiV2ProductsPutAsync(product, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Updates a product with the specified changes.
-        /// </summary>
-        /// <param name="product">The request containing the changes to be applied to the product.</param>
-        /// <returns>The request was successful, and the product was updated.</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ChangedProductResponse> ApiV2ProductsPutAsync(UpdateProductRequest product, System.Threading.CancellationToken cancellationToken)
-        {
-            if (product == null)
-                throw new System.ArgumentNullException("product");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/v2/products");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(product, _settings.Value);
-                    var content_ = new System.Net.Http.StringContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("PUT");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ChangedProductResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProductResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1895,31 +1806,126 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         }
 
         /// <summary>
+        /// Updates a product with the specified changes.
+        /// </summary>
+        /// <param name="productId">Product Id</param>
+        /// <param name="product">The request containing the changes to be applied to the product</param>
+        /// <returns>The product was updated</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<ProductResponse> ApiV2ProductsPutAsync(int productId, UpdateProductRequest product)
+        {
+            return ApiV2ProductsPutAsync(productId, product, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Updates a product with the specified changes.
+        /// </summary>
+        /// <param name="productId">Product Id</param>
+        /// <param name="product">The request containing the changes to be applied to the product</param>
+        /// <returns>The product was updated</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ProductResponse> ApiV2ProductsPutAsync(int productId, UpdateProductRequest product, System.Threading.CancellationToken cancellationToken)
+        {
+            if (productId == null)
+                throw new System.ArgumentNullException("productId");
+
+            if (product == null)
+                throw new System.ArgumentNullException("product");
+
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append("api/v2/products/{id}");
+            urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(productId, System.Globalization.CultureInfo.InvariantCulture)));
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(product, _settings.Value);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProductResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
         /// Returns a product with the specified id
         /// </summary>
-        /// <param name="id">The id of the product to be returned</param>
+        /// <param name="productId">The id of the product to be returned</param>
         /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ProductResponse> ApiV2ProductsGetAsync(int id)
+        public virtual System.Threading.Tasks.Task<ProductResponse> ApiV2ProductsGetAsync(int productId)
         {
-            return ApiV2ProductsGetAsync(id, System.Threading.CancellationToken.None);
+            return ApiV2ProductsGetAsync(productId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Returns a product with the specified id
         /// </summary>
-        /// <param name="id">The id of the product to be returned</param>
+        /// <param name="productId">The id of the product to be returned</param>
         /// <returns>Successful request</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ProductResponse> ApiV2ProductsGetAsync(int id, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ProductResponse> ApiV2ProductsGetAsync(int productId, System.Threading.CancellationToken cancellationToken)
         {
-            if (id == null)
-                throw new System.ArgumentNullException("id");
+            if (productId == null)
+                throw new System.ArgumentNullException("productId");
 
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/v2/products/{id}");
-            urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(productId, System.Globalization.CultureInfo.InvariantCulture)));
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -3479,58 +3485,67 @@ namespace Shifty.Api.Generated.AnalogCoreV2
     }
 
     /// <summary>
-    /// Represents the product response.
+    /// Represents a purchasable product
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
-    public partial class ChangedProductResponse
+    public partial class ProductResponse
     {
         /// <summary>
-        /// Gets or sets the price of the product.
+        /// Id of product
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Product price
         /// </summary>
         [Newtonsoft.Json.JsonProperty("price", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Range(0, 2147483647)]
         public int Price { get; set; }
 
         /// <summary>
-        /// Gets or sets the number of tickets associated with the product.
+        /// Number of tickets in product
         /// </summary>
         [Newtonsoft.Json.JsonProperty("numberOfTickets", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Range(0, 2147483647)]
         public int NumberOfTickets { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the product.
+        /// Name of product
         /// </summary>
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the description of the product.
+        /// Description of products
         /// </summary>
         [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         public string Description { get; set; }
 
         /// <summary>
-        /// Gets or sets the visibility of the product.
+        /// Eligible due to a user perk privilege 
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("isPerk", Required = Newtonsoft.Json.Required.Always)]
+        public bool IsPerk { get; set; }
+
+        /// <summary>
+        /// Visibility of products for users
         /// </summary>
         [Newtonsoft.Json.JsonProperty("visible", Required = Newtonsoft.Json.Required.Always)]
         public bool Visible { get; set; }
 
         /// <summary>
-        /// Gets or sets the user groups that can access the product.
+        /// Decides the user groups that can access the product.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("allowedUserGroups", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         [System.ComponentModel.DataAnnotations.Required]
         public System.Collections.Generic.ICollection<UserGroup> AllowedUserGroups { get; set; } = new System.Collections.ObjectModel.Collection<UserGroup>();
 
         /// <summary>
-        /// Gets or sets the eligibible menu items for the product.
+        /// The menu items that this product can be used on.
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("menuItems", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<MenuItemResponse> MenuItems { get; set; } = new System.Collections.ObjectModel.Collection<MenuItemResponse>();
+        [Newtonsoft.Json.JsonProperty("eligibleMenuItems", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<MenuItemResponse> EligibleMenuItems { get; set; }
 
     }
 
@@ -3597,12 +3612,6 @@ namespace Shifty.Api.Generated.AnalogCoreV2
     public partial class UpdateProductRequest
     {
         /// <summary>
-        /// Gets or sets the ID of the product to update.
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
-        public int Id { get; set; }
-
-        /// <summary>
         /// Gets or sets the updated price of the product.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("price", Required = Newtonsoft.Json.Required.Always)]
@@ -3649,71 +3658,6 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         [Newtonsoft.Json.JsonProperty("menuItemIds", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         public System.Collections.Generic.ICollection<int> MenuItemIds { get; set; } = new System.Collections.ObjectModel.Collection<int>();
-
-    }
-
-    /// <summary>
-    /// Represents a purchasable product
-    /// </summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
-    public partial class ProductResponse
-    {
-        /// <summary>
-        /// Id of product
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
-        public int Id { get; set; }
-
-        /// <summary>
-        /// Product price
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("price", Required = Newtonsoft.Json.Required.Always)]
-        public int Price { get; set; }
-
-        /// <summary>
-        /// Number of tickets in product
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("numberOfTickets", Required = Newtonsoft.Json.Required.Always)]
-        public int NumberOfTickets { get; set; }
-
-        /// <summary>
-        /// Name of product
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Description of products
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        public string Description { get; set; }
-
-        /// <summary>
-        /// Eligible due to a user perk privilege 
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("isPerk", Required = Newtonsoft.Json.Required.Always)]
-        public bool IsPerk { get; set; }
-
-        /// <summary>
-        /// Visibility of products for users
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("visible", Required = Newtonsoft.Json.Required.Always)]
-        public bool Visible { get; set; }
-
-        /// <summary>
-        /// Decides the user groups that can access the product.
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("allowedUserGroups", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<UserGroup> AllowedUserGroups { get; set; } = new System.Collections.ObjectModel.Collection<UserGroup>();
-
-        /// <summary>
-        /// The menu items that this product can be used on.
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("eligibleMenuItems", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.ICollection<MenuItemResponse> EligibleMenuItems { get; set; }
 
     }
 

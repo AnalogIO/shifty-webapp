@@ -1,14 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Blazored.LocalStorage;
 using LanguageExt;
-using LanguageExt.Common;
-using LanguageExt.UnsafeValueAccess;
-using Shifty.Api.Generated.AnalogCoreV1;
-using Shifty.Api.Generated.AnalogCoreV2;
-using Shifty.App.Authentication;
 using Shifty.App.DomainModels;
 using Shifty.App.Repositories;
 
@@ -32,36 +24,17 @@ namespace Shifty.App.Services
         
         public async Task<Try<Product>> UpdateProduct(Product product, int id)
         {
-            var productrequest = new UpdateProductRequest(){
-                        Id = id,
-                        Name = product.Name,
-                        Price = product.Price,
-                        Description = product.Description,
-                        AllowedUserGroups = product.AllowedUserGroups.ToList(),
-                        MenuItemIds = product.EligibleMenuItems.Map(x => x.Id).ToList(),
-                        NumberOfTickets = product.NumberOfTickets,
-                        Visible = product.Visible
-            };
+            var productrequest = Product.ToUpdateRequest(product);
 
-            return await _productRepository.UpdateProduct(productrequest)
-                            .Map(p => Product.FromChangedProduct(p, id, false)); // TODO: Fix when UpdateProduct returns IsPerk property
+            return await _productRepository.UpdateProduct(id, productrequest)
+                            .Map(p => Product.FromDto(p));
         }
 
         public async Task<Try<Product>> AddProduct(Product product)
         {
-            var productrequest = new AddProductRequest(){
-                        Name = product.Name,
-                        Price = product.Price,
-                        Description = product.Description,
-                        AllowedUserGroups = product.AllowedUserGroups.ToList(),
-                        MenuItemIds = product.EligibleMenuItems.Map(x => x.Id).ToList(),
-                        NumberOfTickets = product.NumberOfTickets,
-                        Visible = product.Visible
-            };
+            var newproduct = await _productRepository.AddProduct(Product.ToAddRequest(product));
 
-            var changedproduct = await _productRepository.AddProduct(productrequest);
-
-            return changedproduct.Map(p => Product.FromChangedProduct(p, 0, false)); // TODO: Fix when AddProduct no longer returns a ChangedProductResponse 
+            return newproduct.Map(p => Product.FromDto(p));
         }
     }
 }

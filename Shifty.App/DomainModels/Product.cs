@@ -29,21 +29,6 @@ namespace Shifty.App.DomainModels
                 IsPerk = dto.IsPerk
             };
         }
-        public static Product FromChangedProduct(ChangedProductResponse dto, int id, bool isPerk)
-        {
-            return new Product()
-            {
-                Name = dto.Name,
-                Price = dto.Price,
-                Description = dto.Description,
-                NumberOfTickets = dto.NumberOfTickets,
-                EligibleMenuItems = dto.MenuItems.Map(MenuItem.FromDto),
-                AllowedUserGroups = dto.AllowedUserGroups,
-                Visible = dto.Visible,
-                Id = id,
-                IsPerk = isPerk
-            };
-        }
 
         public static AddProductRequest ToAddRequest(Product product)
         {
@@ -70,7 +55,6 @@ namespace Shifty.App.DomainModels
                 AllowedUserGroups = product.AllowedUserGroups.ToList(),
                 Visible = product.Visible,
                 Price = product.Price,
-                Id = product.Id,
             };
         }
 

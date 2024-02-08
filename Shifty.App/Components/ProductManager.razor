@@ -8,6 +8,7 @@
 @using LanguageExt.UnsafeValueAccess
 @using Components
 @using Shifty.App.DomainModels
+@using System.Collections.ObjectModel
 @inject ISnackbar Snackbar
 @inject IProductService ProductService
 @inject IJSRuntime JSRuntime
@@ -127,7 +128,7 @@
 @code
 {
     private MudDataGrid<Product> _dataGrid;
-    private IEnumerable<Product> _products = new List<Product>();
+    private ObservableCollection<Product> _products = new ObservableCollection<Product>();
     private Dictionary<UserGroup, bool> UserGroupDict = new();
     private IEnumerable<MenuItem> _allMenuItems = new List<MenuItem>();
     private Dictionary<MenuItem, bool> SelectedMenuItems = new();
@@ -148,7 +149,8 @@
         var productsResult = await ProductService.GetProducts();
         productsResult.Match(
             Succ: products => {
-                _products = products;
+                _products = new ObservableCollection<Product>(products);
+                StateHasChanged();
             },
             Fail: error => {
                 Snackbar.Add(error.Message, Severity.Error);
@@ -194,22 +196,16 @@
             var result = await ProductService.AddProduct(item);
 
             result.Match(
-                Succ: async product =>
+                Succ: product =>
                 {
                     // Succesfully added product
                     Snackbar.Add("Product added", Severity.Success);
 
-                    // Retrieve all items again in order to update id
-                    var retrieveItems = await ProductService.GetProducts();
-                    retrieveItems.Match(
-                        Succ: items => {
-                            _products = items;
-                        },
-                        Fail: error => {
-                            // Errors while re-retrieving items, non-fatal (just means _products are slightly outdated)
-                            Snackbar.Add(error.Message, Severity.Warning);
-                        }
-                    );
+                    // Override the created product with the placeholder item
+                    _products.Remove(item);
+                    _products.Add(product);
+                    
+                    StateHasChanged();
                 },
                 Fail: error => {
                     Snackbar.Add(error.Message, Severity.Error);
@@ -221,20 +217,10 @@
             var result = await ProductService.UpdateProduct(item, item.Id);
 
             result.Match(
-                Succ: async result =>
+                Succ: product =>
                 {
                     Snackbar.Add("Product updated", Severity.Success);
-
-                    var retrieveItems = await ProductService.GetProducts();
-                    retrieveItems.Match(
-                        Succ: items => {
-                            _products = items;
-                        },
-                        Fail: error => {
-                            // Errors while re-retrieving items, non-fatal (just means _products are slightly outdated)
-                            Snackbar.Add(error.Message, Severity.Warning);
-                        }
-                    );
+                    _products.FirstOrDefault(p => p.Id == item.Id).IsPerk = product.IsPerk;
                 },
                 Fail: error =>
                 {
@@ -246,7 +232,7 @@
 
     void AddItemToDataGrid()
     {
-        _products = _products.Append<Product>(new Product{
+        _products.Add(new Product{
             Id = 0,
             Name = "",
             Description = "",
@@ -254,8 +240,10 @@
             NumberOfTickets = 1,
             Price = 0,
             Visible = true,
-            AllowedUserGroups = new List<UserGroup>()
+            AllowedUserGroups = new List<UserGroup>(),
+            EligibleMenuItems = new List<MenuItem>(),
         });
+        StateHasChanged();
         _dataGrid.SetEditingItemAsync(_products.Last());
     }
 
