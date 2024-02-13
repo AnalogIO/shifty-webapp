@@ -4,10 +4,12 @@
 @using Shifty.Api.Generated.AnalogCoreV1
 @using Shifty.Api.Generated.AnalogCoreV2
 @using Shared
+@using Shifty.App.DomainModels
 @using LanguageExt.UnsafeValueAccess
 @using Shifty.App.Repositories
 @inject ISnackbar Snackbar
 @inject IJSRuntime JSRuntime
+@inject IMenuItemService MenuItemService
 
 <MudPaper Elevation="15" Style="margin: 2em; border-radius: 5px;">
     @if (_loading)
@@ -16,13 +18,36 @@
             <LoadingIndicator Height="400px" />
         </MudContainer>
     }
+    else
+    {
+        <MudContainer Style="width: 100%; display: flex;">
+            <MudGrid>
+                @foreach (var menuItem in _menuItems)
+                {
+                    <div>Tickets</div>
+                }
+            </MudGrid>
+        </MudContainer>
+    }
 </MudPaper>
 
 @code
 {
     private bool _loading = true;
+    private IEnumerable<MenuItem> _menuItems = new List<MenuItem>();
 
     protected override async Task OnInitializedAsync()
     {
+        var result = await MenuItemService.GetMenuItems();
+        result.Match(
+            Succ: menuItems => {
+                _menuItems = menuItems;
+            },
+            Fail: error => {
+                Snackbar.Add(error.Message, Severity.Error);
+            }
+        );
+        Console.WriteLine("MenuItems: " + _menuItems.Count());
+        _loading = false;
     }
 }

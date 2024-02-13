@@ -36,21 +36,21 @@ namespace Shifty.App
             services.AddBlazoredLocalStorage();
             services.AddAuthorizationCore();
 
-            
+
             services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
                 .CreateClient("AnalogCoreV1"));
             services.AddHttpClient("AnalogCoreV1",
                     client => client.BaseAddress = new Uri(configuration["ApiHost"]))
                 .AddHttpMessageHandler<RequestAuthenticationHandler>();
-            services.AddScoped(provider => 
+            services.AddScoped(provider =>
                 new AnalogCoreV1(provider.GetRequiredService<IHttpClientFactory>().CreateClient("AnalogCoreV1")));
-            
+
             services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
                 .CreateClient("AnalogCoreV2"));
             services.AddHttpClient("AnalogCoreV2",
                     client => client.BaseAddress = new Uri(configuration["ApiHost"]))
                 .AddHttpMessageHandler<RequestAuthenticationHandler>();
-            services.AddScoped(provider => 
+            services.AddScoped(provider =>
                 new AnalogCoreV2(provider.GetRequiredService<IHttpClientFactory>().CreateClient("AnalogCoreV2")));
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IVoucherRepository, VoucherRepository>();
@@ -60,6 +60,7 @@ namespace Shifty.App
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IVoucherService, VoucherService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IMenuItemService, MenuItemService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<RequestAuthenticationHandler>();
 
@@ -76,7 +77,7 @@ namespace Shifty.App
                 config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
             });
 
-            
+
         }
     }
 }
