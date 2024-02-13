@@ -121,7 +121,7 @@
 
         result.Match(
             Succ: products => {
-                _products = products;
+                _products = products.Filter<ProductResponse>(p => p.Visible);
                 _voucherForm.Prefix = User.Claims.Single(el => el.Type.Contains("email")).Value[..3].ToUpper();
             },
             Fail: error => {
