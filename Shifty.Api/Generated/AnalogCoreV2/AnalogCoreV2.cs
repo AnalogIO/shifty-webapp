@@ -1442,6 +1442,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         /// <summary>
         /// Updates a menu item
         /// </summary>
+        /// <param name="id">Menu item id to update</param>
         /// <param name="menuItem">Menu item to update</param>
         /// <returns>Menu item successfully updated</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -1454,6 +1455,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         /// <summary>
         /// Updates a menu item
         /// </summary>
+        /// <param name="id">Menu item id to update</param>
         /// <param name="menuItem">Menu item to update</param>
         /// <returns>Menu item successfully updated</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -2956,7 +2958,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
     public partial class ApiError
     {
-        [Newtonsoft.Json.JsonProperty("message", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("message", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Message { get; set; }
 
     }
@@ -3386,6 +3388,12 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         [System.ComponentModel.DataAnnotations.Required]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Whether or not this menu item is active
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("active", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Active { get; set; }
+
     }
 
     /// <summary>
@@ -3415,6 +3423,12 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the updated active status of the product.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("active", Required = Newtonsoft.Json.Required.Always)]
+        public bool Active { get; set; }
 
     }
 
@@ -3784,9 +3798,6 @@ namespace Shifty.Api.Generated.AnalogCoreV2
 
     }
 
-    [Newtonsoft.Json.JsonConverter(typeof(JsonInheritanceConverter), "discriminator")]
-    [JsonInheritanceAttribute("MobilePayPaymentDetails", typeof(MobilePayPaymentDetails))]
-    [JsonInheritanceAttribute("FreePurchasePaymentDetails", typeof(FreePurchasePaymentDetails))]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
     public partial class PaymentDetails
     {
@@ -3825,7 +3836,6 @@ namespace Shifty.Api.Generated.AnalogCoreV2
     /// <summary>
     /// MobilePay Payment details
     /// </summary>
-    [Newtonsoft.Json.JsonConverter(typeof(JsonInheritanceConverter), "discriminator")]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
     public partial class MobilePayPaymentDetails : PaymentDetails
     {
@@ -3854,7 +3864,6 @@ namespace Shifty.Api.Generated.AnalogCoreV2
     /// <summary>
     /// Payment details for a free purchase
     /// </summary>
-    [Newtonsoft.Json.JsonConverter(typeof(JsonInheritanceConverter), "discriminator")]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
     public partial class FreePurchasePaymentDetails : PaymentDetails
     {
@@ -4121,143 +4130,6 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         [System.ComponentModel.DataAnnotations.Required]
         public string Requester { get; set; }
 
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
-    [System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Interface, AllowMultiple = true)]
-    internal class JsonInheritanceAttribute : System.Attribute
-    {
-        public JsonInheritanceAttribute(string key, System.Type type)
-        {
-            Key = key;
-            Type = type;
-        }
-
-        public string Key { get; }
-
-        public System.Type Type { get; }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
-    public class JsonInheritanceConverter : Newtonsoft.Json.JsonConverter
-    {
-        internal static readonly string DefaultDiscriminatorName = "discriminator";
-
-        private readonly string _discriminatorName;
-
-        [System.ThreadStatic]
-        private static bool _isReading;
-
-        [System.ThreadStatic]
-        private static bool _isWriting;
-
-        public JsonInheritanceConverter()
-        {
-            _discriminatorName = DefaultDiscriminatorName;
-        }
-
-        public JsonInheritanceConverter(string discriminatorName)
-        {
-            _discriminatorName = discriminatorName;
-        }
-
-        public string DiscriminatorName { get { return _discriminatorName; } }
-
-        public override void WriteJson(Newtonsoft.Json.JsonWriter writer, object value, Newtonsoft.Json.JsonSerializer serializer)
-        {
-            try
-            {
-                _isWriting = true;
-
-                var jObject = Newtonsoft.Json.Linq.JObject.FromObject(value, serializer);
-                jObject.AddFirst(new Newtonsoft.Json.Linq.JProperty(_discriminatorName, GetSubtypeDiscriminator(value.GetType())));
-                writer.WriteToken(jObject.CreateReader());
-            }
-            finally
-            {
-                _isWriting = false;
-            }
-        }
-
-        public override bool CanWrite
-        {
-            get
-            {
-                if (_isWriting)
-                {
-                    _isWriting = false;
-                    return false;
-                }
-                return true;
-            }
-        }
-
-        public override bool CanRead
-        {
-            get
-            {
-                if (_isReading)
-                {
-                    _isReading = false;
-                    return false;
-                }
-                return true;
-            }
-        }
-
-        public override bool CanConvert(System.Type objectType)
-        {
-            return true;
-        }
-
-        public override object ReadJson(Newtonsoft.Json.JsonReader reader, System.Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer)
-        {
-            var jObject = serializer.Deserialize<Newtonsoft.Json.Linq.JObject>(reader);
-            if (jObject == null)
-                return null;
-
-            var discriminatorValue = jObject.GetValue(_discriminatorName);
-            var discriminator = discriminatorValue != null ? Newtonsoft.Json.Linq.Extensions.Value<string>(discriminatorValue) : null;
-            var subtype = GetObjectSubtype(objectType, discriminator);
-
-            var objectContract = serializer.ContractResolver.ResolveContract(subtype) as Newtonsoft.Json.Serialization.JsonObjectContract;
-            if (objectContract == null || System.Linq.Enumerable.All(objectContract.Properties, p => p.PropertyName != _discriminatorName))
-            {
-                jObject.Remove(_discriminatorName);
-            }
-
-            try
-            {
-                _isReading = true;
-                return serializer.Deserialize(jObject.CreateReader(), subtype);
-            }
-            finally
-            {
-                _isReading = false;
-            }
-        }
-
-        private System.Type GetObjectSubtype(System.Type objectType, string discriminator)
-        {
-            foreach (var attribute in System.Reflection.CustomAttributeExtensions.GetCustomAttributes<JsonInheritanceAttribute>(System.Reflection.IntrospectionExtensions.GetTypeInfo(objectType), true))
-            {
-                if (attribute.Key == discriminator)
-                    return attribute.Type;
-            }
-
-            return objectType;
-        }
-
-        private string GetSubtypeDiscriminator(System.Type objectType)
-        {
-            foreach (var attribute in System.Reflection.CustomAttributeExtensions.GetCustomAttributes<JsonInheritanceAttribute>(System.Reflection.IntrospectionExtensions.GetTypeInfo(objectType), true))
-            {
-                if (attribute.Type == objectType)
-                    return attribute.Key;
-            }
-
-            return objectType.Name;
-        }
     }
 
 

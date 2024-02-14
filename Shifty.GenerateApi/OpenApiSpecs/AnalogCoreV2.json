@@ -1,5 +1,5 @@
 {
-  "x-generator": "NSwag v13.17.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))",
+  "x-generator": "NSwag v14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))",
   "openapi": "3.0.0",
   "info": {
     "title": "Cafe Analog CoffeeCard API",
@@ -17,7 +17,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5001"
+      "url": "https://core.dev.analogio.dk"
     }
   ],
   "paths": {
@@ -349,7 +349,8 @@
             "description": "A filter to search by Id, Name or Email. When an empty string is given, all users will be returned",
             "schema": {
               "type": "string",
-              "default": ""
+              "default": "",
+              "nullable": true
             },
             "x-position": 2
           },
@@ -674,6 +675,7 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "Menu item id to update",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -730,7 +732,8 @@
             "in": "header",
             "description": "Webhook signature",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "nullable": true
             },
             "x-position": 2
           }
@@ -1428,7 +1431,8 @@
         "additionalProperties": false,
         "properties": {
           "message": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           }
         }
       },
@@ -1931,6 +1935,11 @@
             "description": "Name of menu item",
             "minLength": 1,
             "example": "Cappuccino"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Whether or not this menu item is active",
+            "example": true
           }
         }
       },
@@ -1955,7 +1964,8 @@
         "description": "Initiate an update product request.",
         "additionalProperties": false,
         "required": [
-          "name"
+          "name",
+          "active"
         ],
         "properties": {
           "name": {
@@ -1963,6 +1973,11 @@
             "description": "Gets or sets the updated name of the product.",
             "minLength": 1,
             "example": "Espresso"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Gets or sets the updated active status of the product.",
+            "example": true
           }
         }
       },
@@ -2429,15 +2444,11 @@
       },
       "PaymentDetails": {
         "type": "object",
-        "discriminator": {
-          "propertyName": "discriminator"
-        },
         "x-abstract": true,
         "additionalProperties": false,
         "required": [
           "paymentType",
-          "orderId",
-          "discriminator"
+          "orderId"
         ],
         "properties": {
           "paymentType": {
@@ -2454,9 +2465,6 @@
             "description": "Order id of purchase",
             "minLength": 1,
             "example": "f5cb3e0f-3b9b-4f50-8c4f-a7450f300a5c"
-          },
-          "discriminator": {
-            "type": "string"
           }
         }
       },
@@ -2479,9 +2487,6 @@
           },
           {
             "type": "object",
-            "discriminator": {
-              "propertyName": "discriminator"
-            },
             "description": "MobilePay Payment details",
             "example": {
               "paymentType": "MobilePay",
@@ -2493,8 +2498,7 @@
             "required": [
               "mobilePayAppRedirectUri",
               "paymentId",
-              "state",
-              "discriminator"
+              "state"
             ],
             "properties": {
               "mobilePayAppRedirectUri": {
@@ -2514,9 +2518,6 @@
                 "description": "MobilePay state",
                 "nullable": true,
                 "example": "Initiated"
-              },
-              "discriminator": {
-                "type": "string"
               }
             }
           }
@@ -2529,23 +2530,12 @@
           },
           {
             "type": "object",
-            "discriminator": {
-              "propertyName": "discriminator"
-            },
             "description": "Payment details for a free purchase",
             "example": {
               "paymentType": "FreeProduct",
               "orderId": "f5cb3e0f-3b9b-4f50-8c4f-a7450f300a5c"
             },
-            "additionalProperties": false,
-            "required": [
-              "discriminator"
-            ],
-            "properties": {
-              "discriminator": {
-                "type": "string"
-              }
-            }
+            "additionalProperties": false
           }
         ]
       },
