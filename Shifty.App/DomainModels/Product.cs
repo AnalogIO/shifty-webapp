@@ -57,10 +57,5 @@ namespace Shifty.App.DomainModels
                 Price = product.Price,
             };
         }
-
-        public override string ToString()
-        {
-            return Name;
-        }
     }
 }
