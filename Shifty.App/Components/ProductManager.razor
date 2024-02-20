@@ -37,7 +37,7 @@
         CommittedItemChanges="@CommittedItemChanges"
         EditTrigger="DataGridEditTrigger.Manual"
         QuickFilter="e => _showNonvisible || e.Visible"
-        RowStyleFunc="@_RowStyleFunc"
+        RowStyleFunc="@RowStyleFunc"
         FixedHeader="true"
         Height="calc(100vh - 250px)"
         Dense="true"
@@ -131,7 +131,7 @@
     private IEnumerable<Product> _products = new List<Product>();
     private Dictionary<UserGroup, bool> UserGroupDict = new();
     private IEnumerable<MenuItem> _allMenuItems = new List<MenuItem>();
-    private Dictionary<MenuItem, bool> SelectedMenuItems = new();
+    
     private void StartedEditingItem(Product item)
     {
         UserGroupDict = new();
@@ -247,7 +247,7 @@
         _dataGrid.SetEditingItemAsync(_products.Last());
     }
 
-    private Func<Product, int, string> _RowStyleFunc => (x, i) =>
+    private Func<Product, int, string> RowStyleFunc => (x, i) =>
     {
         if (!x.Visible)
         {
