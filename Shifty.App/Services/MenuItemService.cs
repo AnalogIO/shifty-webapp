@@ -26,14 +26,14 @@ namespace Shifty.App.Services
         {
             return await _MenuItemRepository
                         .UpdateMenuItem(MenuItem, id)
-                        .Map(mi => DomainModels.MenuItem.FromDto(mi));
+                        .Map(DomainModels.MenuItem.FromDto);
         }
 
         public async Task<Try<MenuItem>> AddMenuItem(AddMenuItemRequest MenuItem)
         {
             return await _MenuItemRepository
                         .AddMenuItem(MenuItem)
-                        .Map(mi => DomainModels.MenuItem.FromDto(mi));
+                        .Map(DomainModels.MenuItem.FromDto);
         }
         
         public async Task<Try<IEnumerable<MenuItem>>> GetMenuItems()
@@ -42,7 +42,7 @@ namespace Shifty.App.Services
                         .GetMenuItems();
 
             return await temp.Map(x => 
-                x.Map(mi => MenuItem.FromDto(mi)));
+                x.Map(MenuItem.FromDto));
         }
     }
 }
