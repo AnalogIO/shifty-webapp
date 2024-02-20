@@ -1,13 +1,13 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shifty.Api", "Shifty.Api\Shifty.Api.csproj", "{BEDEC57C-E274-4F0A-B82C-9EBBCD8C67F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shifty.App", "Shifty.App\Shifty.App.csproj", "{A27A55FD-8B36-48DA-9EC5-2FC45E2D89C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shifty.App", "Shifty.App\Shifty.App.csproj", "{A27A55FD-8B36-48DA-9EC5-2FC45E2D89C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shifty.GenerateApi", "Shifty.GenerateApi\Shifty.GenerateApi.csproj", "{45CCCE83-B163-4DDF-9826-61413C85BF4F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shifty.GenerateApi", "Shifty.GenerateApi\Shifty.GenerateApi.csproj", "{45CCCE83-B163-4DDF-9826-61413C85BF4F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
