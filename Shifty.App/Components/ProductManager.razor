@@ -103,7 +103,12 @@
             <PropertyColumn Property="x => x.Description" Title="Description" IsEditable="true" />
             <PropertyColumn Property="x => x.EligibleMenuItems" Title="Eligible menu items" IsEditable="true" Hidden>
                 <EditTemplate>
-                    <MudComboBox Label="Eligible menu items" T="MenuItem" MultiSelection="true" Editable="true" @bind-SelectedValues="context.Item.EligibleMenuItems">
+                    <MudComboBox
+                        T="MenuItem" 
+                        Label="Eligible menu items"
+                        MultiSelection="true" 
+                        Editable="true" 
+                        @bind-SelectedValues="context.Item.EligibleMenuItems">
                         @foreach (var mi in _allMenuItems)
                         {
                             <MudComboBoxItem Text="@mi.Name" Value="@mi">@mi.Name</MudComboBoxItem>

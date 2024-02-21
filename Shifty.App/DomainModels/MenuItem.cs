@@ -5,7 +5,7 @@ using Shifty.Api.Generated.AnalogCoreV2;
 
 namespace Shifty.App.DomainModels
 {
-    public class MenuItem {
+    public record MenuItem {
         public int Id { get; init; }
         public string Name { get; set; }
         public static MenuItem FromDto(MenuItemResponse dto)
@@ -31,20 +31,6 @@ namespace Shifty.App.DomainModels
             {
                 Name = menuItem.Name
             };
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is not MenuItem)
-            {
-                return false;
-            }
-            return ((MenuItem)obj).Id == Id;
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Id, Name);
         }
     }
 }
