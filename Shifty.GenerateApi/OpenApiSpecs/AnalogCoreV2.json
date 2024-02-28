@@ -17,7 +17,7 @@
   },
   "servers": [
     {
-      "url": "https://core.dev.analogio.dk"
+      "url": "http://localhost:5001"
     }
   ],
   "paths": {
@@ -1362,6 +1362,47 @@
           }
         ]
       }
+    },
+    "/api/v2/webhooks/accounts/user-group": {
+      "put": {
+        "tags": [
+          "Webhooks"
+        ],
+        "summary": "Update user groups in bulk",
+        "operationId": "Webhooks_UpdateUserGroups",
+        "requestBody": {
+          "x-name": "request",
+          "description": "The request containing the new user groups",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookUpdateUserGroupRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "204": {
+            "description": "The user groups were updated"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          },
+          "400": {
+            "description": "Bad request. See explanation"
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -1721,10 +1762,16 @@
         "description": "Represents a search result",
         "additionalProperties": false,
         "required": [
-          "users",
-          "totalUsers"
+          "totalUsers",
+          "users"
         ],
         "properties": {
+          "totalUsers": {
+            "type": "integer",
+            "description": "The number of users that match the query",
+            "format": "int32",
+            "example": 1
+          },
           "users": {
             "type": "array",
             "description": "The users that match the query",
@@ -1740,12 +1787,6 @@
             "items": {
               "$ref": "#/components/schemas/SimpleUserResponse"
             }
-          },
-          "totalUsers": {
-            "type": "integer",
-            "description": "The number of users that match the query",
-            "format": "int32",
-            "example": 1
           }
         }
       },
@@ -2444,11 +2485,19 @@
       },
       "PaymentDetails": {
         "type": "object",
+        "discriminator": {
+          "propertyName": "discriminator",
+          "mapping": {
+            "MobilePayPaymentDetails": "#/components/schemas/MobilePayPaymentDetails",
+            "FreePurchasePaymentDetails": "#/components/schemas/FreePurchasePaymentDetails"
+          }
+        },
         "x-abstract": true,
         "additionalProperties": false,
         "required": [
           "paymentType",
-          "orderId"
+          "orderId",
+          "discriminator"
         ],
         "properties": {
           "paymentType": {
@@ -2465,6 +2514,9 @@
             "description": "Order id of purchase",
             "minLength": 1,
             "example": "f5cb3e0f-3b9b-4f50-8c4f-a7450f300a5c"
+          },
+          "discriminator": {
+            "type": "string"
           }
         }
       },
@@ -2497,8 +2549,7 @@
             "additionalProperties": false,
             "required": [
               "mobilePayAppRedirectUri",
-              "paymentId",
-              "state"
+              "paymentId"
             ],
             "properties": {
               "mobilePayAppRedirectUri": {
@@ -2512,12 +2563,6 @@
                 "description": "MobilePay Id for a payment",
                 "minLength": 1,
                 "example": "186d2b31-ff25-4414-9fd1-bfe9807fa8b7"
-              },
-              "state": {
-                "type": "string",
-                "description": "MobilePay state",
-                "nullable": true,
-                "example": "Initiated"
               }
             }
           }
@@ -2650,7 +2695,6 @@
         "required": [
           "id",
           "dateCreated",
-          "dateUsed",
           "productId",
           "productName"
         ],
@@ -2852,6 +2896,49 @@
             "description": "The requester of the voucher codes",
             "minLength": 1,
             "example": "John Doe"
+          }
+        }
+      },
+      "WebhookUpdateUserGroupRequest": {
+        "type": "object",
+        "description": "Represents a request to update user groups in bulk",
+        "additionalProperties": false,
+        "required": [
+          "privilegedUsers"
+        ],
+        "properties": {
+          "privilegedUsers": {
+            "type": "array",
+            "description": "List of accounts and their new user groups",
+            "items": {
+              "$ref": "#/components/schemas/AccountUserGroup"
+            }
+          }
+        }
+      },
+      "AccountUserGroup": {
+        "type": "object",
+        "description": "Represents an account user group update",
+        "additionalProperties": false,
+        "required": [
+          "accountId",
+          "userGroup"
+        ],
+        "properties": {
+          "accountId": {
+            "type": "integer",
+            "description": "The account id",
+            "format": "int32",
+            "example": 1
+          },
+          "userGroup": {
+            "description": "The user group",
+            "example": "Barista",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/UserGroup"
+              }
+            ]
           }
         }
       }

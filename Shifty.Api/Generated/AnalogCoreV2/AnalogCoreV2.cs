@@ -2803,6 +2803,101 @@ namespace Shifty.Api.Generated.AnalogCoreV2
             }
         }
 
+        /// <summary>
+        /// Update user groups in bulk
+        /// </summary>
+        /// <param name="request">The request containing the new user groups</param>
+        /// <returns>The user groups were updated</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task ApiV2WebhooksAccountsUserGroupAsync(WebhookUpdateUserGroupRequest request)
+        {
+            return ApiV2WebhooksAccountsUserGroupAsync(request, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Update user groups in bulk
+        /// </summary>
+        /// <param name="request">The request containing the new user groups</param>
+        /// <returns>The user groups were updated</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task ApiV2WebhooksAccountsUserGroupAsync(WebhookUpdateUserGroupRequest request, System.Threading.CancellationToken cancellationToken)
+        {
+            if (request == null)
+                throw new System.ArgumentNullException("request");
+
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append("api/v2/webhooks/accounts/user-group");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(request, _settings.Value);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 204)
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("Invalid credentials", status_, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("Bad request. See explanation", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
         protected struct ObjectResponseResult<T>
         {
             public ObjectResponseResult(T responseObject, string responseText)
@@ -3199,17 +3294,17 @@ namespace Shifty.Api.Generated.AnalogCoreV2
     public partial class UserSearchResponse
     {
         /// <summary>
+        /// The number of users that match the query
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("totalUsers", Required = Newtonsoft.Json.Required.Always)]
+        public int TotalUsers { get; set; }
+
+        /// <summary>
         /// The users that match the query
         /// </summary>
         [Newtonsoft.Json.JsonProperty("users", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         public System.Collections.Generic.ICollection<SimpleUserResponse> Users { get; set; } = new System.Collections.ObjectModel.Collection<SimpleUserResponse>();
-
-        /// <summary>
-        /// The number of users that match the query
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("totalUsers", Required = Newtonsoft.Json.Required.Always)]
-        public int TotalUsers { get; set; }
 
     }
 
@@ -3798,6 +3893,9 @@ namespace Shifty.Api.Generated.AnalogCoreV2
 
     }
 
+    [Newtonsoft.Json.JsonConverter(typeof(JsonInheritanceConverter), "discriminator")]
+    [JsonInheritanceAttribute("MobilePayPaymentDetails", typeof(MobilePayPaymentDetails))]
+    [JsonInheritanceAttribute("FreePurchasePaymentDetails", typeof(FreePurchasePaymentDetails))]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
     public partial class PaymentDetails
     {
@@ -3852,12 +3950,6 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         [Newtonsoft.Json.JsonProperty("paymentId", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
         public string PaymentId { get; set; }
-
-        /// <summary>
-        /// MobilePay state
-        /// </summary>
-        [Newtonsoft.Json.JsonProperty("state", Required = Newtonsoft.Json.Required.AllowNull)]
-        public string State { get; set; }
 
     }
 
@@ -3970,7 +4062,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         /// <summary>
         /// Used date time for ticket in Utc format
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("dateUsed", Required = Newtonsoft.Json.Required.AllowNull)]
+        [Newtonsoft.Json.JsonProperty("dateUsed", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTimeOffset? DateUsed { get; set; }
 
         /// <summary>
@@ -4130,6 +4222,180 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         [System.ComponentModel.DataAnnotations.Required]
         public string Requester { get; set; }
 
+    }
+
+    /// <summary>
+    /// Represents a request to update user groups in bulk
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
+    public partial class WebhookUpdateUserGroupRequest
+    {
+        /// <summary>
+        /// List of accounts and their new user groups
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("privilegedUsers", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<AccountUserGroup> PrivilegedUsers { get; set; } = new System.Collections.ObjectModel.Collection<AccountUserGroup>();
+
+    }
+
+    /// <summary>
+    /// Represents an account user group update
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
+    public partial class AccountUserGroup
+    {
+        /// <summary>
+        /// The account id
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("accountId", Required = Newtonsoft.Json.Required.Always)]
+        public int AccountId { get; set; }
+
+        /// <summary>
+        /// The user group
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("userGroup", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public UserGroup UserGroup { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
+    [System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Interface, AllowMultiple = true)]
+    internal class JsonInheritanceAttribute : System.Attribute
+    {
+        public JsonInheritanceAttribute(string key, System.Type type)
+        {
+            Key = key;
+            Type = type;
+        }
+
+        public string Key { get; }
+
+        public System.Type Type { get; }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
+    public class JsonInheritanceConverter : Newtonsoft.Json.JsonConverter
+    {
+        internal static readonly string DefaultDiscriminatorName = "discriminator";
+
+        private readonly string _discriminatorName;
+
+        [System.ThreadStatic]
+        private static bool _isReading;
+
+        [System.ThreadStatic]
+        private static bool _isWriting;
+
+        public JsonInheritanceConverter()
+        {
+            _discriminatorName = DefaultDiscriminatorName;
+        }
+
+        public JsonInheritanceConverter(string discriminatorName)
+        {
+            _discriminatorName = discriminatorName;
+        }
+
+        public string DiscriminatorName { get { return _discriminatorName; } }
+
+        public override void WriteJson(Newtonsoft.Json.JsonWriter writer, object value, Newtonsoft.Json.JsonSerializer serializer)
+        {
+            try
+            {
+                _isWriting = true;
+
+                var jObject = Newtonsoft.Json.Linq.JObject.FromObject(value, serializer);
+                jObject.AddFirst(new Newtonsoft.Json.Linq.JProperty(_discriminatorName, GetSubtypeDiscriminator(value.GetType())));
+                writer.WriteToken(jObject.CreateReader());
+            }
+            finally
+            {
+                _isWriting = false;
+            }
+        }
+
+        public override bool CanWrite
+        {
+            get
+            {
+                if (_isWriting)
+                {
+                    _isWriting = false;
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        public override bool CanRead
+        {
+            get
+            {
+                if (_isReading)
+                {
+                    _isReading = false;
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        public override bool CanConvert(System.Type objectType)
+        {
+            return true;
+        }
+
+        public override object ReadJson(Newtonsoft.Json.JsonReader reader, System.Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer)
+        {
+            var jObject = serializer.Deserialize<Newtonsoft.Json.Linq.JObject>(reader);
+            if (jObject == null)
+                return null;
+
+            var discriminatorValue = jObject.GetValue(_discriminatorName);
+            var discriminator = discriminatorValue != null ? Newtonsoft.Json.Linq.Extensions.Value<string>(discriminatorValue) : null;
+            var subtype = GetObjectSubtype(objectType, discriminator);
+
+            var objectContract = serializer.ContractResolver.ResolveContract(subtype) as Newtonsoft.Json.Serialization.JsonObjectContract;
+            if (objectContract == null || System.Linq.Enumerable.All(objectContract.Properties, p => p.PropertyName != _discriminatorName))
+            {
+                jObject.Remove(_discriminatorName);
+            }
+
+            try
+            {
+                _isReading = true;
+                return serializer.Deserialize(jObject.CreateReader(), subtype);
+            }
+            finally
+            {
+                _isReading = false;
+            }
+        }
+
+        private System.Type GetObjectSubtype(System.Type objectType, string discriminator)
+        {
+            foreach (var attribute in System.Reflection.CustomAttributeExtensions.GetCustomAttributes<JsonInheritanceAttribute>(System.Reflection.IntrospectionExtensions.GetTypeInfo(objectType), true))
+            {
+                if (attribute.Key == discriminator)
+                    return attribute.Type;
+            }
+
+            return objectType;
+        }
+
+        private string GetSubtypeDiscriminator(System.Type objectType)
+        {
+            foreach (var attribute in System.Reflection.CustomAttributeExtensions.GetCustomAttributes<JsonInheritanceAttribute>(System.Reflection.IntrospectionExtensions.GetTypeInfo(objectType), true))
+            {
+                if (attribute.Type == objectType)
+                    return attribute.Key;
+            }
+
+            return objectType.Name;
+        }
     }
 
 
