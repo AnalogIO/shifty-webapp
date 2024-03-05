@@ -17,7 +17,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5001"
+      "url": "https://localhost:8081"
     }
   ],
   "paths": {
@@ -1238,6 +1238,63 @@
         ]
       }
     },
+    "/api/v2/tickets/recent": {
+      "get": {
+        "tags": [
+          "Tickets"
+        ],
+        "summary": "Gets recently used tickets",
+        "operationId": "Tickets_GetRecentlyUsedTickets",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UsedTicketEvent"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
     "/api/v2/vouchers/issue-vouchers": {
       "post": {
         "tags": [
@@ -1955,14 +2012,11 @@
       "MenuItemResponse": {
         "type": "object",
         "description": "Represents a menu item that can be redeemed with a ticket",
-        "example": {
-          "id": 1,
-          "name": "Cappuccino"
-        },
         "additionalProperties": false,
         "required": [
           "id",
-          "name"
+          "name",
+          "active"
         ],
         "properties": {
           "id": {
@@ -2804,6 +2858,43 @@
             "description": "The id of the menu item to use the ticket on.",
             "format": "int32",
             "example": 1
+          }
+        }
+      },
+      "UsedTicketEvent": {
+        "type": "object",
+        "description": "Representing a used ticket for a product",
+        "additionalProperties": false,
+        "required": [
+          "dateUsed",
+          "productName",
+          "userName"
+        ],
+        "properties": {
+          "dateUsed": {
+            "type": "string",
+            "description": "Used date time for ticket in Utc format",
+            "format": "date-time",
+            "minLength": 1,
+            "example": "2022-01-09T21:03:52.2283208Z"
+          },
+          "productName": {
+            "type": "string",
+            "description": "Name of product a ticket is for",
+            "minLength": 1,
+            "example": "Small drink"
+          },
+          "menuItemName": {
+            "type": "string",
+            "description": "Name of the menu item that this ticket was used on",
+            "nullable": true,
+            "example": "Cappuccino"
+          },
+          "userName": {
+            "type": "string",
+            "description": "Name of the user who swiped the ticket",
+            "minLength": 1,
+            "example": "John Doe"
           }
         }
       },

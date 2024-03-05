@@ -58,6 +58,7 @@ namespace Shifty.App
             services.AddScoped<IVoucherRepository, VoucherRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IMenuItemRepository, MenuItemRepository>();
+            services.AddScoped<ITicketRepository, TicketRepository>();
             services.AddScoped<CustomAuthStateProvider>();
             services.AddScoped<AuthenticationStateProvider>(s => s.GetService<CustomAuthStateProvider>());
             services.AddScoped<IAuthenticationService, AuthenticationService>();
@@ -65,6 +66,7 @@ namespace Shifty.App
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IMenuItemService, MenuItemService>();
+            services.AddScoped<ITicketService, TicketService>();
             services.AddScoped<RequestAuthenticationHandler>();
 
             services.AddMudServices(config =>
