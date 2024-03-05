@@ -1,0 +1,54 @@
+﻿@namespace Components
+@using System.ComponentModel.DataAnnotations
+@using Shifty.App.Services
+@using Shifty.Api.Generated.AnalogCoreV1
+@using Shifty.Api.Generated.AnalogCoreV2
+@using Shared
+@using LanguageExt.UnsafeValueAccess
+@using Shifty.App.Repositories
+@using Microsoft.AspNetCore.SignalR.Client;
+@inject ISnackbar Snackbar
+@inject IJSRuntime JSRuntime
+
+<MudPaper Elevation="15" Style="margin: 2em; border-radius: 5px;">
+    @if (_loading)
+    {
+        <MudContainer Style="width: 100%; display: flex;">
+            <MudTimeline>
+                @foreach(var ticket in _usedTickets)
+                {
+                    <MudTimelineItem>
+                        <MudTimelineContent>
+                            <MudTypography Variant="Variant.H6" Color="Color.Primary">@ticket.UserName</MudTypography>
+                            <MudTypography Variant="Variant.Subtitle1" Color="Color.TextSecondary">@ticket.DateUsed</MudTypography>
+                        </MudTimelineContent>
+                    </MudTimelineItem>
+                }
+            </MudTimeline>
+        </MudContainer>
+    }
+</MudPaper>
+
+@code
+{
+    private bool _loading = true;
+    private HubConnection _hubConnection;
+    private List<UsedTicketEvent> _usedTickets = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl("https://localhost:8081/used_tickets")
+            .Build();
+        
+        _hubConnection.On<UsedTicketEvent>("UsedTicket", usedTicketEvent =>
+        {
+            _usedTickets.Add(usedTicketEvent);
+            InvokeAsync(StateHasChanged);
+        });
+
+        await _hubConnection.StartAsync();
+
+
+    }
+}
