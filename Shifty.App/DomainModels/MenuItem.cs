@@ -1,10 +1,8 @@
-using System.Data.Common;
-using Shifty.Api.Generated.AnalogCoreV1;
 using Shifty.Api.Generated.AnalogCoreV2;
 
 namespace Shifty.App.DomainModels
 {
-    public class MenuItem {
+    public record MenuItem {
         public int Id { get; init; }
         public string Name { get; set; }
         public static MenuItem FromDto(MenuItemResponse dto)
@@ -30,11 +28,6 @@ namespace Shifty.App.DomainModels
             {
                 Name = menuItem.Name
             };
-        }
-
-        public override string ToString()
-        {
-            return Name;
         }
     }
 }

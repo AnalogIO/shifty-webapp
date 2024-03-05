@@ -6,6 +6,7 @@
 @using Shared
 @using LanguageExt.UnsafeValueAccess
 @using Shifty.App.Repositories
+@using Shifty.App.DomainModels
 @inject IProductService _productService
 @inject IVoucherService _voucherService
 @inject ISnackbar Snackbar
@@ -16,7 +17,7 @@
         <MudCardContent>
             <MudText Align="Align.Center" Class="mb-n4">Issue Voucher Form</MudText>
             <MudForm @bind-IsValid="@_isFormValid" >
-                <MudAutocomplete T="ProductResponse"
+                <MudAutocomplete T="Product"
                                  Required="true"
                                  RequiredError="Product is required"
                                  Placeholder="Select product"
@@ -100,7 +101,7 @@
     private VoucherForm _voucherForm = new();
     private bool _isFormValid = false;
     private bool _showProgressBar = false;
-    private IEnumerable<ProductResponse> _products = new List<ProductResponse>();
+    private IEnumerable<Product> _products = new List<Product>();
     private IEnumerable<IssueVoucherResponse> _vouchers;
     private string _voucherCodes;
     private MudTextField<string> _multilineReference;
@@ -109,7 +110,7 @@
     {
         [Required]
         public string Description { get; set; }
-        public ProductResponse Product { get; set; }
+        public Product Product { get; set; }
         public int Amount { get; set; } = 1;
         public string Requester { get; set; }
         public string Prefix { get; set; }
@@ -121,7 +122,7 @@
 
         result.Match(
             Succ: products => {
-                _products = products.Filter<ProductResponse>(p => p.Visible);
+                _products = products.Filter<Product>(p => p.Visible);
                 _voucherForm.Prefix = User.Claims.Single(el => el.Type.Contains("email")).Value[..3].ToUpper();
             },
             Fail: error => {
@@ -130,7 +131,7 @@
         );
     }
 
-    private async Task<IEnumerable<ProductResponse>> Products(string value)
+    private async Task<IEnumerable<Product>> Products(string value)
     {
         if (string.IsNullOrEmpty(value))
             return _products;
@@ -168,6 +169,6 @@
         );
     }
     
-    Func<ProductResponse,string> _converter = p => p != null ? $"{p.Name} - {p.NumberOfTickets} ticket" + (p.NumberOfTickets == 1 ? "" : "s") : "";
+    Func<Product,string> _converter = p => p != null ? $"{p.Name} - {p.NumberOfTickets} ticket" + (p.NumberOfTickets == 1 ? "" : "s") : "";
     Func<string, string> _prefixValidation = str => str.Length == 3 ? null : "Prefix must be 3 letters";
 }

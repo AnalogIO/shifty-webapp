@@ -1,13 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Blazored.LocalStorage;
 using LanguageExt;
-using LanguageExt.Common;
-using LanguageExt.UnsafeValueAccess;
-using Shifty.Api.Generated.AnalogCoreV1;
-using Shifty.Api.Generated.AnalogCoreV2;
-using Shifty.App.Authentication;
+using Shifty.App.DomainModels;
 using Shifty.App.Repositories;
 
 namespace Shifty.App.Services
@@ -21,19 +15,26 @@ namespace Shifty.App.Services
             _productRepository = productRepository;
         }
 
-        public async Task<Try<IEnumerable<ProductResponse>>> GetProducts()
+        public async Task<Try<IEnumerable<Product>>> GetProducts()
         {
-            return await _productRepository.GetProducts();
+            return await _productRepository
+                            .GetProducts()
+                            .Map(x => x.Map(p => Product.FromDto(p)));
         }
         
-        public async Task<Try<ChangedProductResponse>> UpdateProduct(UpdateProductRequest product)
+        public async Task<Try<Product>> UpdateProduct(Product product, int id)
         {
-            return await _productRepository.UpdateProduct(product);
+            var productrequest = Product.ToUpdateRequest(product);
+
+            return await _productRepository.UpdateProduct(id, productrequest)
+                            .Map(p => Product.FromDto(p));
         }
 
-        public async Task<Try<ChangedProductResponse>> AddProduct(AddProductRequest product)
+        public async Task<Try<Product>> AddProduct(Product product)
         {
-            return await _productRepository.AddProduct(product);
+            var newproduct = await _productRepository.AddProduct(Product.ToAddRequest(product));
+
+            return newproduct.Map(p => Product.FromDto(p));
         }
     }
 }

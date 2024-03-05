@@ -20,14 +20,14 @@ namespace Shifty.App.Repositories
             _client = client;
         }
 
-        public async Task<Try<ChangedProductResponse>> AddProduct(AddProductRequest addProductRequest)
+        public async Task<Try<ProductResponse>> AddProduct(AddProductRequest addProductRequest)
         {
             return await TryAsync(async () => await _client.ApiV2ProductsPostAsync(addProductRequest));
         }
 
-        public async Task<Try<ChangedProductResponse>> UpdateProduct(UpdateProductRequest product)
+        public async Task<Try<ProductResponse>> UpdateProduct(int productId, UpdateProductRequest product)
         {
-            return await TryAsync(async () => await _client.ApiV2ProductsPutAsync(product));
+            return await TryAsync(async () => await _client.ApiV2ProductsPutAsync(productId, product));
         }
 
         async Task<Try<IEnumerable<ProductResponse>>> IProductRepository.GetProducts()

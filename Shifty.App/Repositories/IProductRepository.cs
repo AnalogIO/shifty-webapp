@@ -8,8 +8,8 @@ namespace Shifty.App.Repositories
 {
     public interface IProductRepository
     {
-        Task<Try<ChangedProductResponse>> AddProduct(AddProductRequest addProductRequest);
+        Task<Try<ProductResponse>> AddProduct(AddProductRequest addProductRequest);
         public Task<Try<System.Collections.Generic.IEnumerable<ProductResponse>>> GetProducts();
-        Task<Try<ChangedProductResponse>> UpdateProduct(UpdateProductRequest product);
+        Task<Try<ProductResponse>> UpdateProduct(int productId, UpdateProductRequest product);
     }
 }
