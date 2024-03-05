@@ -9,17 +9,24 @@
 @using Microsoft.AspNetCore.SignalR.Client;
 @inject ISnackbar Snackbar
 @inject IJSRuntime JSRuntime
+@inject ITicketService TicketService
 
 <MudPaper Elevation="15" Style="margin: 2em; border-radius: 5px;">
     @if (_loading)
     {
         <MudContainer Style="width: 100%; display: flex;">
+            <LoadingIndicator Height="400px"/>
+        </MudContainer>
+    }
+    else
+    {
+        <MudContainer Style="width: 100%; display: flex;">
             <MudTimeline>
-                @foreach(var ticket in _usedTickets)
+                @foreach (var ticket in _usedTickets)
                 {
                     <MudTimelineItem>
                         <MudTimelineContent>
-                            <MudTypography Variant="Variant.H6" Color="Color.Primary">@ticket.UserName</MudTypography>
+                            <MudTypography Variant="Variant.H6" Color="Color.Primary">@ticket.UserName swiped @ticket.ProductName</MudTypography>
                             <MudTypography Variant="Variant.Subtitle1" Color="Color.TextSecondary">@ticket.DateUsed</MudTypography>
                         </MudTimelineContent>
                     </MudTimelineItem>
@@ -37,6 +44,17 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var result = await TicketService.GetRecentlyUsedTickets(10);
+        result.Match(
+            Succ: usedTickets =>
+            {
+                Snackbar.Add("Fetched recently swiped tickets", Severity.Success);
+                _usedTickets.AddRange(usedTickets.ToList());
+                StateHasChanged();
+            }, 
+            Fail: error => Snackbar.Add(error.Message, Severity.Error)
+        );
+        
         _hubConnection = new HubConnectionBuilder()
             .WithUrl("https://localhost:8081/used_tickets")
             .Build();
@@ -48,7 +66,6 @@
         });
 
         await _hubConnection.StartAsync();
-
-
+        _loading = false;
     }
 }
