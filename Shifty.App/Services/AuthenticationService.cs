@@ -1,4 +1,7 @@
 using System.Threading.Tasks;
+using System;
+using System.Security.Cryptography;
+using System.Text;
 using Blazored.LocalStorage;
 using LanguageExt.UnsafeValueAccess;
 using Shifty.App.Authentication;
@@ -19,9 +22,20 @@ namespace Shifty.App.Services
             _localStorage = storageService;
         }
 
+        private static string EncodePasscode(string passcode)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(passcode);
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] passcodeHash = sha256.ComputeHash(bytes);
+                return Convert.ToBase64String(passcodeHash);
+            }
+        }
+        
         public async Task<bool> LoginUser(string username, string password)
         {
-            var either = await _accountRepository.LoginAsync(username, password);
+            var encodedPassword = EncodePasscode(password);
+            var either = await _accountRepository.LoginAsync(username, encodedPassword);
 
             if (either.IsLeft)
             {
