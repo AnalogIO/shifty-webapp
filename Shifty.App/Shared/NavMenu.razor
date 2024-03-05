@@ -1,4 +1,7 @@
-﻿<MudNavMenu>
+﻿@using Shifty.App.Services
+@inject IAuthenticationService _authenticationService
+
+<MudNavMenu>
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
     @if (_user is not null && _user.IsInRole("Board"))
     {
@@ -8,7 +11,7 @@
         <MudNavLink Href="Users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.ManageAccounts">Manage users</MudNavLink>
     }
     <MudDivider />
-    <MudNavLink ForceLoad="true" Href="Logout" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Logout">Logout</MudNavLink>
+    <MudNavLink OnClick="_authenticationService.Logout" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Logout">Logout</MudNavLink>
 </MudNavMenu>
 
 @code
