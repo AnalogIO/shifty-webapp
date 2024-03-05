@@ -1,14 +1,18 @@
 @namespace Components
 @using System.ComponentModel.DataAnnotations
+@using MudExtensions
 @using Shifty.App.Services
 @using Shifty.Api.Generated.AnalogCoreV1
 @using Shifty.Api.Generated.AnalogCoreV2
 @using Shared
 @using LanguageExt.UnsafeValueAccess
 @using Components
+@using Shifty.App.DomainModels
+@using System.Collections.ObjectModel
 @inject ISnackbar Snackbar
 @inject IProductService ProductService
 @inject IJSRuntime JSRuntime
+@inject IMenuItemService MenuItemService
 
 <style>
     .mud-table-cell {
@@ -24,7 +28,7 @@
     }
     <MudDataGrid
         @ref="_dataGrid"
-        T="ProductResponse"
+        T="Product"
         Items="@_products"
         EditMode="DataGridEditMode.Form"
         ReadOnly="false"
@@ -33,7 +37,7 @@
         CommittedItemChanges="@CommittedItemChanges"
         EditTrigger="DataGridEditTrigger.Manual"
         QuickFilter="e => _showNonvisible || e.Visible"
-        RowStyleFunc="@_RowStyleFunc"
+        RowStyleFunc="@RowStyleFunc"
         FixedHeader="true"
         Height="calc(100vh - 250px)"
         Dense="true"
@@ -97,6 +101,21 @@
                 </CellTemplate>
             </PropertyColumn>
             <PropertyColumn Property="x => x.Description" Title="Description" IsEditable="true" />
+            <PropertyColumn Property="x => x.EligibleMenuItems" Title="Eligible menu items" IsEditable="true" Hidden>
+                <EditTemplate>
+                    <MudComboBox
+                        T="MenuItem" 
+                        Label="Eligible menu items"
+                        MultiSelection="true" 
+                        Editable="true" 
+                        @bind-SelectedValues="context.Item.EligibleMenuItems">
+                        @foreach (var mi in _allMenuItems)
+                        {
+                            <MudComboBoxItem Text="@mi.Name" Value="@mi">@mi.Name</MudComboBoxItem>
+                        }
+                    </MudComboBox>
+                </EditTemplate>
+            </PropertyColumn>
         </Columns>
     </MudDataGrid>
 
@@ -113,11 +132,12 @@
 </MudPaper>
 @code
 {
-    private MudDataGrid<ProductResponse> _dataGrid;
-    private IEnumerable<ProductResponse> _products = new List<ProductResponse>();
+    private MudDataGrid<Product> _dataGrid;
+    private IEnumerable<Product> _products = new List<Product>();
     private Dictionary<UserGroup, bool> UserGroupDict = new();
-
-    private void StartedEditingItem(ProductResponse item)
+    private IEnumerable<MenuItem> _allMenuItems = new List<MenuItem>();
+    
+    private void StartedEditingItem(Product item)
     {
         UserGroupDict = new();
         foreach (var group in Enum.GetValues<UserGroup>())
@@ -131,19 +151,32 @@
     private bool _showNonvisible = true;
     protected override async Task OnInitializedAsync()
     {
-        var result = await ProductService.GetProducts();
-        _loading = false;
-        result.Match(
+        var productsResult = await ProductService.GetProducts();
+        productsResult.Match(
             Succ: products => {
-                _products = products;
+                _products = new List<Product>(products);
+                StateHasChanged();
             },
             Fail: error => {
                 Snackbar.Add(error.Message, Severity.Error);
             }
         );
+
+        var menuItemsResult = await MenuItemService.GetMenuItems();
+
+        menuItemsResult.Match(
+            Succ: menuItems => {
+                _allMenuItems = menuItems;
+            },
+            Fail: error => {
+                Snackbar.Add(error.Message, Severity.Error);
+            }
+        );
+
+        _loading = false;
     }
 
-    void CanceledEditingItem(ProductResponse item)
+    void CanceledEditingItem(Product item)
     {
         Snackbar.Add("Cancelled product changes", Severity.Info);
     }
@@ -153,35 +186,31 @@
         await JSRuntime.InvokeVoidAsync("window.focusElement", "first-edit-element");
     }
 
-    async Task CommittedItemChanges(ProductResponse item)
+    async Task CommittedItemChanges(Product item)
     {
         List<UserGroup> AllowedUserGroups =
                 UserGroupDict.Where(e => e.Value)
                              .ToDictionary(kv => kv.Key, kv => kv.Value)
                              .Keys
                              .ToList();
+        
+        item.AllowedUserGroups = AllowedUserGroups;
 
         if (item.Id == 0)
         {
-            var result = await addProduct(item, AllowedUserGroups);
+            var result = await ProductService.AddProduct(item);
 
             result.Match(
-                Succ: async product =>
+                Succ: product =>
                 {
                     // Succesfully added product
                     Snackbar.Add("Product added", Severity.Success);
 
-                    // Retrieve all items again in order to update id
-                    var retrieveItems = await ProductService.GetProducts();
-                    retrieveItems.Match(
-                        Succ: items => {
-                            _products = items;
-                        },
-                        Fail: error => {
-                            // Errors while re-retrieving items, non-fatal (just means _products are slightly outdated)
-                            Snackbar.Add(error.Message, Severity.Warning);
-                        }
-                    );
+                    // Override the created product with the placeholder item
+                    _products = _products.Where(p => p.Id != 0)
+                                .Append(product);
+                    
+                    StateHasChanged();
                 },
                 Fail: error => {
                     Snackbar.Add(error.Message, Severity.Error);
@@ -190,23 +219,13 @@
         }
         else
         {
-            var result = await updateProduct(item, AllowedUserGroups);
+            var result = await ProductService.UpdateProduct(item, item.Id);
 
             result.Match(
-                Succ: async result =>
+                Succ: product =>
                 {
                     Snackbar.Add("Product updated", Severity.Success);
-
-                    var retrieveItems = await ProductService.GetProducts();
-                    retrieveItems.Match(
-                        Succ: items => {
-                            _products = items;
-                        },
-                        Fail: error => {
-                            // Errors while re-retrieving items, non-fatal (just means _products are slightly outdated)
-                            Snackbar.Add(error.Message, Severity.Warning);
-                        }
-                    );
+                    _products.FirstOrDefault(p => p.Id == item.Id).IsPerk = product.IsPerk;
                 },
                 Fail: error =>
                 {
@@ -216,36 +235,9 @@
         }
     }
 
-    async Task<LanguageExt.Try<ChangedProductResponse>> updateProduct(ProductResponse item, List<UserGroup>
-    AllowedUserGroups)
-    {
-        return await ProductService.UpdateProduct(new UpdateProductRequest{
-                Id = item.Id,
-                Name = item.Name,
-                Description = item.Description,
-                NumberOfTickets = item.NumberOfTickets,
-                Price = item.Price,
-                Visible = item.Visible,
-                AllowedUserGroups = AllowedUserGroups
-            });
-    }
-
-    async Task<LanguageExt.Try<ChangedProductResponse>> addProduct(ProductResponse item, List<UserGroup>
-    AllowedUserGroups)
-    {
-        return await ProductService.AddProduct(new AddProductRequest{
-                Name = item.Name,
-                Description = item.Description,
-                NumberOfTickets = item.NumberOfTickets,
-                Price = item.Price,
-                Visible = item.Visible,
-                AllowedUserGroups = AllowedUserGroups
-            });
-    }
-
     void AddItemToDataGrid()
     {
-        _products = _products.Append<ProductResponse>(new ProductResponse{
+        _products = _products.Append(new Product{
             Id = 0,
             Name = "",
             Description = "",
@@ -253,12 +245,14 @@
             NumberOfTickets = 1,
             Price = 0,
             Visible = true,
-            AllowedUserGroups = new List<UserGroup>()
+            AllowedUserGroups = new List<UserGroup>(),
+            EligibleMenuItems = new List<MenuItem>(),
         });
+        StateHasChanged();
         _dataGrid.SetEditingItemAsync(_products.Last());
     }
 
-    private Func<ProductResponse, int, string> _RowStyleFunc => (x, i) =>
+    private Func<Product, int, string> RowStyleFunc => (x, i) =>
     {
         if (!x.Visible)
         {
