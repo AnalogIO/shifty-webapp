@@ -1,5 +1,6 @@
 @namespace Components
 @using System.ComponentModel.DataAnnotations
+@using System.Collections.ObjectModel
 @using Shifty.App.Services
 @using Shifty.Api.Generated.AnalogCoreV1
 @using Shifty.Api.Generated.AnalogCoreV2
@@ -20,28 +21,67 @@
     }
     else
     {
-        <MudContainer Style="width: 100%; display: flex;">
-            <MudGrid>
-                @foreach (var menuItem in _menuItems)
-                {
-                    <div>Tickets</div>
-                }
-            </MudGrid>
-        </MudContainer>
+        <MudDataGrid
+        @ref="_dataGrid"
+        T="MenuItem"
+        Items="@_menuItems"
+        ReadOnly="false"
+        EditTrigger="DataGridEditTrigger.Manual"
+        CommittedItemChanges="@CommittedItemChanges"
+        FixedHeader="true"
+        Height="calc(100vh - 250px)"
+        Dense="true"
+        SortMode="MudBlazor.SortMode.None">
+        <Columns>
+            <TemplateColumn Title="Edit">
+                <CellTemplate>
+                    <MudIconButton
+                        Size="@Size.Medium"
+                        Icon="@Icons.Material.Outlined.Edit"
+                        Color="Color.Primary"
+                        OnClick="@context.Actions.StartEditingItemAsync" />
+                </CellTemplate>
+            </TemplateColumn>
+            <PropertyColumn Property="x => x.Id" Title="Id" IsEditable="false" />
+            <PropertyColumn Property="x => x.Name" Title="Name" IsEditable="true" />
+                <TemplateColumn Title="Delete">
+                <CellTemplate>
+                    <MudIconButton
+                        Size="@Size.Medium"
+                        Icon="@Icons.Material.Outlined.Delete"
+                        Color="Color.Primary"
+                        OnClick="@(() => DeleteItemAsync(context.Item))"
+                    />
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+
+    <MudToolBar>
+        <MudSpacer />
+        <MudButton
+            Color="Color.Primary"
+            Variant="Variant.Filled"
+            EndIcon="@Icons.Material.Outlined.Add"
+            OnClick="@AddItemToDataGrid">
+                Add Product
+        </MudButton>
+    </MudToolBar>
     }
 </MudPaper>
 
 @code
-{
+    {
+    private MudDataGrid<MenuItem> _dataGrid;
     private bool _loading = true;
-    private IEnumerable<MenuItem> _menuItems = new List<MenuItem>();
+    private ObservableCollection<MenuItem> _menuItems = new ObservableCollection<MenuItem>();
 
     protected override async Task OnInitializedAsync()
     {
         var result = await MenuItemService.GetMenuItems();
         result.Match(
             Succ: menuItems => {
-                _menuItems = menuItems;
+                _menuItems = new ObservableCollection<MenuItem>(menuItems);
             },
             Fail: error => {
                 Snackbar.Add(error.Message, Severity.Error);
@@ -49,5 +89,68 @@
         );
         Console.WriteLine("MenuItems: " + _menuItems.Count());
         _loading = false;
+    }
+    async Task CommittedItemChanges(MenuItem item)
+    {
+        if (item.Id == 0)
+        {
+            var result = await addMenuItem(item);
+
+            result.Match(
+                Succ: menuItem =>
+                {
+                    // Succesfully added product
+                    Snackbar.Add("MenuItem added", Severity.Success);
+                    _menuItems.Remove(item);
+                    _menuItems.Add(menuItem);
+
+                },
+                Fail: error => {
+                    Snackbar.Add(error.Message, Severity.Error);
+                }
+            );
+        }
+        else
+        {
+            var result = await updateMenuItem(item);
+
+            result.Match(
+                Succ: newItem =>
+                {
+                    Snackbar.Add("MenuItem updated", Severity.Success);
+
+                    _menuItems.Add(newItem);
+                },
+                Fail: error =>
+                {
+                    Snackbar.Add(error.Message, Severity.Warning);
+                }
+            );
+        }
+        StateHasChanged();
+    }
+    async Task<LanguageExt.Try<MenuItem>> updateMenuItem(MenuItem item)
+    {
+        return await MenuItemService.UpdateMenuItem(new UpdateMenuItemRequest{
+                Name = item.Name,
+            }, item.Id);
+    }
+    async Task<LanguageExt.Try<MenuItem>> addMenuItem(MenuItem item)
+    {
+        return await MenuItemService.AddMenuItem(new AddMenuItemRequest{
+                Name = item.Name
+            });
+    }
+    void AddItemToDataGrid()
+    {
+        _menuItems.Add(new MenuItem{
+            Name = "",
+        });
+        _dataGrid.SetEditingItemAsync(_menuItems.Last());
+    }
+    void DeleteItemAsync(MenuItem item)
+    {
+        MenuItemService.DisableMenuItem(item);
+        _menuItems.Remove(item);
     }
 }

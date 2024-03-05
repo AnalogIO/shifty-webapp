@@ -30,5 +30,12 @@ namespace Shifty.App.Services
         /// <param name="MenuItem">The MenuItem request containing the new MenuItem information</param>
         /// <returns>The newly created MenuItem</returns>
         Task<Try<MenuItem>> AddMenuItem(AddMenuItemRequest MenuItem);
+
+        /// <summary>
+        /// Disables a MenuItem
+        /// </summary>
+        /// <param name="menuItem">The MenuItem to disable</param>
+        /// <returns>The disabled MenuItem</returns>
+        Task<Try<MenuItem>> DisableMenuItem(MenuItem menuItem);
     }
 }
