@@ -2,7 +2,7 @@
 @using Components
 @inject NavigationManager NavManager
 
-@if (_user is not null && _user.IsInRole("Board"))
+@if (_user is not null && (_user.IsInRole("Board") || _user.IsInRole("Manager")))
 {
     <Voucher User="@_user"/> 
 }
@@ -16,7 +16,7 @@
         var authState = await AuthTask;
         _user = authState.User;
 
-        if (_user is null || !_user.IsInRole("Board"))
+        if (_user is null || (!_user.IsInRole("Board") && !_user.IsInRole("Manager")))
         {
             NavManager.NavigateTo("/");
         }
