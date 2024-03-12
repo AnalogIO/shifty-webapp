@@ -59,10 +59,10 @@
             .WithUrl("https://localhost:8081/used_tickets")
             .Build();
         
-        _hubConnection.On<UsedTicketEvent>("UsedTicket", usedTicketEvent =>
+        _hubConnection.On<UsedTicketEvent>("UsedTicket", async usedTicketEvent =>
         {
-            _usedTickets.Add(usedTicketEvent);
-            InvokeAsync(StateHasChanged);
+            _usedTickets = _usedTickets.Prepend(usedTicketEvent).ToList();
+            await InvokeAsync(StateHasChanged);
         });
 
         await _hubConnection.StartAsync();
