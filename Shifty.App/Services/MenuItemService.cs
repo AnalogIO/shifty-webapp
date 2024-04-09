@@ -45,15 +45,15 @@ namespace Shifty.App.Services
                 x.Map(MenuItem.FromDto));
         }
 
-        public async Task<Try<MenuItem>> DisableMenuItem(MenuItem menuItem)
+        public async Task<Try<MenuItem>> ToggleMenuItemActive(MenuItem menuItem)
         {
             var request = new UpdateMenuItemRequest{
                 Name = menuItem.Name,
-                Active = false,
+                Active = !menuItem.Active,
             };
 
             return await _MenuItemRepository
-                        .UpdateMenuItem(request, menuItem.Id).Map(mi => DomainModels.MenuItem.FromDto(mi));
+                        .UpdateMenuItem(request, menuItem.Id).Map(MenuItem.FromDto);
         }
     }
 }

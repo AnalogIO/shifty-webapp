@@ -30,6 +30,7 @@
         CommittedItemChanges="@CommittedItemChanges"
         FixedHeader="true"
         Height="calc(100vh - 250px)"
+        RowStyleFunc="@RowStyleFunc"
         Dense="true"
         SortMode="MudBlazor.SortMode.None">
         <Columns>
@@ -44,16 +45,22 @@
             </TemplateColumn>
             <PropertyColumn Property="x => x.Id" Title="Id" IsEditable="false" />
             <PropertyColumn Property="x => x.Name" Title="Name" IsEditable="true" />
-                <TemplateColumn Title="Delete">
+            <PropertyColumn Property="x => x.Active" Title="Active" InitialDirection="SortDirection.Descending">
                 <CellTemplate>
-                    <MudIconButton
-                        Size="@Size.Medium"
-                        Icon="@Icons.Material.Outlined.Delete"
-                        Color="Color.Primary"
-                        OnClick="@(() => DeleteItemAsync(context.Item))"
-                    />
+                    @{
+                        if (context.Item.Active)
+                        {
+                            <MudIconButton Size="@Size.Small" Color="Color.Dark" OnClick="@(() => ToggleItemActiveAsync(context.Item))"
+                                Icon="@Icons.Material.Filled.Visibility" />
+                        }
+                        else
+                        {
+                            <MudIconButton Size="@Size.Small" Style="@($"color:{Colors.Grey.Default};")"
+                                Icon="@Icons.Material.Filled.VisibilityOff" OnClick="@(() => ToggleItemActiveAsync(context.Item))" />
+                        }
+                    }
                 </CellTemplate>
-            </TemplateColumn>
+            </PropertyColumn>
         </Columns>
     </MudDataGrid>
 
@@ -118,8 +125,7 @@
                 Succ: newItem =>
                 {
                     Snackbar.Add("MenuItem updated", Severity.Success);
-
-                    _menuItems.Add(newItem);
+                    _menuItems.FirstOrDefault(x => x.Id == newItem.Id).Name = newItem.Name;
                 },
                 Fail: error =>
                 {
@@ -133,6 +139,7 @@
     {
         return await MenuItemService.UpdateMenuItem(new UpdateMenuItemRequest{
                 Name = item.Name,
+                Active = item.Active
             }, item.Id);
     }
     async Task<LanguageExt.Try<MenuItem>> addMenuItem(MenuItem item)
@@ -148,9 +155,28 @@
         });
         _dataGrid.SetEditingItemAsync(_menuItems.Last());
     }
-    void DeleteItemAsync(MenuItem item)
+    void ToggleItemActiveAsync(MenuItem item)
     {
-        MenuItemService.DisableMenuItem(item);
-        _menuItems.Remove(item);
+        MenuItemService.ToggleMenuItemActive(item).Match(
+            Succ: menuItem =>
+            {
+                Snackbar.Add("MenuItem updated", Severity.Success);
+                _menuItems.FirstOrDefault(x => x.Id == menuItem.Id).Active = menuItem.Active;
+                StateHasChanged();
+            },
+            Fail: error =>
+            {
+                Snackbar.Add(error.Message, Severity.Error);
+            }
+        );
     }
+
+        private Func<MenuItem, int, string> RowStyleFunc => (x, i) =>
+    {
+        if (!x.Active)
+        {
+            return "background-color:#ebebeb;font-style:italic;font-color:#8a8686;";
+        }
+        return "";
+    };
 }

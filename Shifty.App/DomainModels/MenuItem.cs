@@ -5,12 +5,14 @@ namespace Shifty.App.DomainModels
     public record MenuItem {
         public int Id { get; init; }
         public string Name { get; set; }
+        public bool Active { get; set; }
         public static MenuItem FromDto(MenuItemResponse dto)
         {
             return new MenuItem()
             {
                 Id = dto.Id,
-                Name = dto.Name
+                Name = dto.Name,
+                Active = dto.Active
             };
         }
 
@@ -26,7 +28,8 @@ namespace Shifty.App.DomainModels
         {
             return new UpdateMenuItemRequest()
             {
-                Name = menuItem.Name
+                Name = menuItem.Name,
+                Active = menuItem.Active
             };
         }
     }
