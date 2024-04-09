@@ -14,6 +14,7 @@ using Shifty.App.Authentication;
 using Shifty.App.Repositories;
 using Shifty.App.Services;
 using MudExtensions.Services;
+using Shifty.App.Settings;
 
 namespace Shifty.App
 {
@@ -24,6 +25,7 @@ namespace Shifty.App
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
             builder.Services.AddMudExtensions();
+            builder.Services.Configure<ApiOptions>(builder.Configuration.GetSection("ApiOptions"));
             ConfigureServices(builder.Services, builder.Configuration);
 
             await builder.Build().RunAsync();
@@ -31,6 +33,7 @@ namespace Shifty.App
 
         public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
+            var apiOptions = configuration.GetSection("ApiOptions").Get<ApiOptions>();
             services.AddMudServices(config =>
             {
                 config.SnackbarConfiguration.RequireInteraction = true;
@@ -42,7 +45,7 @@ namespace Shifty.App
             services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
                 .CreateClient("AnalogCoreV1"));
             services.AddHttpClient("AnalogCoreV1",
-                    client => client.BaseAddress = new Uri(configuration["ApiHost"]))
+                    client => client.BaseAddress = new Uri(apiOptions.ApiHost))
                 .AddHttpMessageHandler<RequestAuthenticationHandler>();
             services.AddScoped(provider =>
                 new AnalogCoreV1(provider.GetRequiredService<IHttpClientFactory>().CreateClient("AnalogCoreV1")));
@@ -50,10 +53,11 @@ namespace Shifty.App
             services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
                 .CreateClient("AnalogCoreV2"));
             services.AddHttpClient("AnalogCoreV2",
-                    client => client.BaseAddress = new Uri(configuration["ApiHost"]))
+                    client => client.BaseAddress = new Uri(apiOptions.ApiHost))
                 .AddHttpMessageHandler<RequestAuthenticationHandler>();
             services.AddScoped(provider =>
                 new AnalogCoreV2(provider.GetRequiredService<IHttpClientFactory>().CreateClient("AnalogCoreV2")));
+            
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IVoucherRepository, VoucherRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
@@ -71,7 +75,9 @@ namespace Shifty.App
             services.AddScoped<IUnusedTicketsService, UnusedTicketsService>();
             services.AddScoped<ITicketService, TicketService>();
             services.AddScoped<RequestAuthenticationHandler>();
-
+            
+            services.AddSingleton(configuration.GetSection("ApiOptions").Get<ApiOptions>());
+            
             services.AddMudServices(config =>
             {
                 config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomRight;

@@ -7,9 +7,14 @@
 @using LanguageExt.UnsafeValueAccess
 @using Shifty.App.Repositories
 @using Microsoft.AspNetCore.SignalR.Client;
+@using Microsoft.Extensions.Configuration
+@using Microsoft.Extensions.Options
+@using Shifty.App.DomainModels
+@using Shifty.App.Settings
 @inject ISnackbar Snackbar
 @inject IJSRuntime JSRuntime
 @inject ITicketService TicketService
+@inject ApiOptions ApiOptions
 
 <MudPaper Elevation="15" Style="margin: 2em; border-radius: 5px;">
     @if (_loading)
@@ -26,7 +31,7 @@
                 {
                     <MudTimelineItem>
                         <MudTimelineContent>
-                            <MudTypography Variant="Variant.H6" Color="Color.Primary">@ticket.UserName swiped @ticket.ProductName</MudTypography>
+                            <MudTypography Variant="Variant.H6" Color="Color.Primary">@ticket.UserName swiped a @ticket.MenuItemName using @ticket.ProductName</MudTypography>
                             <MudTypography Variant="Variant.Subtitle1" Color="Color.TextSecondary">@ticket.DateUsed</MudTypography>
                         </MudTimelineContent>
                     </MudTimelineItem>
@@ -56,7 +61,7 @@
         );
         
         _hubConnection = new HubConnectionBuilder()
-            .WithUrl("https://localhost:8081/used_tickets")
+            .WithUrl($"{ApiOptions.ApiHost}/used_tickets")
             .Build();
         
         _hubConnection.On<UsedTicketEvent>("UsedTicket", async usedTicketEvent =>

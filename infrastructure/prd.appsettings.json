@@ -1,3 +1,5 @@
 {
-  "ApiHost": "https://core.prd.analogio.dk"
+  "ApiOptions": {
+    "ApiHost": "https://core.prd.analogio.dk"
+  }
 }
