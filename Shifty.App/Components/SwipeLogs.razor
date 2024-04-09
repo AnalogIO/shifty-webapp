@@ -1,5 +1,6 @@
 ﻿@namespace Components
 @using System.ComponentModel.DataAnnotations
+@using System.Globalization
 @using Shifty.App.Services
 @using Shifty.Api.Generated.AnalogCoreV1
 @using Shifty.Api.Generated.AnalogCoreV2
@@ -26,14 +27,16 @@
     else
     {
         <MudContainer Style="width: 100%; display: flex;">
-            <MudTimeline>
+            <MudTimeline TimelinePosition="TimelinePosition.Start">
                 @foreach (var ticket in _usedTickets)
                 {
-                    <MudTimelineItem>
-                        <MudTimelineContent>
-                            <MudTypography Variant="Variant.H6" Color="Color.Primary">@ticket.UserName swiped a @ticket.MenuItemName using @ticket.ProductName</MudTypography>
-                            <MudTypography Variant="Variant.Subtitle1" Color="Color.TextSecondary">@ticket.DateUsed</MudTypography>
-                        </MudTimelineContent>
+                    var isFirst = ticket == _usedTickets.First();
+                    <MudTimelineItem Color="@(isFirst ? Color.Success : Color.Default)">
+                        <MudAlert
+                            Severity="@(isFirst ? Severity.Success : Severity.Normal)"
+                            Variant="Variant.Outlined">
+                            <b>@ticket.MenuItemName</b> swiped by @ticket.UserName using @ticket.ProductName (@ticket.DateUsed.ToString("T"))
+                        </MudAlert>
                     </MudTimelineItem>
                 }
             </MudTimeline>
