@@ -17,15 +17,13 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5001"
+      "url": "https://core.dev.analogio.dk"
     }
   ],
   "paths": {
     "/api/v2/account": {
       "post": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Register data request. An account is required to verify its email before logging in",
         "operationId": "Account_Register",
         "requestBody": {
@@ -65,9 +63,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Request the deletion of the user coupled to the provided token",
         "operationId": "Account_Delete",
         "responses": {
@@ -98,9 +94,7 @@
         ]
       },
       "get": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Returns basic data about the account",
         "operationId": "Account_Get",
         "responses": {
@@ -128,9 +122,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Updates the account and returns the updated values.\nOnly properties which are present in the UpdateUserRequest will be updated",
         "operationId": "Account_Update",
         "requestBody": {
@@ -173,9 +165,7 @@
     },
     "/api/v2/account/email-exists": {
       "post": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Check if a given email is in use",
         "operationId": "Account_EmailExists",
         "requestBody": {
@@ -210,9 +200,7 @@
     },
     "/api/v2/account/{id}/user-group": {
       "patch": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Updates the user group of a user",
         "operationId": "Account_UpdateAccountUserGroup",
         "parameters": [
@@ -278,9 +266,7 @@
     },
     "/api/v2/account/resend-verification-email": {
       "post": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Resend account verification email if account is not already verified",
         "operationId": "Account_ResendVerificationEmail",
         "requestBody": {
@@ -325,9 +311,7 @@
     },
     "/api/v2/account/search": {
       "get": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Searches a user in the database",
         "operationId": "Account_SearchUsers",
         "parameters": [
@@ -338,8 +322,8 @@
             "schema": {
               "type": "integer",
               "format": "int32",
-              "maximum": 2147483647.0,
-              "minimum": 0.0
+              "maximum": 2147483647,
+              "minimum": 0
             },
             "x-position": 1
           },
@@ -362,29 +346,29 @@
               "type": "integer",
               "format": "int32",
               "default": 30,
-              "maximum": 100.0,
-              "minimum": 1.0
+              "maximum": 100,
+              "minimum": 1
             },
             "x-position": 3
           }
         ],
         "responses": {
-          "401": {
-            "description": " Invalid credentials ",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Users, possible with filter applied",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UserSearchResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": " Invalid credentials ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -402,9 +386,7 @@
     },
     "/api/v2/appconfig": {
       "get": {
-        "tags": [
-          "AppConfig"
-        ],
+        "tags": ["AppConfig"],
         "summary": "Get app configuration",
         "operationId": "AppConfig_Get",
         "responses": {
@@ -423,9 +405,7 @@
     },
     "/api/v2/health/ping": {
       "get": {
-        "tags": [
-          "Health"
-        ],
+        "tags": ["Health"],
         "summary": "Ping",
         "operationId": "Health_Ping",
         "responses": {
@@ -452,9 +432,7 @@
     },
     "/api/v2/health/check": {
       "get": {
-        "tags": [
-          "Health"
-        ],
+        "tags": ["Health"],
         "summary": "Check service health",
         "operationId": "Health_Healthcheck",
         "responses": {
@@ -494,9 +472,7 @@
     },
     "/api/v2/leaderboard/top": {
       "get": {
-        "tags": [
-          "Leaderboard"
-        ],
+        "tags": ["Leaderboard"],
         "summary": "Gets the top leaderboard by the specified preset",
         "operationId": "Leaderboard_GetTopEntries",
         "parameters": [
@@ -545,9 +521,7 @@
     },
     "/api/v2/leaderboard": {
       "get": {
-        "tags": [
-          "Leaderboard"
-        ],
+        "tags": ["Leaderboard"],
         "summary": "Get leaderboard stats for authenticated user. A user will have rank 0 if they do not have any valid swipes",
         "operationId": "Leaderboard_Get",
         "parameters": [
@@ -593,9 +567,7 @@
     },
     "/api/v2/menuitems": {
       "get": {
-        "tags": [
-          "MenuItems"
-        ],
+        "tags": ["MenuItems"],
         "summary": "Returns a list of all menu items",
         "operationId": "MenuItems_GetAllMenuItems",
         "responses": {
@@ -623,9 +595,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "MenuItems"
-        ],
+        "tags": ["MenuItems"],
         "summary": "Adds a menu item",
         "operationId": "MenuItems_AddMenuItem",
         "requestBody": {
@@ -665,9 +635,7 @@
     },
     "/api/v2/menuitems/{id}": {
       "put": {
-        "tags": [
-          "MenuItems"
-        ],
+        "tags": ["MenuItems"],
         "summary": "Updates a menu item",
         "operationId": "MenuItems_UpdateMenuItem",
         "parameters": [
@@ -720,9 +688,7 @@
     },
     "/api/v2/mobilepay/webhook": {
       "post": {
-        "tags": [
-          "MobilePay"
-        ],
+        "tags": ["MobilePay"],
         "summary": "Webhook to be invoked by MobilePay backend",
         "operationId": "MobilePay_Webhook",
         "parameters": [
@@ -773,9 +739,7 @@
     },
     "/api/v2/products": {
       "post": {
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "summary": "Adds a new product",
         "operationId": "Products_AddProduct",
         "requestBody": {
@@ -813,9 +777,7 @@
         ]
       },
       "get": {
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "summary": "Returns a list of available products based on a account's user group.",
         "operationId": "Products_GetProducts",
         "responses": {
@@ -848,9 +810,7 @@
     },
     "/api/v2/products/{id}": {
       "put": {
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "summary": "Updates a product with the specified changes.",
         "operationId": "Products_UpdateProduct",
         "parameters": [
@@ -902,9 +862,7 @@
         ]
       },
       "get": {
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "summary": "Returns a product with the specified id",
         "operationId": "Products_GetProduct",
         "parameters": [
@@ -958,9 +916,7 @@
     },
     "/api/v2/products/all": {
       "get": {
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "summary": "Returns a list of all products",
         "operationId": "Products_GetAllProducts",
         "responses": {
@@ -990,9 +946,7 @@
     },
     "/api/v2/purchases": {
       "get": {
-        "tags": [
-          "Purchases"
-        ],
+        "tags": ["Purchases"],
         "summary": "Get all purchases",
         "operationId": "Purchases_GetAllPurchases",
         "responses": {
@@ -1026,9 +980,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Purchases"
-        ],
+        "tags": ["Purchases"],
         "summary": "Initiate a new payment.",
         "operationId": "Purchases_InitiatePurchase",
         "requestBody": {
@@ -1074,9 +1026,7 @@
     },
     "/api/v2/purchases/{id}": {
       "get": {
-        "tags": [
-          "Purchases"
-        ],
+        "tags": ["Purchases"],
         "summary": "Get purchase",
         "operationId": "Purchases_GetPurchase",
         "parameters": [
@@ -1129,9 +1079,7 @@
     },
     "/api/v2/tickets": {
       "get": {
-        "tags": [
-          "Tickets"
-        ],
+        "tags": ["Tickets"],
         "summary": "Returns a list of tickets",
         "operationId": "Tickets_Get",
         "parameters": [
@@ -1175,9 +1123,7 @@
     },
     "/api/v2/tickets/use": {
       "post": {
-        "tags": [
-          "Tickets"
-        ],
+        "tags": ["Tickets"],
         "summary": "Uses a ticket (for the given product) on the given menu item",
         "operationId": "Tickets_UseTicket",
         "requestBody": {
@@ -1240,9 +1186,7 @@
     },
     "/api/v2/vouchers/issue-vouchers": {
       "post": {
-        "tags": [
-          "Vouchers"
-        ],
+        "tags": ["Vouchers"],
         "summary": "Issue voucher codes, that can later be redeemed",
         "operationId": "Vouchers_IssueVouchers",
         "requestBody": {
@@ -1301,9 +1245,7 @@
     },
     "/api/v2/vouchers/{voucher-code}/redeem": {
       "post": {
-        "tags": [
-          "Vouchers"
-        ],
+        "tags": ["Vouchers"],
         "summary": "Redeems the voucher supplied as parameter in the path",
         "operationId": "Vouchers_RedeemVoucher",
         "parameters": [
@@ -1365,9 +1307,7 @@
     },
     "/api/v2/webhooks/accounts/user-group": {
       "put": {
-        "tags": [
-          "Webhooks"
-        ],
+        "tags": ["Webhooks"],
         "summary": "Update user groups in bulk",
         "operationId": "Webhooks_UpdateUserGroups",
         "requestBody": {
@@ -1387,11 +1327,11 @@
           "204": {
             "description": "The user groups were updated"
           },
-          "401": {
-            "description": "Invalid credentials"
-          },
           "400": {
             "description": "Bad request. See explanation"
+          },
+          "401": {
+            "description": "Invalid credentials"
           }
         },
         "security": [
@@ -1433,12 +1373,7 @@
           "programmeId": 1
         },
         "additionalProperties": false,
-        "required": [
-          "name",
-          "email",
-          "password",
-          "programmeId"
-        ],
+        "required": ["name", "email", "password", "programmeId"],
         "properties": {
           "name": {
             "type": "string",
@@ -1568,18 +1503,8 @@
       "UserRole": {
         "type": "string",
         "description": "",
-        "x-enumNames": [
-          "Customer",
-          "Barista",
-          "Manager",
-          "Board"
-        ],
-        "enum": [
-          "Customer",
-          "Barista",
-          "Manager",
-          "Board"
-        ]
+        "x-enumNames": ["Customer", "Barista", "Manager", "Board"],
+        "enum": ["Customer", "Barista", "Manager", "Board"]
       },
       "ProgrammeResponse": {
         "type": "object",
@@ -1590,11 +1515,7 @@
           "fullName": "Software Development"
         },
         "additionalProperties": false,
-        "required": [
-          "id",
-          "shortName",
-          "fullName"
-        ],
+        "required": ["id", "shortName", "fullName"],
         "properties": {
           "id": {
             "type": "integer",
@@ -1669,9 +1590,7 @@
           "emailExists": true
         },
         "additionalProperties": false,
-        "required": [
-          "emailExists"
-        ],
+        "required": ["emailExists"],
         "properties": {
           "emailExists": {
             "type": "boolean",
@@ -1686,9 +1605,7 @@
           "email": "johndoe@mail.com"
         },
         "additionalProperties": false,
-        "required": [
-          "email"
-        ],
+        "required": ["email"],
         "properties": {
           "email": {
             "type": "string",
@@ -1706,9 +1623,7 @@
           "UserGroup": "Barista"
         },
         "additionalProperties": false,
-        "required": [
-          "userGroup"
-        ],
+        "required": ["userGroup"],
         "properties": {
           "userGroup": {
             "description": "The UserGroup of a user",
@@ -1724,18 +1639,8 @@
       "UserGroup": {
         "type": "string",
         "description": "",
-        "x-enumNames": [
-          "Customer",
-          "Barista",
-          "Manager",
-          "Board"
-        ],
-        "enum": [
-          "Customer",
-          "Barista",
-          "Manager",
-          "Board"
-        ]
+        "x-enumNames": ["Customer", "Barista", "Manager", "Board"],
+        "enum": ["Customer", "Barista", "Manager", "Board"]
       },
       "ResendAccountVerificationEmailRequest": {
         "type": "object",
@@ -1744,9 +1649,7 @@
           "email": "john@doe.com"
         },
         "additionalProperties": false,
-        "required": [
-          "email"
-        ],
+        "required": ["email"],
         "properties": {
           "email": {
             "type": "string",
@@ -1761,10 +1664,7 @@
         "type": "object",
         "description": "Represents a search result",
         "additionalProperties": false,
-        "required": [
-          "totalUsers",
-          "users"
-        ],
+        "required": ["totalUsers", "users"],
         "properties": {
           "totalUsers": {
             "type": "integer",
@@ -1834,16 +1734,8 @@
       "UserState": {
         "type": "string",
         "description": "",
-        "x-enumNames": [
-          "Active",
-          "Deleted",
-          "PendingActivition"
-        ],
-        "enum": [
-          "Active",
-          "Deleted",
-          "PendingActivition"
-        ]
+        "x-enumNames": ["Active", "Deleted", "PendingActivition"],
+        "enum": ["Active", "Deleted", "PendingActivition"]
       },
       "AppConfig": {
         "type": "object",
@@ -1852,9 +1744,7 @@
           "environmentType": "Production"
         },
         "additionalProperties": false,
-        "required": [
-          "environmentType"
-        ],
+        "required": ["environmentType"],
         "properties": {
           "environmentType": {
             "description": "Environment type for indicating production or test system",
@@ -1870,16 +1760,8 @@
       "EnvironmentType": {
         "type": "string",
         "description": "",
-        "x-enumNames": [
-          "Production",
-          "Test",
-          "LocalDevelopment"
-        ],
-        "enum": [
-          "Production",
-          "Test",
-          "LocalDevelopment"
-        ]
+        "x-enumNames": ["Production", "Test", "LocalDevelopment"],
+        "enum": ["Production", "Test", "LocalDevelopment"]
       },
       "ServiceHealthResponse": {
         "type": "object",
@@ -1941,29 +1823,14 @@
       "LeaderboardPreset": {
         "type": "string",
         "description": "Preset for filtering Leaderboard based on date range",
-        "x-enumNames": [
-          "Month",
-          "Semester",
-          "Total"
-        ],
-        "enum": [
-          "Month",
-          "Semester",
-          "Total"
-        ]
+        "x-enumNames": ["Month", "Semester", "Total"],
+        "enum": ["Month", "Semester", "Total"]
       },
       "MenuItemResponse": {
         "type": "object",
         "description": "Represents a menu item that can be redeemed with a ticket",
-        "example": {
-          "id": 1,
-          "name": "Cappuccino"
-        },
         "additionalProperties": false,
-        "required": [
-          "id",
-          "name"
-        ],
+        "required": ["id", "name", "active"],
         "properties": {
           "id": {
             "type": "integer",
@@ -1988,9 +1855,7 @@
         "type": "object",
         "description": "Initiate a new menuitem add request.",
         "additionalProperties": false,
-        "required": [
-          "name"
-        ],
+        "required": ["name"],
         "properties": {
           "name": {
             "type": "string",
@@ -2004,10 +1869,7 @@
         "type": "object",
         "description": "Initiate an update product request.",
         "additionalProperties": false,
-        "required": [
-          "name",
-          "active"
-        ],
+        "required": ["name", "active"],
         "properties": {
           "name": {
             "type": "string",
@@ -2093,10 +1955,7 @@
           "description": "Coffee clip card of 10 clips",
           "isPerk": true,
           "visible": true,
-          "allowedUserGroups": [
-            "Manager",
-            "Board"
-          ],
+          "allowedUserGroups": ["Manager", "Board"],
           "eligibleMenuItems": [
             {
               "id": 1,
@@ -2171,10 +2030,7 @@
           "eligibleMenuItems": {
             "type": "array",
             "description": "The menu items that this product can be used on.",
-            "example": [
-              "Cappuccino",
-              "Caffe Latte"
-            ],
+            "example": ["Cappuccino", "Caffe Latte"],
             "items": {
               "$ref": "#/components/schemas/MenuItemResponse"
             }
@@ -2199,16 +2055,16 @@
             "type": "integer",
             "description": "Gets or sets the price of the product.",
             "format": "int32",
-            "maximum": 2147483647.0,
-            "minimum": 0.0,
+            "maximum": 2147483647,
+            "minimum": 0,
             "example": 10
           },
           "numberOfTickets": {
             "type": "integer",
             "description": "Gets or sets the number of tickets associated with the product.",
             "format": "int32",
-            "maximum": 2147483647.0,
-            "minimum": 0.0,
+            "maximum": 2147483647,
+            "minimum": 0,
             "example": 5
           },
           "name": {
@@ -2232,10 +2088,7 @@
           "allowedUserGroups": {
             "type": "array",
             "description": "Gets or sets the user groups that can access the product.",
-            "example": [
-              "Manager",
-              "Board"
-            ],
+            "example": ["Manager", "Board"],
             "items": {
               "$ref": "#/components/schemas/UserGroup"
             }
@@ -2243,10 +2096,7 @@
           "menuItemIds": {
             "type": "array",
             "description": "Gets or sets the menu items that are eligible for the product.",
-            "example": [
-              1,
-              2
-            ],
+            "example": [1, 2],
             "items": {
               "type": "integer",
               "format": "int32"
@@ -2272,16 +2122,16 @@
             "type": "integer",
             "description": "Gets or sets the updated price of the product.",
             "format": "int32",
-            "maximum": 2147483647.0,
-            "minimum": 0.0,
+            "maximum": 2147483647,
+            "minimum": 0,
             "example": 10
           },
           "numberOfTickets": {
             "type": "integer",
             "description": "Gets or sets the updated number of tickets associated with the product.",
             "format": "int32",
-            "maximum": 2147483647.0,
-            "minimum": 0.0,
+            "maximum": 2147483647,
+            "minimum": 0,
             "example": 5
           },
           "name": {
@@ -2305,10 +2155,7 @@
           "allowedUserGroups": {
             "type": "array",
             "description": "Gets or sets the user groups that can access the product.",
-            "example": [
-              "Manager",
-              "Board"
-            ],
+            "example": ["Manager", "Board"],
             "items": {
               "$ref": "#/components/schemas/UserGroup"
             }
@@ -2316,10 +2163,7 @@
           "menuItemIds": {
             "type": "array",
             "description": "Gets or sets the eligible menu items for the product.",
-            "example": [
-              1,
-              2
-            ],
+            "example": [1, 2],
             "items": {
               "type": "integer",
               "format": "int32"
@@ -2400,18 +2244,8 @@
       "PurchaseStatus": {
         "type": "string",
         "description": "Status of purchase",
-        "x-enumNames": [
-          "Completed",
-          "Cancelled",
-          "PendingPayment",
-          "Refunded"
-        ],
-        "enum": [
-          "Completed",
-          "Cancelled",
-          "PendingPayment",
-          "Refunded"
-        ]
+        "x-enumNames": ["Completed", "Cancelled", "PendingPayment", "Refunded"],
+        "enum": ["Completed", "Cancelled", "PendingPayment", "Refunded"]
       },
       "SinglePurchaseResponse": {
         "type": "object",
@@ -2494,11 +2328,7 @@
         },
         "x-abstract": true,
         "additionalProperties": false,
-        "required": [
-          "paymentType",
-          "orderId",
-          "discriminator"
-        ],
+        "required": ["paymentType", "orderId", "discriminator"],
         "properties": {
           "paymentType": {
             "description": "Payment type",
@@ -2523,14 +2353,8 @@
       "PaymentType": {
         "type": "string",
         "description": "PaymentType represents the type of Payment which is used to fulfill a purchase",
-        "x-enumNames": [
-          "MobilePay",
-          "FreePurchase"
-        ],
-        "enum": [
-          "MobilePay",
-          "FreePurchase"
-        ]
+        "x-enumNames": ["MobilePay", "FreePurchase"],
+        "enum": ["MobilePay", "FreePurchase"]
       },
       "MobilePayPaymentDetails": {
         "allOf": [
@@ -2547,10 +2371,7 @@
               "paymentId": "186d2b31-ff25-4414-9fd1-bfe9807fa8b7"
             },
             "additionalProperties": false,
-            "required": [
-              "mobilePayAppRedirectUri",
-              "paymentId"
-            ],
+            "required": ["mobilePayAppRedirectUri", "paymentId"],
             "properties": {
               "mobilePayAppRedirectUri": {
                 "type": "string",
@@ -2666,10 +2487,7 @@
         "type": "object",
         "description": "Initiate a new purchase request",
         "additionalProperties": false,
-        "required": [
-          "productId",
-          "paymentType"
-        ],
+        "required": ["productId", "paymentType"],
         "properties": {
           "productId": {
             "type": "integer",
@@ -2692,12 +2510,7 @@
         "type": "object",
         "description": "Representing a ticket for a product",
         "additionalProperties": false,
-        "required": [
-          "id",
-          "dateCreated",
-          "productId",
-          "productName"
-        ],
+        "required": ["id", "dateCreated", "productId", "productName"],
         "properties": {
           "id": {
             "type": "integer",
@@ -2743,12 +2556,7 @@
         "type": "object",
         "description": "Representing a used ticket for a product",
         "additionalProperties": false,
-        "required": [
-          "id",
-          "dateCreated",
-          "dateUsed",
-          "productName"
-        ],
+        "required": ["id", "dateCreated", "dateUsed", "productName"],
         "properties": {
           "id": {
             "type": "integer",
@@ -2788,10 +2596,7 @@
         "type": "object",
         "description": "Represents a request to use a ticket.",
         "additionalProperties": false,
-        "required": [
-          "productId",
-          "menuItemId"
-        ],
+        "required": ["productId", "menuItemId"],
         "properties": {
           "productId": {
             "type": "integer",
@@ -2817,12 +2622,7 @@
           "IssuedAt": "2023-02-07T12:00:00"
         },
         "additionalProperties": false,
-        "required": [
-          "voucherCode",
-          "productId",
-          "productName",
-          "issuedAt"
-        ],
+        "required": ["voucherCode", "productId", "productName", "issuedAt"],
         "properties": {
           "voucherCode": {
             "type": "string",
@@ -2903,9 +2703,7 @@
         "type": "object",
         "description": "Represents a request to update user groups in bulk",
         "additionalProperties": false,
-        "required": [
-          "privilegedUsers"
-        ],
+        "required": ["privilegedUsers"],
         "properties": {
           "privilegedUsers": {
             "type": "array",
@@ -2920,10 +2718,7 @@
         "type": "object",
         "description": "Represents an account user group update",
         "additionalProperties": false,
-        "required": [
-          "accountId",
-          "userGroup"
-        ],
+        "required": ["accountId", "userGroup"],
         "properties": {
           "accountId": {
             "type": "integer",

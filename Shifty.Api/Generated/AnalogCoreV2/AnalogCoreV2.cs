@@ -18,7 +18,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
     using System = global::System;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
-    public partial class AnalogCoreV2 
+    public partial class AnalogCoreV2
     {
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
@@ -795,16 +795,6 @@ namespace Shifty.Api.Generated.AnalogCoreV2
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 401)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ApiError>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new ApiException<ApiError>(" Invalid credentials ", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<UserSearchResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -813,6 +803,16 @@ namespace Shifty.Api.Generated.AnalogCoreV2
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ApiError>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<ApiError>(" Invalid credentials ", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {
@@ -2867,16 +2867,16 @@ namespace Shifty.Api.Generated.AnalogCoreV2
                             return;
                         }
                         else
-                        if (status_ == 401)
-                        {
-                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("Invalid credentials", status_, responseText_, headers_, null);
-                        }
-                        else
                         if (status_ == 400)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
                             throw new ApiException("Bad request. See explanation", status_, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("Invalid credentials", status_, responseText_, headers_, null);
                         }
                         else
                         {
@@ -2970,7 +2970,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
                     var field = System.Reflection.IntrospectionExtensions.GetTypeInfo(value.GetType()).GetDeclaredField(name);
                     if (field != null)
                     {
-                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute)) 
+                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute))
                             as System.Runtime.Serialization.EnumMemberAttribute;
                         if (attribute != null)
                         {
@@ -2982,7 +2982,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
                     return converted == null ? string.Empty : converted;
                 }
             }
-            else if (value is bool) 
+            else if (value is bool)
             {
                 return System.Convert.ToString((bool)value, cultureInfo).ToLowerInvariant();
             }
@@ -3486,7 +3486,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         /// <summary>
         /// Whether or not this menu item is active
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("active", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("active", Required = Newtonsoft.Json.Required.Always)]
         public bool Active { get; set; }
 
     }
@@ -3528,7 +3528,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
     }
 
     /// <summary>
-    /// MobilePay webhook invocation request 
+    /// MobilePay webhook invocation request
     /// <br/>Code documentation based on MobilePay Developer: Webhooks
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v10.0.0.0))")]
@@ -3543,18 +3543,18 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         /// <summary>
         /// Type of event
         /// <br/>
-        /// <br/>    
+        /// <br/>
         /// <br/>        payment.reserved
         /// <br/>        Published when payment has been approved by MobilePay user and is ready to be captured
-        /// <br/>    
-        /// <br/>    
+        /// <br/>
+        /// <br/>
         /// <br/>        payment.cancelled_by_user
         /// <br/>        Published when payment has been cancelled by user inside MobilePay app
-        /// <br/>    
-        /// <br/>    
+        /// <br/>
+        /// <br/>
         /// <br/>        payment.expired
         /// <br/>        Published when either initiated payment didn't have any user interactions for 5-10 minutes or payment was reserved, but 7 days have passed and the reservation has expired.
-        /// <br/>    
+        /// <br/>
         /// </summary>
         [Newtonsoft.Json.JsonProperty("eventType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string EventType { get; set; }
@@ -3632,7 +3632,7 @@ namespace Shifty.Api.Generated.AnalogCoreV2
         public string Description { get; set; }
 
         /// <summary>
-        /// Eligible due to a user perk privilege 
+        /// Eligible due to a user perk privilege
         /// </summary>
         [Newtonsoft.Json.JsonProperty("isPerk", Required = Newtonsoft.Json.Required.Always)]
         public bool IsPerk { get; set; }

@@ -16,12 +16,12 @@ namespace Shifty.App.Services
     public class MenuItemService : IMenuItemService
     {
         private readonly IMenuItemRepository _MenuItemRepository;
-        
+
         public MenuItemService(IMenuItemRepository MenuItemRepository)
         {
             _MenuItemRepository = MenuItemRepository;
         }
-        
+
         public async Task<Try<MenuItem>> UpdateMenuItem(UpdateMenuItemRequest MenuItem, int id)
         {
             return await _MenuItemRepository
@@ -35,14 +35,25 @@ namespace Shifty.App.Services
                         .AddMenuItem(MenuItem)
                         .Map(DomainModels.MenuItem.FromDto);
         }
-        
+
         public async Task<Try<IEnumerable<MenuItem>>> GetMenuItems()
         {
             var temp = _MenuItemRepository
                         .GetMenuItems();
 
-            return await temp.Map(x => 
+            return await temp.Map(x =>
                 x.Map(MenuItem.FromDto));
+        }
+
+        public async Task<Try<MenuItem>> ToggleMenuItemActive(MenuItem menuItem)
+        {
+            var request = new UpdateMenuItemRequest{
+                Name = menuItem.Name,
+                Active = !menuItem.Active,
+            };
+
+            return await _MenuItemRepository
+                        .UpdateMenuItem(request, menuItem.Id).Map(MenuItem.FromDto);
         }
     }
 }

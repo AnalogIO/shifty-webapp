@@ -104,10 +104,10 @@
             <PropertyColumn Property="x => x.EligibleMenuItems" Title="Eligible menu items" IsEditable="true" Hidden>
                 <EditTemplate>
                     <MudComboBox
-                        T="MenuItem" 
+                        T="MenuItem"
                         Label="Eligible menu items"
-                        MultiSelection="true" 
-                        Editable="true" 
+                        MultiSelection="true"
+                        Editable="true"
                         @bind-SelectedValues="context.Item.EligibleMenuItems">
                         @foreach (var mi in _allMenuItems)
                         {
@@ -136,7 +136,7 @@
     private IEnumerable<Product> _products = new List<Product>();
     private Dictionary<UserGroup, bool> UserGroupDict = new();
     private IEnumerable<MenuItem> _allMenuItems = new List<MenuItem>();
-    
+
     private void StartedEditingItem(Product item)
     {
         UserGroupDict = new();
@@ -193,7 +193,7 @@
                              .ToDictionary(kv => kv.Key, kv => kv.Value)
                              .Keys
                              .ToList();
-        
+
         item.AllowedUserGroups = AllowedUserGroups;
 
         if (item.Id == 0)
@@ -209,7 +209,7 @@
                     // Override the created product with the placeholder item
                     _products = _products.Where(p => p.Id != 0)
                                 .Append(product);
-                    
+
                     StateHasChanged();
                 },
                 Fail: error => {

@@ -1,13 +1,19 @@
 @namespace Components
 @using System.ComponentModel.DataAnnotations
+@using System.Collections.ObjectModel
+@using Shifty.App.Components
 @using Shifty.App.Services
 @using Shifty.Api.Generated.AnalogCoreV1
 @using Shifty.Api.Generated.AnalogCoreV2
 @using Shared
+@using System
+@using Shifty.App.DomainModels
 @using LanguageExt.UnsafeValueAccess
 @using Shifty.App.Repositories
 @inject ISnackbar Snackbar
 @inject IJSRuntime JSRuntime
+@inject IMenuItemService MenuItemService
+@inject IDialogService DialogService
 
 <MudPaper Elevation="15" Style="margin: 2em; border-radius: 5px;">
     @if (_loading)
@@ -16,13 +22,192 @@
             <LoadingIndicator Height="400px" />
         </MudContainer>
     }
+    else
+    {
+        <MudDataGrid
+        @ref="_dataGrid"
+        T="MenuItem"
+        Items="@_menuItems"
+        ReadOnly="false"
+        EditTrigger="DataGridEditTrigger.Manual"
+        CommittedItemChanges="@CommittedItemChanges"
+        StartedEditingItem="@((item) => _editingItem = new MenuItem { Id = item.Id, Name = item.Name, Active = item.Active })"
+        FixedHeader="true"
+        Height="calc(100vh - 250px)"
+        RowStyleFunc="@RowStyleFunc"
+        Dense="true"
+        SortMode="MudBlazor.SortMode.None">
+        <Columns>
+            <TemplateColumn Title="Edit">
+                <CellTemplate>
+                    <MudIconButton
+                        Size="@Size.Medium"
+                        Icon="@Icons.Material.Outlined.Edit"
+                        Color="Color.Primary"
+                        OnClick="@context.Actions.StartEditingItemAsync" />
+                </CellTemplate>
+            </TemplateColumn>
+            <PropertyColumn Property="x => x.Id" Title="Id" IsEditable="false" />
+            <PropertyColumn Property="x => x.Name" Title="Name" IsEditable="true" />
+            <PropertyColumn Property="x => x.Active" Title="Active" IsEditable="true" InitialDirection="SortDirection.Descending">
+                <CellTemplate>
+                    @{
+                        if (context.Item.Active)
+                        {
+                            <MudIconButton Size="@Size.Small" Color="Color.Dark" OnClick="@(() => ConfirmActiveToggle(context.Item))"
+                                Icon="@Icons.Material.Filled.Visibility" />
+                        }
+                        else
+                        {
+                            <MudIconButton Size="@Size.Small" Style="@($"color:{Colors.Grey.Default};")"
+                                Icon="@Icons.Material.Filled.VisibilityOff" OnClick="@(() => ConfirmActiveToggle(context.Item))" />
+                        }
+                    }
+                </CellTemplate>
+                <EditTemplate>
+                    <MudSwitch Label="Active" Color="Color.Primary" @bind-Checked="context.Item.Active" />
+                </EditTemplate>
+            </PropertyColumn>
+        </Columns>
+    </MudDataGrid>
+
+    <MudToolBar>
+        <MudSpacer />
+        <MudButton
+            Color="Color.Primary"
+            Variant="Variant.Filled"
+            EndIcon="@Icons.Material.Outlined.Add"
+            OnClick="@AddItemToDataGrid">
+                Add Product
+        </MudButton>
+    </MudToolBar>
+    }
 </MudPaper>
 
 @code
-{
+    {
+    private MudDataGrid<MenuItem> _dataGrid;
     private bool _loading = true;
+    private ObservableCollection<MenuItem> _menuItems = new ObservableCollection<MenuItem>();
+    private MenuItem _editingItem;
 
     protected override async Task OnInitializedAsync()
     {
+        var result = await MenuItemService.GetMenuItems();
+        result.Match(
+            Succ: menuItems => {
+                _menuItems = new ObservableCollection<MenuItem>(menuItems);
+            },
+            Fail: error => {
+                Snackbar.Add(error.Message, Severity.Error);
+            }
+        );
+        Console.WriteLine("MenuItems: " + _menuItems.Count());
+        _loading = false;
     }
+    async Task CommittedItemChanges(MenuItem item)
+    {
+        if (item.Id == 0)
+        {
+            var result = await addMenuItem(item);
+
+            result.Match(
+                Succ: menuItem =>
+                {
+                    // Succesfully added product
+                    Snackbar.Add("MenuItem added", Severity.Success);
+                    _menuItems.Remove(item);
+                    _menuItems.Add(menuItem);
+
+                },
+                Fail: error => {
+                    Snackbar.Add(error.Message, Severity.Error);
+                }
+            );
+        }
+        else
+        {
+            var result = await updateMenuItem(item);
+
+            result.Match(
+                Succ: newItem =>
+                {
+                    Snackbar.Add("MenuItem updated", Severity.Success);
+                    item = _menuItems.FirstOrDefault(x => x.Id == newItem.Id);
+                    item.Name = newItem.Name;
+                    item.Active = newItem.Active;
+
+                },
+                Fail: error =>
+                {
+                    Snackbar.Add(error.Message, Severity.Error);
+                    MenuItem failedItem = _menuItems.FirstOrDefault(x => x.Id == item.Id);
+                    failedItem.Name = _editingItem.Name;
+                    failedItem.Active = _editingItem.Active;
+
+                }
+            );
+        }
+        StateHasChanged();
+    }
+    async Task<LanguageExt.Try<MenuItem>> updateMenuItem(MenuItem item)
+    {
+        return await MenuItemService.UpdateMenuItem(new UpdateMenuItemRequest{
+                Name = item.Name,
+                Active = item.Active
+            }, item.Id);
+    }
+    async Task<LanguageExt.Try<MenuItem>> addMenuItem(MenuItem item)
+    {
+        return await MenuItemService.AddMenuItem(new AddMenuItemRequest{
+                Name = item.Name
+            });
+    }
+    void AddItemToDataGrid()
+    {
+        _menuItems.Add(new MenuItem{
+            Name = "",
+        });
+        _dataGrid.SetEditingItemAsync(_menuItems.Last());
+    }
+    void ToggleItemActiveAsync(MenuItem item)
+    {
+        MenuItemService.ToggleMenuItemActive(item).Match(
+            Succ: menuItem =>
+            {
+                Snackbar.Add("MenuItem updated", Severity.Success);
+                _menuItems.FirstOrDefault(x => x.Id == menuItem.Id).Active = menuItem.Active;
+                StateHasChanged();
+            },
+            Fail: error =>
+            {
+                Snackbar.Add(error.Message, Severity.Error);
+            }
+        );
+    }
+
+    private async Task ConfirmActiveToggle(MenuItem item)
+    {
+        var parameters = new DialogParameters<ConfirmDialog>();
+        var actionWord = item.Active ? "deactivate" : "activate";
+        parameters.Add(x => x.ContentText, $"Are you sure you want to {actionWord} {item.Name}?");
+        parameters.Add(x => x.ButtonText, actionWord);
+
+        var dialog = await DialogService.ShowAsync<ConfirmDialog>("Confirm", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            ToggleItemActiveAsync(item);
+        }
+    }
+
+    private Func<MenuItem, int, string> RowStyleFunc => (x, i) =>
+    {
+        if (!x.Active)
+        {
+            return "background-color:#ebebeb;font-style:italic;font-color:#8a8686;";
+        }
+        return "";
+    };
 }
