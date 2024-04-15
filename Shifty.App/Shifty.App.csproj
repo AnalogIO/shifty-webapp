@@ -33,7 +33,7 @@
     <_ContentIncludedByDefault Remove="wwwroot\sample-data\weather.json" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Shifty.Api\Shifty.Api.csproj" />
+    <ProjectReference Include="..\Shifty.Generated.ApiClient\Shifty.Generated.ApiClient.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Remove=".dockerignore" />

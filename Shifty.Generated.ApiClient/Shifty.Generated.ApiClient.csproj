@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>10</LangVersion>
+        <RootNamespace>Shifty.Api</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+      <PackageReference Include="NSwag.ApiDescription.Client" Version="14.0.7" /> 
+      <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <OpenApiReference Include="OpenApiSpecs/AnalogCoreV1.json" >
+            <ClassName>AnalogCoreV1</ClassName>
+            <Namespace>Shifty.Api.Generated.AnalogCoreV1</Namespace>
+            <Options>/UseBaseUrl:false /OperationGenerationMode:SingleClientFromPathSegments</Options>
+        </OpenApiReference>
+        <OpenApiReference Include="OpenApiSpecs/AnalogCoreV2.json" >
+            <ClassName>AnalogCoreV2</ClassName>
+            <Namespace>Shifty.Api.Generated.AnalogCoreV2</Namespace>
+            <Options>/AdditionalNamespaceUsages:Shifty.Api.Generated.AnalogCoreV1 /UseBaseUrl:false /OperationGenerationMode:SingleClientFromPathSegments</Options>
+        </OpenApiReference>
+    </ItemGroup>
+
+</Project>
