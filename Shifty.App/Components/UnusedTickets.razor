@@ -1,0 +1,95 @@
+@namespace Components
+@using System.ComponentModel.DataAnnotations
+@using Shifty.App.Services
+@using Shifty.Api.Generated.AnalogCoreV1
+@using Shifty.Api.Generated.AnalogCoreV2
+@using Shifty.App.DomainModels
+@using Shifty.App.Shared
+@using Shared
+@using LanguageExt.UnsafeValueAccess
+@inject IUnusedTicketsService _unusedTicketsService
+@inject ISnackbar Snackbar
+
+<MudContainer MaxWidth="MaxWidth.Medium" Style="margin-top: 20px;">
+    <MudDataGrid
+        T="UnusedTicket"
+        Items="@Items"
+        Height="500px"
+        FixedFooter>
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Unused Tickets</MudText>
+            <MudSpacer />
+            @if (_loading)
+            {
+                <LoadingIndicator Height="64px" />
+            }
+            <MudDateRangePicker DateRange="@_queryDateRange" Editable=true DateRangeChanged="LoadUnusedTickets"/>
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="x => x.ProductId" Title="Product Id" />
+            <PropertyColumn Property="x => x.ProductName" Title="Product Name" AggregateDefinition="_footerLabel"/>
+            <PropertyColumn Property="x => x.TicketsLeft" Title="Unused Tickets" AggregateDefinition="_ticketsLeftSum" />
+            <PropertyColumn Property="x => x.UnusedPurchasesValue" Title="Unused value (DKK)" AggregateDefinition="_valueLeftSum">
+                <CellTemplate>
+                    @context.Item.UnusedPurchasesValue.ToString("0.00")
+                </CellTemplate>
+            </PropertyColumn>
+        </Columns>
+        <NoRecordsContent>No matching records found</NoRecordsContent>
+    </MudDataGrid>
+</MudContainer>
+
+@code
+{
+    private IEnumerable<UnusedTicket> Items;
+    private bool _loading = false;
+    private DateRange _queryDateRange = new(){ Start = DateTime.Today.AddMonths(-1), End = DateTime.Today};
+
+    private async Task LoadUnusedTickets(DateRange queryDateRange)
+    {
+        _loading = true;
+        if (queryDateRange.Start is null || queryDateRange.End is null) return;
+        
+        _queryDateRange.Start = queryDateRange.Start;
+        _queryDateRange.End = queryDateRange.End;
+        var result = await _unusedTicketsService.GetUnusedTickets(queryDateRange.Start.Value, queryDateRange.End.Value);
+
+        result.Match(
+            Succ: res => {
+                Items = res;
+            },
+            Fail: error => {
+                Snackbar.Add(error.Message, Severity.Error);
+                Items = new List<UnusedTicket>();
+            }
+        );
+        _loading = false;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _queryDateRange.Start = new(DateTime.Today.Year, 1, 1);
+        _queryDateRange.End = new(DateTime.Today.Year, 12, 31);
+        await LoadUnusedTickets(_queryDateRange);
+    }
+
+    private AggregateDefinition<UnusedTicket> _ticketsLeftSum = new()
+    {
+        Type = AggregateType.Sum
+    };
+
+    private AggregateDefinition<UnusedTicket> _valueLeftSum = new()
+    {
+        CustomAggregate = x => {
+            var sum = x.Sum(t => t.UnusedPurchasesValue);
+            return sum.ToString("0.00");
+        },
+        Type = AggregateType.Custom,
+    };
+
+    private AggregateDefinition<UnusedTicket> _footerLabel = new()
+    {
+        CustomAggregate = x => "Total",
+        Type = AggregateType.Custom,
+    };
+}
