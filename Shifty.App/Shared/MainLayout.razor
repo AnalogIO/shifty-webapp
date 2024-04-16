@@ -2,7 +2,7 @@
 @using MudBlazor.Utilities
 @inherits LayoutComponentBase
 
-<MudThemeProvider Theme="_theme"/>
+<MudThemeProvider Theme="_theme" @bind-IsDarkMode="_darkmode" @ref="_themeProvider"/>
 <MudDialogProvider
     CloseOnEscapeKey="true"
 />
@@ -14,6 +14,8 @@
             <MudAppBar Elevation="0">
                 <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((_) => DrawerToggle())"/>
                 <MudText Typo="Typo.h6" Align="Align.Left">Analog Shifty</MudText>
+                <MudSpacer />
+                <MudIconButton Icon="@(_darkmode ? Icons.Material.Filled.DarkMode : Icons.Material.Filled.LightMode)" Color="Color.Inherit" Edge="Edge.End" OnClick="@((_) => _darkmode = !_darkmode)"/>
             </MudAppBar>
             <MudDrawer @bind-Open="_drawerOpen" Elevation="1">
                 <MudDrawerHeader>
@@ -28,7 +30,7 @@
         <NotAuthorized>
             <MudAppBar></MudAppBar>
                 <MudMainContent>
-                    <MudPaper Elevation="0" Height="60vh" Class="d-flex justify-center align-center" Style=@($"background:{_theme.Palette.Background}")>
+                    <MudPaper Elevation="0" Height="60vh" Class="d-flex justify-center align-center" >
                         <MudPaper Width="40vw">
                             <MudAlert Severity="Severity.Info">Please login</MudAlert>
                             <Login/>
@@ -41,10 +43,12 @@
 
 @code {
     bool _drawerOpen = true;
+    MudThemeProvider _themeProvider;
+    private bool _darkmode { get; set; } = false;
 
     readonly MudTheme _theme = new MudTheme()
     {
-        Palette = new Palette()
+        Palette = new PaletteLight()
         {
             Primary = new MudColor("#775440"),
             Secondary = new MudColor("#38251a"),
@@ -56,11 +60,45 @@
             Warning = new MudColor("#fed521"),
             Success = new MudColor("#738d4b"),
             Dark = Colors.Grey.Darken3,
+        },
+        PaletteDark = new PaletteDark()
+        {
+            Primary = new MudColor("#B85C38"),
+            Secondary = new MudColor("#38251a"),
+            Tertiary = new MudColor("#8c674c"),
+            AppbarBackground = new MudColor("#1f1b16"),
+            Surface = new MudColor("#29221b"),
+            Background = new MudColor("#1f1b16"),
+            Info = new MudColor("#20455f"),
+            Error = new MudColor("#893c24"),
+            Warning = new MudColor("#fed521"),
+            Success = new MudColor("#738d4b"),
+            Dark = new MudColor("E0C097"),
+            TextPrimary = new MudColor("#f7e8da"),
+            TextSecondary = new MudColor("#f7e8da"),
+            AppbarText = new MudColor("#f7e8da"),
+            DrawerText = new MudColor("#f7e8da"),
+            DrawerIcon = new MudColor("#f7e8da"),
+            DrawerBackground = new MudColor("#29221b"),
+            Divider = new MudColor("#13110f"),
+            DividerLight = new MudColor("#13110f"),
+            TableLines = new MudColor("#13110f"),
+            ActionDefault = new MudColor("#E0C097"),
+            ActionDisabled = new MudColor("#474747"),
         }
     };
 
     protected override void OnInitialized()
     {
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _darkmode = await _themeProvider.GetSystemPreference();
+            StateHasChanged();
+        }
     }
 
     void DrawerToggle()

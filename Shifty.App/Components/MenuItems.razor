@@ -43,7 +43,8 @@
                     <MudIconButton
                         Size="@Size.Medium"
                         Icon="@Icons.Material.Outlined.Edit"
-                        Color="Color.Primary"
+                        Color="Color.Dark"
+                        Variant="Variant.Outlined"
                         OnClick="@context.Actions.StartEditingItemAsync" />
                 </CellTemplate>
             </TemplateColumn>
@@ -54,7 +55,7 @@
                     @{
                         if (context.Item.Active)
                         {
-                            <MudIconButton Size="@Size.Small" Color="Color.Dark" OnClick="@(() => ConfirmActiveToggle(context.Item))"
+                            <MudIconButton Variant="Variant.Outlined" Size="@Size.Small" Color="Color.Dark" OnClick="@(() => ConfirmActiveToggle(context.Item))"
                                 Icon="@Icons.Material.Filled.Visibility" />
                         }
                         else
