@@ -76,7 +76,7 @@
 
         return result.Match(
             Succ: res => {
-                return new TableData<SimpleUserResponse>(){ Items = res.Users.AsEnumerable(), TotalItems = res.TotalUsers};;
+                return new TableData<SimpleUserResponse>(){ Items = res.Users.AsEnumerable(), TotalItems = res.TotalUsers};
             },
             Fail: error => {
                 Snackbar.Add(error.Message, Severity.Error);

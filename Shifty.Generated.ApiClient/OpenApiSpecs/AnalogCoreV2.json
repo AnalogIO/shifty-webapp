@@ -384,6 +384,61 @@
         ]
       }
     },
+    "/api/v2/statistics/unused-clips": {
+      "post": {
+        "tags": [
+          "AdminStatistics"
+        ],
+        "summary": "Sum unused clip cards within a given period per productId",
+        "operationId": "AdminStatistics_GetUnusedClips",
+        "requestBody": {
+          "x-name": "unusedClipsRequest",
+          "description": "Request object containing start and end date of the query",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnusedClipsRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": " Products with tickets that match the criteria ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UnusedClipsResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": " Invalid credentials ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
     "/api/v2/appconfig": {
       "get": {
         "tags": ["AppConfig"],
@@ -1736,6 +1791,55 @@
         "description": "",
         "x-enumNames": ["Active", "Deleted", "PendingActivition"],
         "enum": ["Active", "Deleted", "PendingActivition"]
+      },
+      "UnusedClipsResponse": {
+        "type": "object",
+        "description": "Initialize a response with unused clips data",
+        "additionalProperties": false,
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "description": "The id of the product",
+            "format": "int32",
+            "example": 1
+          },
+          "productName": {
+            "type": "string",
+            "description": "The name of the product",
+            "example": "Americano "
+          },
+          "ticketsLeft": {
+            "type": "integer",
+            "description": "The number of tickets unused in a purchase",
+            "format": "int32",
+            "example": 8
+          },
+          "unusedPurchasesValue": {
+            "type": "number",
+            "description": "The value of the unused purchases of a given product",
+            "format": "decimal",
+            "example": 40.2
+          }
+        }
+      },
+      "UnusedClipsRequest": {
+        "type": "object",
+        "description": "Initialize a request for data with unused clips.",
+        "additionalProperties": false,
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "description": "The start date of unused tickets query.",
+            "format": "date-time",
+            "example": "2021-02-08"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "The end date of unused tickets query.",
+            "format": "date-time",
+            "example": "2024-02-08"
+          }
+        }
       },
       "AppConfig": {
         "type": "object",
