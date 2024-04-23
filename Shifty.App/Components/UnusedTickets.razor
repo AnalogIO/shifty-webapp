@@ -50,8 +50,7 @@
         _loading = true;
         if (queryDateRange.Start is null || queryDateRange.End is null) return;
         
-        _queryDateRange.Start = queryDateRange.Start;
-        _queryDateRange.End = queryDateRange.End;
+        _queryDateRange = queryDateRange;
         var result = await _unusedTicketsService.GetUnusedTickets(queryDateRange.Start.Value, queryDateRange.End.Value);
 
         result.Match(
