@@ -43,7 +43,7 @@
 {
     private IEnumerable<UnusedTicket> Items;
     private bool _loading = false;
-    private DateRange _queryDateRange = new(){ Start = DateTime.Today.AddMonths(-1), End = DateTime.Today};
+    private DateRange _queryDateRange = new(){ Start = new(DateTime.Today.Year, 1, 1), End = new(DateTime.Today.Year, 12, 31)};
 
     private async Task LoadUnusedTickets(DateRange queryDateRange)
     {
@@ -68,8 +68,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _queryDateRange.Start = new(DateTime.Today.Year, 1, 1);
-        _queryDateRange.End = new(DateTime.Today.Year, 12, 31);
         await LoadUnusedTickets(_queryDateRange);
     }
 
