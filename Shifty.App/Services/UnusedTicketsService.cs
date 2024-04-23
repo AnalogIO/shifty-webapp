@@ -24,7 +24,7 @@ namespace Shifty.App.Services
                                 StartDate = from,
                                 EndDate = to
                             })
-                            .Map(x => x.Map(t => UnusedTicket.FromDto(t)));
+                            .Map(x => x.Map(UnusedTicket.FromDto));
         }
     }
 }
