@@ -3,7 +3,7 @@
 
 <MudNavMenu>
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-    @if (_user is not null && _user.IsInRole("Board") || _user is not null && _user.IsInRole("Manager"))
+    @if (_user is not null && (_user.IsInRole("Board") || _user.IsInRole("Manager")))
     {
         <MudNavLink Href="Voucher" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Sell">Issue vouchers</MudNavLink>
     }
