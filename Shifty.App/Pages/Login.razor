@@ -36,6 +36,7 @@
             <MudButton ButtonType="ButtonType.Submit"
                        Variant="Variant.Filled"
                        Color="Color.Primary"
+                       Disabled="@(!ValidateCredentials())"
                        Class="ml-auto"
                        OnClick="@(async () => await LoginUser())">
                 Login
@@ -66,5 +67,14 @@
         _loggingIn = true;
         _successfulLogin = await _authenticationService.LoginUser(_loginForm.Email, _loginForm.Password);
         _loggingIn = false;
+    }
+
+    bool ValidateCredentials()
+    {
+        return _loginForm.Email != null 
+                && _loginForm.Password != null
+                && _loginForm.Email.Length > 0
+                && _loginForm.Password.Length > 0
+                && !_loggingIn;
     }
 }
