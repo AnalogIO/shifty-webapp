@@ -7,36 +7,41 @@
 @using Shifty.App.Shared
 @using Shared
 @using LanguageExt.UnsafeValueAccess
+@using MudExtensions
 @inject IUnusedTicketsService _unusedTicketsService
 @inject ISnackbar Snackbar
 
 <MudContainer MaxWidth="MaxWidth.Medium" Style="margin-top: 20px;">
-    <MudDataGrid
-        T="UnusedTicket"
-        Items="@Items"
-        Height="500px"
-        FixedFooter>
-        <ToolBarContent>
-            <MudText Typo="Typo.h6">Unused Tickets</MudText>
-            <MudSpacer />
-            @if (_loading)
-            {
-                <LoadingIndicator Height="64px" />
-            }
-            <MudDateRangePicker DateRange="@_queryDateRange" Editable=true DateRangeChanged="LoadUnusedTickets"/>
-        </ToolBarContent>
-        <Columns>
-            <PropertyColumn Property="x => x.ProductId" Title="Product Id" />
-            <PropertyColumn Property="x => x.ProductName" Title="Product Name" AggregateDefinition="_footerLabel"/>
-            <PropertyColumn Property="x => x.TicketsLeft" Title="Unused Tickets" AggregateDefinition="_ticketsLeftSum" />
-            <PropertyColumn Property="x => x.UnusedPurchasesValue" Title="Unused value (DKK)" AggregateDefinition="_valueLeftSum">
-                <CellTemplate>
-                    @context.Item.UnusedPurchasesValue.ToString("0.00")
-                </CellTemplate>
-            </PropertyColumn>
-        </Columns>
-        <NoRecordsContent>No records found for the given time period</NoRecordsContent>
-    </MudDataGrid>
+    <MudPaper Style="padding: 10px">
+        <MudText Typo="Typo.h6">Unused Tickets</MudText>
+        <MudDateRangePicker DateRange="@_queryDateRange" Editable=true DateRangeChanged="LoadUnusedTickets"/>
+        <MudLoading @bind-Loading="_loading">
+            <LoaderContent>
+                <MudContainer Style="width: 100%; display: flex;">
+                    <LoadingIndicator Height="400px" />
+                </MudContainer>
+            </LoaderContent>
+            <ChildContent>
+        <MudDataGrid
+            T="UnusedTicket"
+            Items="@Items"
+            Height="500px"
+            FixedFooter>
+                    <Columns>
+                        <PropertyColumn Property="x => x.ProductId" Title="Product Id" />
+                        <PropertyColumn Property="x => x.ProductName" Title="Product Name" AggregateDefinition="_footerLabel"/>
+                        <PropertyColumn Property="x => x.TicketsLeft" Title="Unused Tickets" AggregateDefinition="_ticketsLeftSum" />
+                        <PropertyColumn Property="x => x.UnusedPurchasesValue" Title="Unused value (DKK)" AggregateDefinition="_valueLeftSum">
+                            <CellTemplate>
+                                @context.Item.UnusedPurchasesValue.ToString("0.00")
+                            </CellTemplate>
+                        </PropertyColumn>
+                    </Columns>
+                    <NoRecordsContent>No records found for the given time period</NoRecordsContent>
+                </MudDataGrid>
+            </ChildContent>
+        </MudLoading>
+    </MudPaper>
 </MudContainer>
 
 @code

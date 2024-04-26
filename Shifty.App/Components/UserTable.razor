@@ -5,63 +5,73 @@
 @using Shifty.Api.Generated.AnalogCoreV2
 @using Shared
 @using LanguageExt.UnsafeValueAccess
+@using MudExtensions
 @inject IUserService _userService
 @inject ISnackbar Snackbar
 
 <MudContainer MaxWidth="MaxWidth.Medium" Style="margin-top: 20px;">
-    <MudTable 
-        T="SimpleUserResponse" 
-        ServerData="@(new Func<TableState, Task<TableData<SimpleUserResponse>>>(LoadUsers))" 
-            @ref="_table"
-            EditTrigger="TableEditTrigger.EditButton"
-            ApplyButtonPosition="TableApplyButtonPosition.End"
-            EditButtonPosition="TableEditButtonPosition.End"
-            CanCancelEdit="true"
-            RowEditCancel="ResetUserOnCancel"
-            RowEditCommit="UpdateUserGroup"
-            RowEditPreview="BackupUser"
-            IsEditRowSwitchingBlocked="true">
-        <ToolBarContent>
-            <MudText Typo="Typo.h6">Users</MudText>
-            <MudSpacer />
-            <MudTextField 
-                T="string"
-                ValueChanged="@(s => OnSearch(s))" 
-                Placeholder="Search" 
-                Adornment="Adornment.Start" 
-                AdornmentIcon="Icons.Material.Filled.Search" 
-                IconSize="Size.Medium" />
-        </ToolBarContent>
-        <HeaderContent>
-            <MudTh>Id</MudTh>
-            <MudTh>Name</MudTh>
-            <MudTh>Email</MudTh>
-            <MudTh>UserGroup</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Id">@context.Id</MudTd>
-            <MudTd DataLabel="Name">@context.Name</MudTd>
-            <MudTd DataLabel="Email">@context.Email</MudTd>
-            <MudTd DataLabel="UserGroup">@context.UserGroup</MudTd>
-        </RowTemplate>
-        <RowEditingTemplate>
-            <MudTd DataLabel="Id">@context.Id</MudTd>
-            <MudTd DataLabel="Name">@context.Name</MudTd>
-            <MudTd DataLabel="Email">@context.Email</MudTd>
-            <MudTd DataLabel="UserGroup">
-                <MudSelect T="UserGroup" Label="UserGroup" @bind-Value="context.UserGroup">
-                    @foreach (var group in Enum.GetValues<UserGroup>()) {
-                        <MudSelectItem T="UserGroup" Value="@group">@group</MudSelectItem>    
-                    }
-                </MudSelect>
-            </MudTd>
-        </RowEditingTemplate>
-        <NoRecordsContent>No matching records found</NoRecordsContent>
-        <PagerContent><MudTablePager /></PagerContent>
-        <EditButtonContent Context="button">
-            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
-        </EditButtonContent>
-    </MudTable>
+    <MudPaper Style="padding: 10px">
+        <MudText Typo="Typo.h6">Users</MudText>
+        <MudSpacer />
+        <MudTextField 
+            T="string"
+            ValueChanged="@(s => OnSearch(s))" 
+            Placeholder="Search" 
+            Adornment="Adornment.Start" 
+            AdornmentIcon="Icons.Material.Filled.Search" 
+            IconSize="Size.Medium" />
+        <MudLoading @bind-Loading="_loading">
+            <LoaderContent>
+                <MudContainer Style="width: 100%; display: flex;">
+                    <LoadingIndicator Height="400px" />
+                </MudContainer>
+            </LoaderContent>
+            <ChildContent>
+                <MudTable 
+                    T="SimpleUserResponse" 
+                    ServerData="@(new Func<TableState, Task<TableData<SimpleUserResponse>>>(LoadUsers))" 
+                        @ref="_table"
+                        EditTrigger="TableEditTrigger.EditButton"
+                        ApplyButtonPosition="TableApplyButtonPosition.End"
+                        EditButtonPosition="TableEditButtonPosition.End"
+                        CanCancelEdit="true"
+                        RowEditCancel="ResetUserOnCancel"
+                        RowEditCommit="UpdateUserGroup"
+                        RowEditPreview="BackupUser"
+                        IsEditRowSwitchingBlocked="true">
+                    <HeaderContent>
+                        <MudTh>Id</MudTh>
+                        <MudTh>Name</MudTh>
+                        <MudTh>Email</MudTh>
+                        <MudTh>UserGroup</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Id">@context.Id</MudTd>
+                        <MudTd DataLabel="Name">@context.Name</MudTd>
+                        <MudTd DataLabel="Email">@context.Email</MudTd>
+                        <MudTd DataLabel="UserGroup">@context.UserGroup</MudTd>
+                    </RowTemplate>
+                    <RowEditingTemplate>
+                        <MudTd DataLabel="Id">@context.Id</MudTd>
+                        <MudTd DataLabel="Name">@context.Name</MudTd>
+                        <MudTd DataLabel="Email">@context.Email</MudTd>
+                        <MudTd DataLabel="UserGroup">
+                            <MudSelect T="UserGroup" Label="UserGroup" @bind-Value="context.UserGroup">
+                                @foreach (var group in Enum.GetValues<UserGroup>()) {
+                                    <MudSelectItem T="UserGroup" Value="@group">@group</MudSelectItem>    
+                                }
+                            </MudSelect>
+                        </MudTd>
+                    </RowEditingTemplate>
+                    <NoRecordsContent>No matching records found</NoRecordsContent>
+                    <PagerContent><MudTablePager /></PagerContent>
+                    <EditButtonContent Context="button">
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
+                    </EditButtonContent>
+                </MudTable>
+            </ChildContent>
+        </MudLoading>
+    </MudPaper>
 </MudContainer>
 
 @code
@@ -69,11 +79,13 @@
     private MudTable<SimpleUserResponse> _table;
     private string searchString = "";
     UserGroup UserGroupBeforeEdit;
+    private bool _loading = false;
 
     private async Task<TableData<SimpleUserResponse>> LoadUsers(TableState state)
     {
+        _loading = true;
         var result = await _userService.SearchUsers(searchString, state.Page, state.PageSize);
-
+        _loading = false;
         return result.Match(
             Succ: res => {
                 return new TableData<SimpleUserResponse>(){ Items = res.Users.AsEnumerable(), TotalItems = res.TotalUsers};

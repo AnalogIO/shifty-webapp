@@ -7,6 +7,7 @@
 @using LanguageExt.UnsafeValueAccess
 @using Shifty.App.Repositories
 @using Shifty.App.DomainModels
+@using MudExtensions
 @inject IProductService _productService
 @inject IVoucherService _voucherService
 @inject ISnackbar Snackbar
@@ -71,25 +72,28 @@
                     </MudButton>
                 </MudCardActions>
             </MudForm>
-            @if (_showProgressBar)
-            {
-                <MudContainer class="d-flex">
-                    <LoadingIndicator Height="100px"/>
-                </MudContainer>
-            }
-            @if (_vouchers is not null)
-            {
-                <MudTextField Text="@_voucherCodes"  
-                            @ref="_multilineReference"
-                            T="string"
-                            Adornment="Adornment.End" 
-                            Style="border-width: 2px; padding: 4px;" 
-                            Outlined="true" 
-                            AdornmentIcon="@Icons.Material.Outlined.ContentCopy"
-                            OnAdornmentClick="@(async () => await CopyToClipboard())" 
-                            Lines="@Math.Min(_vouchers.Count(), 10)" 
-                            ReadOnly=true />
-            }
+            <MudLoading @bind-Loading="_loading">
+                <LoaderContent>
+                    <MudContainer Style="width: 100%; display: flex;">
+                        <LoadingIndicator Height="400px" />
+                    </MudContainer>
+                </LoaderContent>
+                <ChildContent>
+                    @if (_vouchers is not null)
+                    {
+                        <MudTextField Text="@_voucherCodes"  
+                                    @ref="_multilineReference"
+                                    T="string"
+                                    Adornment="Adornment.End" 
+                                    Style="border-width: 2px; padding: 4px;" 
+                                    Outlined="true" 
+                                    AdornmentIcon="@Icons.Material.Outlined.ContentCopy"
+                                    OnAdornmentClick="@(async () => await CopyToClipboard())" 
+                                    Lines="@Math.Min(_vouchers.Count(), 10)" 
+                                    ReadOnly=true />
+                    }
+                </ChildContent>
+            </MudLoading>
         </MudCardContent>
     </MudCard>
 </MudContainer>
@@ -100,7 +104,7 @@
     public System.Security.Claims.ClaimsPrincipal User { get; set; }
     private VoucherForm _voucherForm = new();
     private bool _isFormValid = false;
-    private bool _showProgressBar = false;
+    private bool _loading = false;
     private IEnumerable<Product> _products = new List<Product>();
     private IEnumerable<IssueVoucherResponse> _vouchers;
     private string _voucherCodes;
@@ -146,7 +150,7 @@
 
     private async Task IssueVoucher()
     {
-        _showProgressBar = true;
+        _loading = true;
         _vouchers = null;
         _voucherCodes = null;
         var result = await _voucherService.IssueVouchers(
@@ -158,12 +162,12 @@
 
         result.Match(
             Succ: response => {
-                _showProgressBar = false;
+                _loading = false;
                 _vouchers = response;
                 _voucherCodes = string.Join("\n", _vouchers.Select(issueVoucherResponse => issueVoucherResponse.VoucherCode));
             },
             Fail: ex => {
-                _showProgressBar = false;
+                _loading = false;
                 Snackbar.Add(ex.Message, Severity.Error);
             }
         );
