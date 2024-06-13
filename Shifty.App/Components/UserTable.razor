@@ -29,7 +29,8 @@
                 ValueChanged="@(s => OnSearch(s))" 
                 Placeholder="Search" 
                 Adornment="Adornment.Start" 
-                AdornmentIcon="Icons.Material.Filled.Search" 
+                AdornmentIcon="@Icons.Material.Filled.Search" 
+                
                 IconSize="Size.Medium" />
         </ToolBarContent>
         <HeaderContent>
@@ -59,7 +60,7 @@
         <NoRecordsContent>No matching records found</NoRecordsContent>
         <PagerContent><MudTablePager /></PagerContent>
         <EditButtonContent Context="button">
-            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
+            <MudIconButton Size="@Size.Small" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.Edit" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
         </EditButtonContent>
     </MudTable>
 </MudContainer>
@@ -120,6 +121,6 @@
     {
         ((SimpleUserResponse)user).UserGroup = UserGroupBeforeEdit;
         StateHasChanged();
-        Snackbar.Add("Canceled editing", Severity.Warning);
+        Snackbar.Add("Canceled editing", Severity.Info);
     }
 }
