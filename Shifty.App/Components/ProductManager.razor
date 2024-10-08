@@ -26,109 +26,112 @@
             <LoadingIndicator Height="400px" />
         </MudContainer>
     }
-    <MudDataGrid
-        @ref="_dataGrid"
-        T="Product"
-        Items="@_products"
-        EditMode="DataGridEditMode.Form"
-        ReadOnly="false"
-        StartedEditingItem="@StartedEditingItem"
-        CanceledEditingItem="@CanceledEditingItem"
-        CommittedItemChanges="@CommittedItemChanges"
-        EditTrigger="DataGridEditTrigger.Manual"
-        QuickFilter="e => _showNonvisible || e.Visible"
-        RowStyleFunc="@RowStyleFunc"
-        FixedHeader="true"
-        Height="calc(100vh - 250px)"
-        Dense="true"
-        SortMode="MudBlazor.SortMode.None">
-        <Columns>
-            <TemplateColumn Title="Edit">
-                <CellTemplate>
-                    <MudIconButton
-                        Size="@Size.Medium"
-                        Icon="@Icons.Material.Outlined.Edit"
-                        Color="Color.Primary"
-                        OnClick="@context.Actions.StartEditingItemAsync" />
-                </CellTemplate>
-            </TemplateColumn>
-            <PropertyColumn Property="x => x.Visible" Title="" InitialDirection="SortDirection.Descending">
-                <CellTemplate>
-                    @{
-                        if (context.Item.Visible)
-                        {
-                            <MudIcon Size="@Size.Small" Color="Color.Dark"
-                                Icon="@Icons.Material.Filled.Visibility" />
+    else
+    {
+        <MudDataGrid
+            @ref="_dataGrid"
+            T="Product"
+            Items="@_products"
+            EditMode="DataGridEditMode.Form"
+            ReadOnly="false"
+            StartedEditingItem="@StartedEditingItem"
+            CanceledEditingItem="@CanceledEditingItem"
+            CommittedItemChanges="@CommittedItemChanges"
+            EditTrigger="DataGridEditTrigger.Manual"
+            QuickFilter="e => _showNonvisible || e.Visible"
+            RowStyleFunc="@RowStyleFunc"
+            FixedHeader="true"
+            Height="calc(100vh - 250px)"
+            Dense="true"
+            SortMode="MudBlazor.SortMode.None">
+            <Columns>
+                <TemplateColumn Title="Edit">
+                    <CellTemplate>
+                        <MudIconButton
+                            Size="@Size.Medium"
+                            Icon="@Icons.Material.Outlined.Edit"
+                            Color="Color.Primary"
+                            OnClick="@context.Actions.StartEditingItemAsync" />
+                    </CellTemplate>
+                </TemplateColumn>
+                <PropertyColumn Property="x => x.Visible" Title="" InitialDirection="SortDirection.Descending">
+                    <CellTemplate>
+                        @{
+                            if (context.Item.Visible)
+                            {
+                                <MudIcon Size="@Size.Small" Color="Color.Dark"
+                                    Icon="@Icons.Material.Filled.Visibility" />
+                            }
+                            else
+                            {
+                                <MudIcon Size="@Size.Small" Style="@($"color:{Colors.Grey.Default};")"
+                                    Icon="@Icons.Material.Filled.VisibilityOff" />
+                            }
                         }
-                        else
+                    </CellTemplate>
+                    <EditTemplate>
+                        <MudSwitch id="first-edit-element" Label="Visible" Color="Color.Primary" @bind-Checked="context.Item.Visible" />
+                    </EditTemplate>
+                </PropertyColumn>
+                <PropertyColumn Property="x => x.Id" Title="Id" IsEditable="false" />
+                <PropertyColumn Property="x => x.Name" Title="Name" IsEditable="true" />
+                <PropertyColumn Property="x => x.NumberOfTickets" Title="Tickets" IsEditable="true" />
+                <PropertyColumn Property="x => x.Price" Title="Price" IsEditable="true" />
+                <PropertyColumn Property='x => string.Join(", ", x.AllowedUserGroups.Select(e => e.ToString()))'
+                    Title="User groups" IsEditable="true">
+                    <EditTemplate>
+                        <MudText Typo="Typo.subtitle1">Visible to:</MudText>
+                        @foreach (var group in Enum.GetValues<UserGroup>())
                         {
-                            <MudIcon Size="@Size.Small" Style="@($"color:{Colors.Grey.Default};")"
-                                Icon="@Icons.Material.Filled.VisibilityOff" />
+                            <MudCheckBox Dense="true" Color="Color.Primary" @bind-Checked="UserGroupDict[group]" Value="@group">
+                                @group</MudCheckBox>
                         }
-                    }
-                </CellTemplate>
-                <EditTemplate>
-                    <MudSwitch id="first-edit-element" Label="Visible" Color="Color.Primary" @bind-Checked="context.Item.Visible" />
-                </EditTemplate>
-            </PropertyColumn>
-            <PropertyColumn Property="x => x.Id" Title="Id" IsEditable="false" />
-            <PropertyColumn Property="x => x.Name" Title="Name" IsEditable="true" />
-            <PropertyColumn Property="x => x.NumberOfTickets" Title="Tickets" IsEditable="true" />
-            <PropertyColumn Property="x => x.Price" Title="Price" IsEditable="true" />
-            <PropertyColumn Property='x => string.Join(", ", x.AllowedUserGroups.Select(e => e.ToString()))'
-                Title="User groups" IsEditable="true">
-                <EditTemplate>
-                    <MudText Typo="Typo.subtitle1">Visible to:</MudText>
-                    @foreach (var group in Enum.GetValues<UserGroup>())
-                    {
-                        <MudCheckBox Dense="true" Color="Color.Primary" @bind-Checked="UserGroupDict[group]" Value="@group">
-                            @group</MudCheckBox>
-                    }
-                </EditTemplate>
-            </PropertyColumn>
-            <PropertyColumn Property="x => x.IsPerk" Title="Perk?" IsEditable="false">
-                <CellTemplate>
-                    @{
-                        if (context.Item.IsPerk)
-                        {
-                            <MudIcon Style="color:gold;" Icon="@Icons.Material.Filled.Star" Title="IsPerk" />
+                    </EditTemplate>
+                </PropertyColumn>
+                <PropertyColumn Property="x => x.IsPerk" Title="Perk?" IsEditable="false">
+                    <CellTemplate>
+                        @{
+                            if (context.Item.IsPerk)
+                            {
+                                <MudIcon Style="color:gold;" Icon="@Icons.Material.Filled.Star" Title="IsPerk" />
+                            }
+                            else
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.StarOutline" Title="IsPerk" />
+                            }
                         }
-                        else
-                        {
-                            <MudIcon Icon="@Icons.Material.Filled.StarOutline" Title="IsPerk" />
-                        }
-                    }
-                </CellTemplate>
-            </PropertyColumn>
-            <PropertyColumn Property="x => x.Description" Title="Description" IsEditable="true" />
-            <PropertyColumn Property="x => x.EligibleMenuItems" Title="Eligible menu items" IsEditable="true" Hidden>
-                <EditTemplate>
-                    <MudComboBox
-                        T="MenuItem"
-                        Label="Eligible menu items"
-                        MultiSelection="true"
-                        Editable="true"
-                        @bind-SelectedValues="context.Item.EligibleMenuItems">
-                        @foreach (var mi in _allMenuItems)
-                        {
-                            <MudComboBoxItem Text="@mi.Name" Value="@mi">@mi.Name</MudComboBoxItem>
-                        }
-                    </MudComboBox>
-                </EditTemplate>
-            </PropertyColumn>
-        </Columns>
-    </MudDataGrid>
+                    </CellTemplate>
+                </PropertyColumn>
+                <PropertyColumn Property="x => x.Description" Title="Description" IsEditable="true" />
+                <PropertyColumn Property="x => x.EligibleMenuItems" Title="Eligible menu items" IsEditable="true" Hidden>
+                    <EditTemplate>
+                        <MudComboBox
+                            T="MenuItem"
+                            Label="Eligible menu items"
+                            MultiSelection="true"
+                            Editable="true"
+                            @bind-SelectedValues="context.Item.EligibleMenuItems">
+                            @foreach (var mi in _allMenuItems)
+                            {
+                                <MudComboBoxItem Text="@mi.Name" Value="@mi">@mi.Name</MudComboBoxItem>
+                            }
+                        </MudComboBox>
+                    </EditTemplate>
+                </PropertyColumn>
+            </Columns>
+        </MudDataGrid>
 
-    <MudToolBar>
-        <MudSpacer />
-        <MudButton
-            Color="Color.Primary"
-            Variant="Variant.Filled"
-            EndIcon="@Icons.Material.Outlined.Add"
-            OnClick="@AddItemToDataGrid">
-                Add Product
-        </MudButton>
-    </MudToolBar>
+        <MudToolBar>
+            <MudSpacer />
+            <MudButton
+                Color="Color.Primary"
+                Variant="Variant.Filled"
+                EndIcon="@Icons.Material.Outlined.Add"
+                OnClick="@AddItemToDataGrid">
+                    Add Product
+            </MudButton>
+        </MudToolBar>
+    }
 </MudPaper>
 @code
 {

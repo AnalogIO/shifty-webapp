@@ -17,7 +17,7 @@
   },
   "servers": [
     {
-      "url": "https://core.dev.analogio.dk"
+      "url": "http://localhost:5000"
     }
   ],
   "paths": {
@@ -386,9 +386,7 @@
     },
     "/api/v2/statistics/unused-clips": {
       "post": {
-        "tags": [
-          "AdminStatistics"
-        ],
+        "tags": ["AdminStatistics"],
         "summary": "Sum unused clip cards within a given period per productId",
         "operationId": "AdminStatistics_GetUnusedClips",
         "requestBody": {
@@ -1079,6 +1077,65 @@
         ]
       }
     },
+    "/api/v2/purchases/user/{userId}": {
+      "get": {
+        "tags": ["Purchases"],
+        "summary": "Get all purchases for a user",
+        "operationId": "Purchases_GetAllPurchasesForUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "User Id",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Purchases",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SimplePurchaseResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          },
+          "403": {
+            "description": "User not allowed to view purchases for given user"
+          },
+          "404": {
+            "description": "User with userId not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
     "/api/v2/purchases/{id}": {
       "get": {
         "tags": ["Purchases"],
@@ -1120,6 +1177,52 @@
                 }
               }
             }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
+    "/api/v2/purchases/{id}/refund": {
+      "put": {
+        "tags": ["Purchases"],
+        "summary": "Refunds a payment",
+        "operationId": "Purchases_RefundPurchase",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "database id of purchase",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Purchase after being refunded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimplePurchaseResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": ""
+          },
+          "403": {
+            "description": ""
           }
         },
         "security": [
