@@ -19,20 +19,19 @@
                 <MudDataGrid
                     T="Purchase"
                     Items="@_purchases"
-                    EditMode="DataGridEditMode.Form"
-                    ReadOnly="false"
+                    ReadOnly="true"
                     FixedHeader="true"
                     Height="calc(100vh - 250px)"
                     SortMode="MudBlazor.SortMode.None"
                     Style="width: 70vw;padding: 1rem"
                 >
                     <Columns>
-                        <PropertyColumn Property="x => x.Id" Title="Id" IsEditable="false" />
-                        <PropertyColumn Property="x => x.DateCreated" Title="Date" IsEditable="false"/>
-                        <PropertyColumn Property="x => x.ProductName" Title="Name" IsEditable="false" />
-                        <PropertyColumn Property="x => x.NumberOfTickets" Title="Tickets" IsEditable="false" />
-                        <PropertyColumn Property="x => x.Price" Title="Price" IsEditable="false" />
-                        <PropertyColumn Property="x => x.PurchaseStatus" Title="Status" IsEditable="false">
+                        <PropertyColumn Property="x => x.Id" Title="Id" />
+                        <PropertyColumn Property="x => x.DateCreated" Title="Date" />
+                        <PropertyColumn Property="x => x.ProductName" Title="Name" />
+                        <PropertyColumn Property="x => x.NumberOfTickets" Title="Tickets" />
+                        <PropertyColumn Property="x => x.Price" Title="Price" />
+                        <PropertyColumn Property="x => x.PurchaseStatus" Title="Status" >
                             <CellTemplate>
                             @{
                                 if(@context.Item.PurchaseStatus == PurchaseStatus.Completed)
@@ -84,6 +83,7 @@
     {
         if (args.Key=="Enter")
         {
+            Console.WriteLine("Enter key pressed");
             _loading = true;
             await GetPurchases();
             StateHasChanged();
