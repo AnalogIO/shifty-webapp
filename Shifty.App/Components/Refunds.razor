@@ -1,0 +1,103 @@
+@namespace Components
+@using System.ComponentModel.DataAnnotations
+@using MudExtensions
+@using Shifty.App.Services
+@using Shifty.Api.Generated.AnalogCoreV1
+@using Shifty.Api.Generated.AnalogCoreV2
+@using Shared
+@using LanguageExt.UnsafeValueAccess
+@using Components
+@using Shifty.App.DomainModels
+@using System.Collections.ObjectModel
+@inject IPurchaseService PurchaseService
+@inject ISnackbar Snackbar
+
+<MudPaper Elevation="15" Style="border-radius: 5px; width:fit-content; min-width: 500px; margin:2rem auto">
+            @if(_purchasesFetched)
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" Color="Color.Primary" OnClick="@(() => _purchasesFetched = false)" />
+                <MudDataGrid
+                    T="Purchase"
+                    Items="@_purchases"
+                    ReadOnly="true"
+                    FixedHeader="true"
+                    Height="calc(100vh - 250px)"
+                    SortMode="MudBlazor.SortMode.None"
+                    Style="width: 70vw;padding: 1rem"
+                >
+                    <Columns>
+                        <PropertyColumn Property="x => x.Id" Title="Id" />
+                        <PropertyColumn Property="x => x.DateCreated" Title="Date" />
+                        <PropertyColumn Property="x => x.ProductName" Title="Name" />
+                        <PropertyColumn Property="x => x.NumberOfTickets" Title="Tickets" />
+                        <PropertyColumn Property="x => x.Price" Title="Price" />
+                        <PropertyColumn Property="x => x.PurchaseStatus" Title="Status" >
+                            <CellTemplate>
+                            @{
+                                if(@context.Item.PurchaseStatus == PurchaseStatus.Completed)
+                                {
+                                    <MudButton Size="@Size.Small" Color="Color.Primary" Variant="Variant.Filled" OnClick="@(() => RefundPurchase(context.Item))">
+                                        Refund
+                                    </MudButton>
+                        }
+                        else
+                        {
+                            <MudText>@context.Item.PurchaseStatus</MudText>
+                        }
+                            }
+                            </CellTemplate>
+                        </PropertyColumn>
+                    </Columns>
+                </MudDataGrid>
+            }
+            else
+            {
+                <MudContainer Style="padding: 2rem; display: flex; flex-direction: column; justify-content: center;">
+                    <MudText Style="padding: 0.5rem;">Find purchases for user</MudText>
+                    <MudTextField Immediate="true" OnKeyDown="OnKeyDown" @bind-Value="UserId" Label="User ID" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary"></MudTextField>
+                </MudContainer>
+            }
+</MudPaper>
+
+@code {
+    private int UserId;
+    private bool _loading = true;
+    private bool _purchasesFetched = false;
+    private List<Purchase> _purchases;
+
+    private async Task GetPurchases()
+    {
+        var result = await PurchaseService.GetPurchases(UserId);
+        result.Match(
+            purchases =>
+            {
+                _purchases = purchases.OrderByDescending(x => x.DateCreated).ToList();
+                _purchasesFetched = true;
+            },
+            error => Snackbar.Add(error.Message, Severity.Error)
+        );
+        _loading = false;
+    }
+
+    async void OnKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key=="Enter")
+        {
+            _loading = true;
+            await GetPurchases();
+            StateHasChanged();
+        }
+
+  }
+
+    private async Task RefundPurchase(Purchase purchase)
+    {
+        var result = await PurchaseService.RefundPurchase(purchase.Id);
+        result.Match(
+            _ => Snackbar.Add("Purchase refunded", Severity.Success),
+            error => Snackbar.Add(error.Message, Severity.Error)
+        );
+        _loading = true;
+        await GetPurchases();
+    }
+}
