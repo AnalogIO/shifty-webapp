@@ -43,5 +43,10 @@ namespace Shifty.App.Repositories
         {
             return await _v2client.ApiV2AccountAuthLoginAsync(token, LoginType.Shifty);
         }
+
+        public async Task<Try<UserLoginResponse>> RefreshTokenAsync()
+        {
+            return await TryAsync(_v2client.ApiV2AccountAuthRefreshAsync(LoginType.Shifty, null));
+        }
     }
 }

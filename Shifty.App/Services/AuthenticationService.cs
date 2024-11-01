@@ -66,5 +66,18 @@ namespace Shifty.App.Services
             await _localStorage.SetItemAsync("token", res.Jwt);
             await _authStateProvider.UpdateAuthState(res.Jwt);
         }
+
+        public async Task<bool> Refresh()
+        {
+            var res = await _accountRepository.RefreshTokenAsync();
+            return await res.Match(
+                Succ: async (res) => {
+                    await _localStorage.SetItemAsync("token", res.Jwt);
+                    await _authStateProvider.UpdateAuthState(res.Jwt);
+                    return true;
+                },
+                Fail: (err) => Task.FromResult(false)
+            );
+        }
     }
 }

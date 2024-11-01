@@ -13,5 +13,7 @@ namespace Shifty.App.Repositories
         public Task<Try<UserSearchResponse>> SearchUserAsync(string query, int page, int pageSize);
         public Task<Try<Task>> UpdateUserGroupAsync(int userId, UserGroup group);
         public Task<UserLoginResponse> AuthenticateAsync(string token);
+        public Task<Try<UserLoginResponse>> RefreshTokenAsync();
+
     }
 }
