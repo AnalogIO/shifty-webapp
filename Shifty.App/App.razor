@@ -1,7 +1,17 @@
-﻿<CascadingAuthenticationState>
+﻿@using Shifty.App.Components
+@using Shifty.App.Pages
+<CascadingAuthenticationState>
     <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
         <Found Context="routeData">
-            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <NotAuthorized>
+                    <!-- Redirect unauthenticated users to login -->
+                    @if (routeData.PageType != typeof(Login))
+                    {
+                        <RedirectToLogin />
+                    }
+                </NotAuthorized>
+            </AuthorizeRouteView>
         </Found>
         <NotFound>
             <LayoutView Layout="@typeof(MainLayout)">
