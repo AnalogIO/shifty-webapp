@@ -6,6 +6,9 @@ using Blazored.LocalStorage;
 using LanguageExt.UnsafeValueAccess;
 using Shifty.App.Authentication;
 using Shifty.App.Repositories;
+using MudBlazor.Extensions;
+using System.Security.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Shifty.App.Services
 {
@@ -43,15 +46,25 @@ namespace Shifty.App.Services
                 return false;
             }
 
-            var jwtString = either.ValueUnsafe().Token;
-            await _localStorage.SetItemAsync("token", jwtString);
-            return _authStateProvider.UpdateAuthState(jwtString);
+            return true; // Email has been sent, allegedly
+
+            // var jwtString = either.ValueUnsafe().Token;
+            // await _localStorage.SetItemAsync("token", jwtString);
+            // return _authStateProvider.UpdateAuthState(jwtString);
         }
 
         public async Task Logout()
         {
             await _localStorage.RemoveItemAsync("token");
-            _authStateProvider.UpdateAuthState("");
+            await _authStateProvider.UpdateAuthState("");
+        }
+
+        [AllowAnonymous]
+        public async Task Authenticate(string token)
+        {
+            var res = await _accountRepository.AuthenticateAsync(token);
+            await _localStorage.SetItemAsync("token", res.Jwt);
+            await _authStateProvider.UpdateAuthState(res.Jwt);
         }
     }
 }
