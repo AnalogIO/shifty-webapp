@@ -5,7 +5,7 @@
 
 @attribute [AllowAnonymous]
 
-<MudPaper Elevation="0" Height="60vh" Class="d-flex justify-center align-center">
+<MudPaper Elevation="0" Height="60vh" Style="@($"background: {Color.Inherit}")" Class="d-flex justify-center align-center">
     <MudPaper Width="40vw">
         <MudAlert Severity="Severity.Info">Please login</MudAlert>
         <EditForm Model="@_loginForm" OnValidSubmit="async () =>  await LoginUser()" >
