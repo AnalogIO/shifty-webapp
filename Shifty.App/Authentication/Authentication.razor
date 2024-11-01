@@ -1,0 +1,35 @@
+@page "/Auth"
+@using Microsoft.AspNetCore.Authorization
+@attribute [AllowAnonymous]
+@using Microsoft.AspNetCore.Components
+@using Shifty.App.Services
+@inject NavigationManager NavManager
+@inject IAuthenticationService _authenticationService
+
+@code {
+    [CascadingParameter] public Task<AuthenticationState> AuthTask { get; set; }
+    private System.Security.Claims.ClaimsPrincipal _user;
+
+    [AllowAnonymous]
+    protected async override Task OnInitializedAsync()
+    {
+        var authState = await AuthTask;
+        _user = authState.User;
+
+        var uri = new Uri(NavManager.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+        var token = query.Get("token");
+
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            NavManager.NavigateTo("/");
+        }
+
+        Console.WriteLine("Calling authentication");
+        await _authenticationService.Authenticate(token);
+        Console.WriteLine("Finished calling authentication");
+
+        NavManager.NavigateTo("/");
+    }
+}

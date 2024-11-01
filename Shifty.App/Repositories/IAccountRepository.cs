@@ -9,8 +9,9 @@ namespace Shifty.App.Repositories
 {
     public interface IAccountRepository
     {
-        public Task<Either<Error, TokenDto>> LoginAsync(string username, string password);
+        public Task<Either<Error, Task>> LoginAsync(string username, string password);
         public Task<Try<UserSearchResponse>> SearchUserAsync(string query, int page, int pageSize);
         public Task<Try<Task>> UpdateUserGroupAsync(int userId, UserGroup group);
+        public Task<UserLoginResponse> AuthenticateAsync(string token);
     }
 }
