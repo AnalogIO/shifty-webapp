@@ -21,14 +21,11 @@
 
         var token = query.Get("token");
 
-        if (string.IsNullOrWhiteSpace(token))
+        if (!string.IsNullOrWhiteSpace(token))
         {
-            NavManager.NavigateTo("/");
+            await _authenticationService.Authenticate(token);
         }
 
-        Console.WriteLine("Calling authentication");
-        await _authenticationService.Authenticate(token);
-        Console.WriteLine("Finished calling authentication");
 
         NavManager.NavigateTo("/");
     }

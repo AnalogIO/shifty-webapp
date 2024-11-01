@@ -6,18 +6,19 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Shifty.Api.Generated.AnalogCoreV2;
+using Shifty.App.Services;
 
 namespace Shifty.App.Authentication
 {
     public class CustomAuthStateProvider : AuthenticationStateProvider
     {
         private readonly ILocalStorageService _localStorage;
-        private readonly AnalogCoreV2 _client;
+        private readonly IAuthenticationService _authService;
 
-        public CustomAuthStateProvider(ILocalStorageService storageService, AnalogCoreV2 client)
+        public CustomAuthStateProvider(ILocalStorageService storageService, IAuthenticationService authService)
         {
             _localStorage = storageService;
-            _client = client;
+            _authService = authService;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -39,34 +40,26 @@ namespace Shifty.App.Authentication
         private async Task<ClaimsPrincipal> ParseJwtString (string jwtString)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            Console.WriteLine("Authenticating with token: " + jwtString);
             if (!tokenHandler.CanReadToken(jwtString))
             {
-                Console.WriteLine("Cannot read token");
                 return new ClaimsPrincipal();
             }
 
             var token = new JwtSecurityTokenHandler().ReadJwtToken(jwtString);
-            return (DateTime.UtcNow < token.ValidTo) switch
+            switch(DateTime.UtcNow < token.ValidTo)
             {
-                true => new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "bearerToken")), //Needs the string passed as well, otherwise the user is not set to authenticated
-                false => new ClaimsPrincipal()
-            };
-            // switch(DateTime.UtcNow < token.ValidTo)
-            // {
-            //     case true:
-            //         return new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "bearerToken")); //Needs the string passed as well, otherwise the user is not set to authenticated
-            //     case false:
-            //         var t = await _client.ApiV2AccountAuthRefreshAsync(LoginType.Shifty, null);
-            //         if (t is not null)
-            //         {
-            //             await _localStorage.SetItemAsync("token", t.Jwt);
-            //             return new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "bearerToken"));
-            //         } else
-            //         {
-            //             return new ClaimsPrincipal();
-            //         }
-            // }
+                case true:
+                    return new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "bearerToken")); //Needs the string passed as well, otherwise the user is not set to authenticated
+                case false:
+                    var t = await _authService.Refresh();
+                    if (t)
+                    {
+                        return new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "bearerToken"));
+                    } else
+                    {
+                        return new ClaimsPrincipal();
+                    }
+            }
         }
     }
 }
