@@ -39,14 +39,9 @@ namespace Shifty.App.Repositories
             return await TryAsync(_v2client.ApiV2AccountUserGroupAsync(userId, new(){UserGroup = group}));
         }
 
-        public async Task<UserLoginResponse> AuthenticateAsync(string token)
+        public async Task<Either<Error, UserLoginResponse>> AuthenticateAsync(string token)
         {
-            return await _v2client.ApiV2AccountAuthLoginAsync(token, LoginType.Shifty);
-        }
-
-        public async Task<Either<Error, UserLoginResponse>> RefreshTokenAsync(string refreshToken)
-        {
-            return await TryAsync(_v2client.ApiV2AccountAuthRefreshAsync(refreshToken)).ToEither();
+            return await TryAsync(_v2client.ApiV2AccountAuthAsync(token)).ToEither();
         }
     }
 }

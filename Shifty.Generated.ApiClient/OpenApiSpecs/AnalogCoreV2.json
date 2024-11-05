@@ -17,7 +17,7 @@
   },
   "servers": [
     {
-      "url": "https://localhost:5001"
+      "url": "https://localhost:8081"
     }
   ],
   "paths": {
@@ -430,67 +430,15 @@
         }
       }
     },
-    "/api/v2/account/auth/login": {
-      "get": {
-        "tags": [
-          "Account"
-        ],
-        "operationId": "Account_AuthToken",
-        "parameters": [
-          {
-            "name": "tokenHash",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "nullable": true
-            },
-            "x-position": 1
-          },
-          {
-            "name": "loginType",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LoginType"
-            },
-            "x-position": 2
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserLoginResponse"
-                }
-              }
-            }
-          },
-          "204": {
-            "description": ""
-          },
-          "404": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MessageResponseDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/account/auth/refresh": {
+    "/api/v2/account/auth": {
       "post": {
         "tags": [
           "Account"
         ],
-        "operationId": "Account_Refresh",
+        "operationId": "Account_Authenticate",
         "parameters": [
           {
-            "name": "refreshToken",
+            "name": "tokenHash",
             "in": "query",
             "schema": {
               "type": "string",

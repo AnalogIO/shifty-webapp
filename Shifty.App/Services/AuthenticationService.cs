@@ -40,13 +40,14 @@ namespace Shifty.App.Services
             var encodedPassword = EncodePasscode(password);
             var either = await _accountRepository.LoginAsync(username, encodedPassword);
 
-            if (either.IsLeft)
-            {
-                System.Console.WriteLine(either.Right(w => w.ToString()).Left(e => e.Message));
-                return false;
-            }
-
-            return true; // Email has been sent, allegedly
+            return either.Match(
+                Left: error =>
+                {
+                    Console.WriteLine(error);
+                    return false;
+                },
+                Right: _ => true
+                );
 
             // var jwtString = either.ValueUnsafe().Token;
             // await _localStorage.SetItemAsync("token", jwtString);
@@ -56,39 +57,42 @@ namespace Shifty.App.Services
         public async Task Logout()
         {
             await _localStorage.RemoveItemAsync("token");
+            await _localStorage.RemoveItemAsync("refreshToken");
             _authStateProvider.UpdateAuthState("");
         }
 
         [AllowAnonymous]
-        public async Task Authenticate(string token)
-        {
-            var res = await _accountRepository.AuthenticateAsync(token);
-            await _localStorage.SetItemAsync("token", res.Jwt);
-            await _localStorage.SetItemAsync("refreshToken", res.RefreshToken);
-            _authStateProvider.UpdateAuthState(res.Jwt);
-        }
-
         public async Task<bool> Refresh()
         {
-            Console.WriteLine("Refreshing token");
             var refreshToken = await _localStorage.GetItemAsync<string>("refreshToken");
-            var res = await _accountRepository.RefreshTokenAsync(refreshToken);
+            return await Authenticate(refreshToken);
+        }
 
-            if (res.IsLeft)
-            {
-                System.Console.WriteLine(res.Right(w => w.ToString()).Left(e => e.Message));
-                return false;
-            }
+        [AllowAnonymous]
+        public async Task<bool> Authenticate(string token)
+        {
+            Console.WriteLine("Refreshing token");
+            Console.WriteLine(token);
 
-            Console.WriteLine("Refreshing token successful");
+            var either = await _accountRepository.AuthenticateAsync(token);
 
-            var actualRes = res.ValueUnsafe();
-            var jwtString = actualRes.Jwt;
-            await _localStorage.SetItemAsync("refreshToken", actualRes.RefreshToken);
-            await _localStorage.SetItemAsync("token", jwtString);
-            _authStateProvider.UpdateAuthState(jwtString);
+            return await either.Match(
+                Left: e =>
+                {
+                    Console.WriteLine(e.Message);
+                    return Task.FromResult(false);
+                },
+                Right: async response =>
+                {
+                    Console.WriteLine("Refreshing token successful");
 
-            return true;
+                    var jwtString = response.Jwt;
+                    await _localStorage.SetItemAsync("refreshToken", response.RefreshToken);
+                    await _localStorage.SetItemAsync("token", jwtString);
+                    _authStateProvider.UpdateAuthState(jwtString);
+
+                    return true;
+                });
         }
     }
 }

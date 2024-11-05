@@ -8,7 +8,7 @@ namespace Shifty.App.Services
         Task<bool> LoginUser(string username, string password);
         Task Logout();
         [AllowAnonymous]
-        Task Authenticate(string token);
+        Task<bool> Authenticate(string token);
         Task<bool> Refresh();
     }
 }
