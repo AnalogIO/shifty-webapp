@@ -8,25 +8,19 @@
 
 @code {
     [CascadingParameter] public Task<AuthenticationState> AuthTask { get; set; }
-    private System.Security.Claims.ClaimsPrincipal _user;
+
+    [SupplyParameterFromQuery(Name = "token")]
+    public string Token { get; set; }
 
     [AllowAnonymous]
-    protected async override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthTask;
-        _user = authState.User;
-
-        var uri = new Uri(NavManager.Uri);
-        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
-
-        var token = query.Get("token");
-
-        if (!string.IsNullOrWhiteSpace(token))
+        if (!string.IsNullOrWhiteSpace(Token))
         {
-            await _authenticationService.Authenticate(token);
+            await _authenticationService.Authenticate(Token);
         }
-
 
         NavManager.NavigateTo("/");
     }
+
 }
