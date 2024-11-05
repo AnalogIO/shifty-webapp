@@ -17,7 +17,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5001"
+      "url": "https://localhost:5001"
     }
   ],
   "paths": {
@@ -490,21 +490,13 @@
         "operationId": "Account_Refresh",
         "parameters": [
           {
-            "name": "loginType",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LoginType"
-            },
-            "x-position": 1
-          },
-          {
             "name": "refreshToken",
             "in": "query",
             "schema": {
               "type": "string",
               "nullable": true
             },
-            "x-position": 2
+            "x-position": 1
           }
         ],
         "responses": {
@@ -517,16 +509,21 @@
                 }
               }
             }
-          }
-        },
-        "security": [
-          {
-            "jwt": []
           },
-          {
-            "apikey": []
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponseDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": ""
           }
-        ]
+        }
       }
     },
     "/api/v2/statistics/unused-clips": {

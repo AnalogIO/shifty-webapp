@@ -64,13 +64,15 @@ namespace Shifty.App.Services
         {
             var res = await _accountRepository.AuthenticateAsync(token);
             await _localStorage.SetItemAsync("token", res.Jwt);
+            await _localStorage.SetItemAsync("refreshToken", res.RefreshToken);
             _authStateProvider.UpdateAuthState(res.Jwt);
         }
 
         public async Task<bool> Refresh()
         {
             Console.WriteLine("Refreshing token");
-            var res = await _accountRepository.RefreshTokenAsync();
+            var refreshToken = await _localStorage.GetItemAsync<string>("refreshToken");
+            var res = await _accountRepository.RefreshTokenAsync(refreshToken);
 
             if (res.IsLeft)
             {
@@ -80,7 +82,9 @@ namespace Shifty.App.Services
 
             Console.WriteLine("Refreshing token successful");
 
-            var jwtString = res.ValueUnsafe().Jwt;
+            var actualRes = res.ValueUnsafe();
+            var jwtString = actualRes.Jwt;
+            await _localStorage.SetItemAsync("refreshToken", actualRes.RefreshToken);
             await _localStorage.SetItemAsync("token", jwtString);
             _authStateProvider.UpdateAuthState(jwtString);
 
