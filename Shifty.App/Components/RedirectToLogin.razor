@@ -1,8 +1,17 @@
+@using Shifty.App.Services
 @inject NavigationManager Navigation
+@inject IAuthenticationService _authenticationService
 
 @code {
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        Navigation.NavigateTo("/login", false);
+        if (await _authenticationService.Refresh())
+        {
+            Navigation.NavigateTo("/", false);
+        }
+        else
+        {
+            Navigation.NavigateTo("/login", false);
+        }
     }
 }
