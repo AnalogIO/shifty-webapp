@@ -56,7 +56,7 @@ namespace Shifty.App.Services
         public async Task Logout()
         {
             await _localStorage.RemoveItemAsync("token");
-            await _authStateProvider.UpdateAuthState("");
+            _authStateProvider.UpdateAuthState("");
         }
 
         [AllowAnonymous]
@@ -64,20 +64,27 @@ namespace Shifty.App.Services
         {
             var res = await _accountRepository.AuthenticateAsync(token);
             await _localStorage.SetItemAsync("token", res.Jwt);
-            await _authStateProvider.UpdateAuthState(res.Jwt);
+            _authStateProvider.UpdateAuthState(res.Jwt);
         }
 
         public async Task<bool> Refresh()
         {
+            Console.WriteLine("Refreshing token");
             var res = await _accountRepository.RefreshTokenAsync();
-            return await res.Match(
-                Succ: async (res) => {
-                    await _localStorage.SetItemAsync("token", res.Jwt);
-                    await _authStateProvider.UpdateAuthState(res.Jwt);
-                    return true;
-                },
-                Fail: (err) => Task.FromResult(false)
-            );
+
+            if (res.IsLeft)
+            {
+                System.Console.WriteLine(res.Right(w => w.ToString()).Left(e => e.Message));
+                return false;
+            }
+
+            Console.WriteLine("Refreshing token successful");
+
+            var jwtString = res.ValueUnsafe().Jwt;
+            await _localStorage.SetItemAsync("token", jwtString);
+            _authStateProvider.UpdateAuthState(jwtString);
+
+            return true;
         }
     }
 }
