@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout codebase
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
@@ -37,7 +37,7 @@ jobs:
         run: dotnet publish --no-restore --configuration Release --output publish
       - name: Publish workflow artifact
         if: ${{ inputs.publish_artifacts }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: shifty
           path: publish/wwwroot
