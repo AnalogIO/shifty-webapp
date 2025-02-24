@@ -2,7 +2,7 @@ using Shifty.Api.Generated.AnalogCoreV2;
 
 namespace Shifty.App.DomainModels
 {
-    public record MenuItem {
+    public class MenuItem {
         public int Id { get; init; }
         public string Name { get; set; }
         public bool Active { get; set; }
@@ -31,6 +31,23 @@ namespace Shifty.App.DomainModels
                 Name = menuItem.Name,
                 Active = menuItem.Active
             };
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+            
+            return obj is MenuItem menuItem &&
+                   Id == menuItem.Id;
+        }
+        
+        // override object.GetHashCode
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
         }
     }
 }
