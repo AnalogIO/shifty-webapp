@@ -44,7 +44,6 @@ namespace Shifty.App.DomainModels
                    Id == menuItem.Id;
         }
         
-        // override object.GetHashCode
         public override int GetHashCode()
         {
             return Id.GetHashCode();
