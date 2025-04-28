@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Shifty.App.Services
 {
@@ -7,7 +6,6 @@ namespace Shifty.App.Services
     {
         Task<bool> LoginUser(string username);
         Task Logout();
-        [AllowAnonymous]
         Task<bool> Authenticate(string token);
         Task<bool> Refresh();
     }

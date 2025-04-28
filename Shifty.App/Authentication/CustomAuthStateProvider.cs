@@ -33,13 +33,14 @@ namespace Shifty.App.Authentication
         private static ClaimsPrincipal ParseJwtString (string jwtString)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
+
             if (!tokenHandler.CanReadToken(jwtString))
                 return new ClaimsPrincipal();
 
             var token = new JwtSecurityTokenHandler().ReadJwtToken(jwtString);
             return (DateTime.UtcNow < token.ValidTo) switch
             {
-                true =>  new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "bearerToken")), //Needs the string passed as well, otherwise the user is not set to authenticated
+                true => new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "bearerToken")), //Needs the string passed as well, otherwise the user is not set to authenticated
                 false => new ClaimsPrincipal()
             };
         }
