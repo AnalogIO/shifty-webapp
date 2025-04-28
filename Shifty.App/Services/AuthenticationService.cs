@@ -35,10 +35,9 @@ namespace Shifty.App.Services
             }
         }
         
-        public async Task<bool> LoginUser(string username, string password)
+        public async Task<bool> LoginUser(string username)
         {
-            var encodedPassword = EncodePasscode(password);
-            var either = await _accountRepository.LoginAsync(username, encodedPassword);
+            var either = await _accountRepository.LoginAsync(username);
 
             return either.Match(
                 Left: error =>

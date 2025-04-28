@@ -30,11 +30,6 @@
                                       For="() => _loginForm.Email"
                                       Immediate="true"
                                       DebounceInterval="500"/>
-                        <MudTextField T="string" Label="Password"
-                                      @bind-Value="_loginForm.Password"
-                                      InputType="InputType.Password"
-                                      For="() => _loginForm.Password"
-                                      Immediate="true"/>
                     }
                 </MudCardContent>
                 <MudCardActions>
@@ -60,16 +55,13 @@
         [Required]
         [EmailAddress]
         public string Email { get; set; }
-
-        [Required]
-        public string Password { get; set; }
     }
 
     async Task LoginUser()
     {
         _successfulLogin = true;
         _loggingIn = true;
-        _successfulLogin = await _authenticationService.LoginUser(_loginForm.Email, _loginForm.Password);
+        _successfulLogin = await _authenticationService.LoginUser(_loginForm.Email);
         _loggingIn = false;
         if (_successfulLogin)
         {

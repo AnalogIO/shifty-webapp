@@ -17,7 +17,7 @@
   },
   "servers": [
     {
-      "url": "https://localhost:8081"
+      "url": "https://core.dev.analogio.dk"
     }
   ],
   "paths": {
@@ -435,21 +435,24 @@
         "tags": [
           "Account"
         ],
+        "summary": "Authenticates the user with the token hash from a magic link",
         "operationId": "Account_Authenticate",
-        "parameters": [
-          {
-            "name": "tokenHash",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "nullable": true
-            },
-            "x-position": 1
-          }
-        ],
+        "requestBody": {
+          "x-name": "token",
+          "description": "The token hash from the magic link",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenLoginRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
         "responses": {
           "200": {
-            "description": "",
+            "description": "A JSON Web Token used to authenticate for other endpoints and a refresh token to re-authenticate without a new magic link",
             "content": {
               "application/json": {
                 "schema": {
@@ -1961,7 +1964,7 @@
       },
       "UserGroup": {
         "type": "string",
-        "description": "",
+        "description": "Represents the different groups that a user can belong to.",
         "x-enumNames": [
           "Customer",
           "Barista",
@@ -2071,7 +2074,7 @@
       },
       "UserState": {
         "type": "string",
-        "description": "",
+        "description": "Represents the state of a User.",
         "x-enumNames": [
           "Active",
           "Deleted",
@@ -2090,21 +2093,32 @@
           "email": "john@doe.com"
         },
         "additionalProperties": false,
+        "required": [
+          "email",
+          "loginType"
+        ],
         "properties": {
           "email": {
             "type": "string",
             "description": "Email of user",
             "format": "email",
+            "minLength": 1,
             "example": "john@doe.com"
           },
           "loginType": {
-            "$ref": "#/components/schemas/LoginType"
+            "description": "Defines which application should open on login",
+            "example": "Shifty",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LoginType"
+              }
+            ]
           }
         }
       },
       "LoginType": {
         "type": "string",
-        "description": "",
+        "description": "Enum for applications to log in to",
         "x-enumNames": [
           "Shifty",
           "App"
@@ -2116,16 +2130,45 @@
       },
       "UserLoginResponse": {
         "type": "object",
+        "description": "User login response object",
+        "example": {
+          "jwt": "[no example provided]",
+          "refreshToken": "[no example provided]"
+        },
         "additionalProperties": false,
+        "required": [
+          "jwt",
+          "refreshToken"
+        ],
         "properties": {
           "jwt": {
             "type": "string",
-            "description": "JSON Web Token with claims for the user logging in"
+            "description": "JSON Web Token with claims for the user logging in",
+            "minLength": 1
           },
           "refreshToken": {
             "type": "string",
-            "description": "User's Display Name",
-            "example": "Name"
+            "description": "Token used to obtain a new JWT token on expiration",
+            "minLength": 1
+          }
+        }
+      },
+      "TokenLoginRequest": {
+        "type": "object",
+        "description": "Magic link request object",
+        "example": {
+          "token": "[no example provided]"
+        },
+        "additionalProperties": false,
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Magic link token",
+            "minLength": 1,
+            "example": "[no example provided]"
           }
         }
       },
@@ -2822,6 +2865,7 @@
             "FreePurchasePaymentDetails": "#/components/schemas/FreePurchasePaymentDetails"
           }
         },
+        "description": "Payment details",
         "x-abstract": true,
         "additionalProperties": false,
         "required": [

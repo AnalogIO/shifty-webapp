@@ -20,7 +20,7 @@ namespace Shifty.App.Repositories
             _v2client = v2client;
         }
 
-    public async Task<Either<Error, Task>> LoginAsync(string username, string password)
+    public async Task<Either<Error, Task>> LoginAsync(string username)
         {
             var dto = new UserLoginRequest(){
                 Email = username
@@ -41,7 +41,7 @@ namespace Shifty.App.Repositories
 
         public async Task<Either<Error, UserLoginResponse>> AuthenticateAsync(string token)
         {
-            return await TryAsync(_v2client.ApiV2AccountAuthAsync(token)).ToEither();
+            return await TryAsync(_v2client.ApiV2AccountAuthAsync(new(){Token = token})).ToEither();
         }
     }
 }

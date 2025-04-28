@@ -5,7 +5,7 @@ namespace Shifty.App.Services
 {
     public interface IAuthenticationService
     {
-        Task<bool> LoginUser(string username, string password);
+        Task<bool> LoginUser(string username);
         Task Logout();
         [AllowAnonymous]
         Task<bool> Authenticate(string token);
