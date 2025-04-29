@@ -20,15 +20,13 @@ namespace Shifty.App.Repositories
             _v2client = v2client;
         }
 
-    public async Task<Either<Error, TokenDto>> LoginAsync(string username, string password)
+    public async Task<Either<Error, Task>> LoginAsync(string username)
         {
-            var dto = new LoginDto()
-            {
-                Email= username,
-                Password = password,
-                Version = "2.1.0"
+            var dto = new UserLoginRequest(){
+                Email = username
             };
-            return await TryAsync(_v1client.ApiV1AccountLoginAsync(loginDto: dto)).ToEither();
+
+            return await TryAsync(_v2client.ApiV2AccountLoginAsync(dto)).ToEither();
         }
 
         public async Task<Try<UserSearchResponse>> SearchUserAsync(string query, int page, int pageSize)
@@ -39,6 +37,11 @@ namespace Shifty.App.Repositories
         public async Task<Try<Task>> UpdateUserGroupAsync(int userId, UserGroup group)
         {
             return await TryAsync(_v2client.ApiV2AccountUserGroupAsync(userId, new(){UserGroup = group}));
+        }
+
+        public async Task<Either<Error, UserLoginResponse>> AuthenticateAsync(string token)
+        {
+            return await TryAsync(_v2client.ApiV2AccountAuthAsync(new(){Token = token})).ToEither();
         }
     }
 }

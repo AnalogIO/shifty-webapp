@@ -1,0 +1,25 @@
+@page "/Auth"
+@using Microsoft.AspNetCore.Authorization
+@attribute [AllowAnonymous]
+@using Shifty.App.Services
+@inject NavigationManager NavManager
+@inject IAuthenticationService _authenticationService
+
+@code {
+    [CascadingParameter] public Task<AuthenticationState> AuthTask { get; set; }
+
+    [SupplyParameterFromQuery(Name = "token")]
+    public string Token { get; set; }
+
+    [AllowAnonymous]
+    protected override async Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(Token))
+        {
+            await _authenticationService.Authenticate(Token);
+        }
+
+        NavManager.NavigateTo("/");
+    }
+
+}
