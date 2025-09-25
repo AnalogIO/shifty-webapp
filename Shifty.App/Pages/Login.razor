@@ -14,35 +14,12 @@
             <DataAnnotationsValidator/>
             <MudCard Class="mb-auto">
                 <MudCardContent>
-                    @if (_loggingIn)
-                    {
-                        <MudProgressCircular Color="Color.Default" Indeterminate="true"/>
-                    }
-                    else
-                    {
-                        if (_showFailureAlert)
-                        {
-                            <MudAlert Severity="Severity.Error" ShowCloseIcon="true"
-                                      CloseIconClicked="() => CloseAlert(FailureAlertId)">An error occurred. Please try
-                                again later.
-                            </MudAlert>
-                        }
-
-                        if (_showSuccessAlert)
-                        {
-                            <MudAlert Severity="Severity.Success" ShowCloseIcon="true"
-                                      CloseIconClicked="() => CloseAlert(SuccessAlertId)">A magic link has been sent to
-                                your email address. Please check your inbox to login.
-                            </MudAlert>
-                        }
-
-                        <MudTextField T="string"
-                                      @bind-Value="_loginForm.Email"
-                                      Label="Email"
-                                      For="() => _loginForm.Email"
-                                      Immediate="true"
-                                      DebounceInterval="500"/>
-                    }
+                    <MudTextField T="string"
+                                  @bind-Value="_loginForm.Email"
+                                  Label="Email"
+                                  For="() => _loginForm.Email"
+                                  Immediate="true"
+                                  DebounceInterval="500"/>
                 </MudCardContent>
                 <MudCardActions>
                     <MudButton ButtonType="ButtonType.Submit"
@@ -58,16 +35,10 @@
 </MudPaper>
 
 @code {
-    private const string FailureAlertId = "failure";
-    private const string SuccessAlertId = "success";
+    [Inject] private IDialogService DialogService { get; set; }
 
     readonly LoginForm _loginForm = new();
 
-    bool _loggingIn;
-    bool _successfulLogin;
-    bool _showFailureAlert;
-    bool _showSuccessAlert;
-    
     public class LoginForm
     {
         [Required] [EmailAddress] public string Email { get; set; }
@@ -75,24 +46,16 @@
 
     async Task LoginUser()
     {
-        _loggingIn = true;
-        _successfulLogin = await _authenticationService.LoginUser(_loginForm.Email);
-        _loggingIn = false;
-
-        _ = _successfulLogin switch
+        _ = await _authenticationService.LoginUser(_loginForm.Email) switch
         {
-            true => _showSuccessAlert = true,
-            _ => _showFailureAlert = true
-        };
-    }
-
-    private void CloseAlert(string alert)
-    {
-        _ = alert switch
-        {
-            FailureAlertId => _showFailureAlert = false,
-            SuccessAlertId => _showSuccessAlert = false,
-            _ => throw new Exception("roof burning")
+            true => await DialogService.ShowMessageBox(
+                "Email sent",
+                "A magic link has been sent to your email address. Please check your inbox to login."
+            ),
+            _ => await DialogService.ShowMessageBox(
+                "Error",
+                "An error occured. Please wait a few minutes and try again."
+            )
         };
     }
 
