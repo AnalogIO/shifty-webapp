@@ -6,22 +6,34 @@
 
 @attribute [AllowAnonymous]
 
-<MudPaper Elevation="0" Height="60vh" Style="@($"background: {Color.Inherit}")" Class="d-flex justify-center align-center">
+<MudPaper Elevation="0" Height="60vh" Style="@($"background: {Color.Inherit}")"
+          Class="d-flex justify-center align-center">
     <MudPaper Width="40vw">
         <MudAlert Severity="Severity.Info">Please login</MudAlert>
-        <EditForm Model="@_loginForm" OnValidSubmit="async () =>  await LoginUser()" >
+        <EditForm Model="@_loginForm" OnValidSubmit="async () =>  await LoginUser()">
             <DataAnnotationsValidator/>
             <MudCard Class="mb-auto">
                 <MudCardContent>
                     @if (_loggingIn)
                     {
-                        <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+                        <MudProgressCircular Color="Color.Default" Indeterminate="true"/>
                     }
                     else
                     {
-                        if (!_successfulLogin)
+                        if (_showFailureAlert)
                         {
-                            <MudAlert Severity="Severity.Warning" ShowCloseIcon="true">Invalid credentials</MudAlert>
+                            <MudAlert Severity="Severity.Error" ShowCloseIcon="true"
+                                      CloseIconClicked="() => CloseAlert(FailureAlertId)">An error occurred. Please try
+                                again later.
+                            </MudAlert>
+                        }
+
+                        if (_showSuccessAlert)
+                        {
+                            <MudAlert Severity="Severity.Success" ShowCloseIcon="true"
+                                      CloseIconClicked="() => CloseAlert(SuccessAlertId)">A magic link has been sent to
+                                your email address. Please check your inbox to login.
+                            </MudAlert>
                         }
 
                         <MudTextField T="string"
@@ -46,26 +58,42 @@
 </MudPaper>
 
 @code {
-    bool _loggingIn = false;
-    bool _successfulLogin = true;
-    LoginForm _loginForm = new();
+    private const string FailureAlertId = "failure";
+    private const string SuccessAlertId = "success";
+
+    readonly LoginForm _loginForm = new();
+
+    bool _loggingIn;
+    bool _successfulLogin;
+    bool _showFailureAlert;
+    bool _showSuccessAlert;
     
     public class LoginForm
     {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+        [Required] [EmailAddress] public string Email { get; set; }
     }
 
     async Task LoginUser()
     {
-        _successfulLogin = true;
         _loggingIn = true;
         _successfulLogin = await _authenticationService.LoginUser(_loginForm.Email);
         _loggingIn = false;
-        if (_successfulLogin)
+
+        _ = _successfulLogin switch
         {
-            Navigation.NavigateTo("/");
-        }
+            true => _showSuccessAlert = true,
+            _ => _showFailureAlert = true
+        };
     }
+
+    private void CloseAlert(string alert)
+    {
+        _ = alert switch
+        {
+            FailureAlertId => _showFailureAlert = false,
+            SuccessAlertId => _showSuccessAlert = false,
+            _ => throw new Exception("roof burning")
+        };
+    }
+
 }
