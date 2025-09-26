@@ -6,31 +6,20 @@
 
 @attribute [AllowAnonymous]
 
-<MudPaper Elevation="0" Height="60vh" Style="@($"background: {Color.Inherit}")" Class="d-flex justify-center align-center">
+<MudPaper Elevation="0" Height="60vh" Style="@($"background: {Color.Inherit}")"
+          Class="d-flex justify-center align-center">
     <MudPaper Width="40vw">
         <MudAlert Severity="Severity.Info">Please login</MudAlert>
-        <EditForm Model="@_loginForm" OnValidSubmit="async () =>  await LoginUser()" >
+        <EditForm Model="@_loginForm" OnValidSubmit="async () =>  await LoginUser()">
             <DataAnnotationsValidator/>
             <MudCard Class="mb-auto">
                 <MudCardContent>
-                    @if (_loggingIn)
-                    {
-                        <MudProgressCircular Color="Color.Default" Indeterminate="true" />
-                    }
-                    else
-                    {
-                        if (!_successfulLogin)
-                        {
-                            <MudAlert Severity="Severity.Warning" ShowCloseIcon="true">Invalid credentials</MudAlert>
-                        }
-
-                        <MudTextField T="string"
-                                      @bind-Value="_loginForm.Email"
-                                      Label="Email"
-                                      For="() => _loginForm.Email"
-                                      Immediate="true"
-                                      DebounceInterval="500"/>
-                    }
+                    <MudTextField T="string"
+                                  @bind-Value="_loginForm.Email"
+                                  Label="Email"
+                                  For="() => _loginForm.Email"
+                                  Immediate="true"
+                                  DebounceInterval="500"/>
                 </MudCardContent>
                 <MudCardActions>
                     <MudButton ButtonType="ButtonType.Submit"
@@ -46,26 +35,28 @@
 </MudPaper>
 
 @code {
-    bool _loggingIn = false;
-    bool _successfulLogin = true;
-    LoginForm _loginForm = new();
-    
+    [Inject] private IDialogService DialogService { get; set; }
+
+    readonly LoginForm _loginForm = new();
+
     public class LoginForm
     {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+        [Required] [EmailAddress] public string Email { get; set; }
     }
 
     async Task LoginUser()
     {
-        _successfulLogin = true;
-        _loggingIn = true;
-        _successfulLogin = await _authenticationService.LoginUser(_loginForm.Email);
-        _loggingIn = false;
-        if (_successfulLogin)
+        _ = await _authenticationService.LoginUser(_loginForm.Email) switch
         {
-            Navigation.NavigateTo("/");
-        }
+            true => await DialogService.ShowMessageBox(
+                "Email sent",
+                "A magic link has been sent to your email address. Please check your inbox to login."
+            ),
+            _ => await DialogService.ShowMessageBox(
+                "Error",
+                "An error occured. Please wait a few minutes and try again."
+            )
+        };
     }
+
 }
