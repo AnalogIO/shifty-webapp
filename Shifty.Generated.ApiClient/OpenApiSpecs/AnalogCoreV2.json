@@ -17,15 +17,13 @@
   },
   "servers": [
     {
-      "url": "https://core.dev.analogio.dk"
+      "url": "https://core.prd.analogio.dk"
     }
   ],
   "paths": {
     "/api/v2/account": {
       "post": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Register data request. An account is required to verify its email before logging in",
         "operationId": "Account_Register",
         "requestBody": {
@@ -65,9 +63,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Request the deletion of the user coupled to the provided token",
         "operationId": "Account_Delete",
         "responses": {
@@ -98,9 +94,7 @@
         ]
       },
       "get": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Returns basic data about the account",
         "operationId": "Account_Get",
         "responses": {
@@ -128,9 +122,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Updates the account and returns the updated values.\nOnly properties which are present in the UpdateUserRequest will be updated",
         "operationId": "Account_Update",
         "requestBody": {
@@ -173,9 +165,7 @@
     },
     "/api/v2/account/email-exists": {
       "post": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Check if a given email is in use",
         "operationId": "Account_EmailExists",
         "requestBody": {
@@ -210,9 +200,7 @@
     },
     "/api/v2/account/{id}/user-group": {
       "patch": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Updates the user group of a user",
         "operationId": "Account_UpdateAccountUserGroup",
         "parameters": [
@@ -278,9 +266,7 @@
     },
     "/api/v2/account/resend-verification-email": {
       "post": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Resend account verification email if account is not already verified",
         "operationId": "Account_ResendVerificationEmail",
         "requestBody": {
@@ -325,9 +311,7 @@
     },
     "/api/v2/account/search": {
       "get": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Searches a user in the database",
         "operationId": "Account_SearchUsers",
         "parameters": [
@@ -402,9 +386,7 @@
     },
     "/api/v2/account/login": {
       "post": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Sends a magic link to the user's email to login",
         "operationId": "Account_Login",
         "requestBody": {
@@ -432,9 +414,7 @@
     },
     "/api/v2/account/auth": {
       "post": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Authenticates the user with the token hash from a magic link",
         "operationId": "Account_Authenticate",
         "requestBody": {
@@ -479,9 +459,7 @@
     },
     "/api/v2/statistics/unused-clips": {
       "post": {
-        "tags": [
-          "AdminStatistics"
-        ],
+        "tags": ["AdminStatistics"],
         "summary": "Sum unused clip cards within a given period per productId",
         "operationId": "AdminStatistics_GetUnusedClips",
         "requestBody": {
@@ -534,9 +512,7 @@
     },
     "/api/v2/appconfig": {
       "get": {
-        "tags": [
-          "AppConfig"
-        ],
+        "tags": ["AppConfig"],
         "summary": "Get app configuration",
         "operationId": "AppConfig_Get",
         "responses": {
@@ -555,9 +531,7 @@
     },
     "/api/v2/health/ping": {
       "get": {
-        "tags": [
-          "Health"
-        ],
+        "tags": ["Health"],
         "summary": "Ping",
         "operationId": "Health_Ping",
         "responses": {
@@ -584,9 +558,7 @@
     },
     "/api/v2/health/check": {
       "get": {
-        "tags": [
-          "Health"
-        ],
+        "tags": ["Health"],
         "summary": "Check service health",
         "operationId": "Health_Healthcheck",
         "responses": {
@@ -626,9 +598,7 @@
     },
     "/api/v2/leaderboard/top": {
       "get": {
-        "tags": [
-          "Leaderboard"
-        ],
+        "tags": ["Leaderboard"],
         "summary": "Gets the top leaderboard by the specified preset",
         "operationId": "Leaderboard_GetTopEntries",
         "parameters": [
@@ -677,9 +647,7 @@
     },
     "/api/v2/leaderboard": {
       "get": {
-        "tags": [
-          "Leaderboard"
-        ],
+        "tags": ["Leaderboard"],
         "summary": "Get leaderboard stats for authenticated user. A user will have rank 0 if they do not have any valid swipes",
         "operationId": "Leaderboard_Get",
         "parameters": [
@@ -725,9 +693,7 @@
     },
     "/api/v2/menuitems": {
       "get": {
-        "tags": [
-          "MenuItems"
-        ],
+        "tags": ["MenuItems"],
         "summary": "Returns a list of all menu items",
         "operationId": "MenuItems_GetAllMenuItems",
         "responses": {
@@ -755,9 +721,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "MenuItems"
-        ],
+        "tags": ["MenuItems"],
         "summary": "Adds a menu item",
         "operationId": "MenuItems_AddMenuItem",
         "requestBody": {
@@ -797,9 +761,7 @@
     },
     "/api/v2/menuitems/{id}": {
       "put": {
-        "tags": [
-          "MenuItems"
-        ],
+        "tags": ["MenuItems"],
         "summary": "Updates a menu item",
         "operationId": "MenuItems_UpdateMenuItem",
         "parameters": [
@@ -850,64 +812,9 @@
         ]
       }
     },
-    "/api/v2/mobilepay/webhook": {
-      "post": {
-        "tags": [
-          "MobilePay"
-        ],
-        "summary": "Webhook to be invoked by MobilePay backend",
-        "operationId": "MobilePay_Webhook",
-        "parameters": [
-          {
-            "name": "x-mobilepay-signature",
-            "x-originalName": "mpSignatureHeader",
-            "in": "header",
-            "description": "Webhook signature",
-            "schema": {
-              "type": "string",
-              "nullable": true
-            },
-            "x-position": 2
-          }
-        ],
-        "requestBody": {
-          "x-name": "request",
-          "description": "Webhook request",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MobilePayWebhook"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "204": {
-            "description": "Webhook processed"
-          },
-          "400": {
-            "description": "Signature is not valid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
     "/api/v2/products": {
       "post": {
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "summary": "Adds a new product",
         "operationId": "Products_AddProduct",
         "requestBody": {
@@ -945,9 +852,7 @@
         ]
       },
       "get": {
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "summary": "Returns a list of available products based on a account's user group.",
         "operationId": "Products_GetProducts",
         "responses": {
@@ -980,9 +885,7 @@
     },
     "/api/v2/products/{id}": {
       "put": {
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "summary": "Updates a product with the specified changes.",
         "operationId": "Products_UpdateProduct",
         "parameters": [
@@ -1034,9 +937,7 @@
         ]
       },
       "get": {
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "summary": "Returns a product with the specified id",
         "operationId": "Products_GetProduct",
         "parameters": [
@@ -1090,9 +991,7 @@
     },
     "/api/v2/products/all": {
       "get": {
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "summary": "Returns a list of all products",
         "operationId": "Products_GetAllProducts",
         "responses": {
@@ -1122,9 +1021,7 @@
     },
     "/api/v2/purchases": {
       "get": {
-        "tags": [
-          "Purchases"
-        ],
+        "tags": ["Purchases"],
         "summary": "Get all purchases",
         "operationId": "Purchases_GetAllPurchases",
         "responses": {
@@ -1158,9 +1055,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Purchases"
-        ],
+        "tags": ["Purchases"],
         "summary": "Initiate a new payment.",
         "operationId": "Purchases_InitiatePurchase",
         "requestBody": {
@@ -1206,9 +1101,7 @@
     },
     "/api/v2/purchases/user/{userId}": {
       "get": {
-        "tags": [
-          "Purchases"
-        ],
+        "tags": ["Purchases"],
         "summary": "Get all purchases for a user",
         "operationId": "Purchases_GetAllPurchasesForUser",
         "parameters": [
@@ -1267,9 +1160,7 @@
     },
     "/api/v2/purchases/{id}": {
       "get": {
-        "tags": [
-          "Purchases"
-        ],
+        "tags": ["Purchases"],
         "summary": "Get purchase",
         "operationId": "Purchases_GetPurchase",
         "parameters": [
@@ -1322,9 +1213,7 @@
     },
     "/api/v2/purchases/{id}/refund": {
       "put": {
-        "tags": [
-          "Purchases"
-        ],
+        "tags": ["Purchases"],
         "summary": "Refunds a payment",
         "operationId": "Purchases_RefundPurchase",
         "parameters": [
@@ -1368,11 +1257,64 @@
         ]
       }
     },
+    "/api/v2/receipts": {
+      "get": {
+        "tags": ["Receipt"],
+        "summary": "Retrieve all receipts for the authenticated user\nThis includes all purchases, swiped tickets, and used vouchers",
+        "operationId": "Receipt_GetReceipts",
+        "parameters": [
+          {
+            "name": "Type",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ReceiptType"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "BatchSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "ContinuationToken",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All users receipts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiptResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
     "/api/v2/tickets": {
       "get": {
-        "tags": [
-          "Tickets"
-        ],
+        "tags": ["Tickets"],
         "summary": "Returns a list of tickets",
         "operationId": "Tickets_Get",
         "parameters": [
@@ -1416,9 +1358,7 @@
     },
     "/api/v2/tickets/use": {
       "post": {
-        "tags": [
-          "Tickets"
-        ],
+        "tags": ["Tickets"],
         "summary": "Uses a ticket (for the given product) on the given menu item",
         "operationId": "Tickets_UseTicket",
         "requestBody": {
@@ -1479,11 +1419,42 @@
         ]
       }
     },
+    "/api/v2/tickets/grouped": {
+      "get": {
+        "tags": ["Tickets"],
+        "summary": "Retrieve the owned tickets of the account (grouped)",
+        "operationId": "Tickets_GetGroupedOwnedTickets",
+        "responses": {
+          "200": {
+            "description": "Successful request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GroupedTicketsResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          },
+          {
+            "apikey": []
+          }
+        ]
+      }
+    },
     "/api/v2/vouchers/issue-vouchers": {
       "post": {
-        "tags": [
-          "Vouchers"
-        ],
+        "tags": ["Vouchers"],
         "summary": "Issue voucher codes, that can later be redeemed",
         "operationId": "Vouchers_IssueVouchers",
         "requestBody": {
@@ -1542,9 +1513,7 @@
     },
     "/api/v2/vouchers/{voucher-code}/redeem": {
       "post": {
-        "tags": [
-          "Vouchers"
-        ],
+        "tags": ["Vouchers"],
         "summary": "Redeems the voucher supplied as parameter in the path",
         "operationId": "Vouchers_RedeemVoucher",
         "parameters": [
@@ -1606,9 +1575,7 @@
     },
     "/api/v2/webhooks/accounts/user-group": {
       "put": {
-        "tags": [
-          "Webhooks"
-        ],
+        "tags": ["Webhooks"],
         "summary": "Update user groups in bulk",
         "operationId": "Webhooks_UpdateUserGroups",
         "requestBody": {
@@ -1674,12 +1641,7 @@
           "programmeId": 1
         },
         "additionalProperties": false,
-        "required": [
-          "name",
-          "email",
-          "password",
-          "programmeId"
-        ],
+        "required": ["name", "email", "password", "programmeId"],
         "properties": {
           "name": {
             "type": "string",
@@ -1809,18 +1771,8 @@
       "UserRole": {
         "type": "string",
         "description": "",
-        "x-enumNames": [
-          "Customer",
-          "Barista",
-          "Manager",
-          "Board"
-        ],
-        "enum": [
-          "Customer",
-          "Barista",
-          "Manager",
-          "Board"
-        ]
+        "x-enumNames": ["Customer", "Barista", "Manager", "Board"],
+        "enum": ["Customer", "Barista", "Manager", "Board"]
       },
       "ProgrammeResponse": {
         "type": "object",
@@ -1831,11 +1783,7 @@
           "fullName": "Software Development"
         },
         "additionalProperties": false,
-        "required": [
-          "id",
-          "shortName",
-          "fullName"
-        ],
+        "required": ["id", "shortName", "fullName"],
         "properties": {
           "id": {
             "type": "integer",
@@ -1910,9 +1858,7 @@
           "emailExists": true
         },
         "additionalProperties": false,
-        "required": [
-          "emailExists"
-        ],
+        "required": ["emailExists"],
         "properties": {
           "emailExists": {
             "type": "boolean",
@@ -1927,9 +1873,7 @@
           "email": "johndoe@mail.com"
         },
         "additionalProperties": false,
-        "required": [
-          "email"
-        ],
+        "required": ["email"],
         "properties": {
           "email": {
             "type": "string",
@@ -1947,9 +1891,7 @@
           "UserGroup": "Barista"
         },
         "additionalProperties": false,
-        "required": [
-          "userGroup"
-        ],
+        "required": ["userGroup"],
         "properties": {
           "userGroup": {
             "description": "The UserGroup of a user",
@@ -1965,18 +1907,8 @@
       "UserGroup": {
         "type": "string",
         "description": "Represents the different groups that a user can belong to.",
-        "x-enumNames": [
-          "Customer",
-          "Barista",
-          "Manager",
-          "Board"
-        ],
-        "enum": [
-          "Customer",
-          "Barista",
-          "Manager",
-          "Board"
-        ]
+        "x-enumNames": ["Customer", "Barista", "Manager", "Board"],
+        "enum": ["Customer", "Barista", "Manager", "Board"]
       },
       "ResendAccountVerificationEmailRequest": {
         "type": "object",
@@ -1985,9 +1917,7 @@
           "email": "john@doe.com"
         },
         "additionalProperties": false,
-        "required": [
-          "email"
-        ],
+        "required": ["email"],
         "properties": {
           "email": {
             "type": "string",
@@ -2002,10 +1932,7 @@
         "type": "object",
         "description": "Represents a search result",
         "additionalProperties": false,
-        "required": [
-          "totalUsers",
-          "users"
-        ],
+        "required": ["totalUsers", "users"],
         "properties": {
           "totalUsers": {
             "type": "integer",
@@ -2075,16 +2002,8 @@
       "UserState": {
         "type": "string",
         "description": "Represents the state of a User.",
-        "x-enumNames": [
-          "Active",
-          "Deleted",
-          "PendingActivition"
-        ],
-        "enum": [
-          "Active",
-          "Deleted",
-          "PendingActivition"
-        ]
+        "x-enumNames": ["Active", "Deleted", "PendingActivition"],
+        "enum": ["Active", "Deleted", "PendingActivition"]
       },
       "UserLoginRequest": {
         "type": "object",
@@ -2093,10 +2012,7 @@
           "email": "john@doe.com"
         },
         "additionalProperties": false,
-        "required": [
-          "email",
-          "loginType"
-        ],
+        "required": ["email", "loginType"],
         "properties": {
           "email": {
             "type": "string",
@@ -2119,14 +2035,8 @@
       "LoginType": {
         "type": "string",
         "description": "Enum for applications to log in to",
-        "x-enumNames": [
-          "Shifty",
-          "App"
-        ],
-        "enum": [
-          "Shifty",
-          "App"
-        ]
+        "x-enumNames": ["Shifty", "App"],
+        "enum": ["Shifty", "App"]
       },
       "UserLoginResponse": {
         "type": "object",
@@ -2136,10 +2046,7 @@
           "refreshToken": "[no example provided]"
         },
         "additionalProperties": false,
-        "required": [
-          "jwt",
-          "refreshToken"
-        ],
+        "required": ["jwt", "refreshToken"],
         "properties": {
           "jwt": {
             "type": "string",
@@ -2160,9 +2067,7 @@
           "token": "[no example provided]"
         },
         "additionalProperties": false,
-        "required": [
-          "token"
-        ],
+        "required": ["token"],
         "properties": {
           "token": {
             "type": "string",
@@ -2228,9 +2133,7 @@
           "environmentType": "Production"
         },
         "additionalProperties": false,
-        "required": [
-          "environmentType"
-        ],
+        "required": ["environmentType"],
         "properties": {
           "environmentType": {
             "description": "Environment type for indicating production or test system",
@@ -2246,16 +2149,8 @@
       "EnvironmentType": {
         "type": "string",
         "description": "",
-        "x-enumNames": [
-          "Production",
-          "Test",
-          "LocalDevelopment"
-        ],
-        "enum": [
-          "Production",
-          "Test",
-          "LocalDevelopment"
-        ]
+        "x-enumNames": ["Production", "Test", "LocalDevelopment"],
+        "enum": ["Production", "Test", "LocalDevelopment"]
       },
       "ServiceHealthResponse": {
         "type": "object",
@@ -2317,26 +2212,14 @@
       "LeaderboardPreset": {
         "type": "string",
         "description": "Preset for filtering Leaderboard based on date range",
-        "x-enumNames": [
-          "Month",
-          "Semester",
-          "Total"
-        ],
-        "enum": [
-          "Month",
-          "Semester",
-          "Total"
-        ]
+        "x-enumNames": ["Month", "Semester", "Total"],
+        "enum": ["Month", "Semester", "Total"]
       },
       "MenuItemResponse": {
         "type": "object",
         "description": "Represents a menu item that can be redeemed with a ticket",
         "additionalProperties": false,
-        "required": [
-          "id",
-          "name",
-          "active"
-        ],
+        "required": ["id", "name", "active"],
         "properties": {
           "id": {
             "type": "integer",
@@ -2361,9 +2244,7 @@
         "type": "object",
         "description": "Initiate a new menuitem add request.",
         "additionalProperties": false,
-        "required": [
-          "name"
-        ],
+        "required": ["name"],
         "properties": {
           "name": {
             "type": "string",
@@ -2377,10 +2258,7 @@
         "type": "object",
         "description": "Initiate an update product request.",
         "additionalProperties": false,
-        "required": [
-          "name",
-          "active"
-        ],
+        "required": ["name", "active"],
         "properties": {
           "name": {
             "type": "string",
@@ -2395,66 +2273,6 @@
           }
         }
       },
-      "MobilePayWebhook": {
-        "type": "object",
-        "description": "MobilePay webhook invocation request \nCode documentation based on MobilePay Developer: Webhooks",
-        "example": {
-          "notificationId": "c85f42aa-0a81-4838-8e87-72236a348d08",
-          "eventType": "payment.reserved",
-          "eventDate": "2021-10-15T15:30:31Z",
-          "data": {
-            "id": "ceb351ac-9d20-4300-b5ad-e05851d5a3b7",
-            "type": "payment"
-          }
-        },
-        "additionalProperties": false,
-        "properties": {
-          "notificationId": {
-            "type": "string",
-            "description": "Internal MobilePay Id for Webhook invocation",
-            "example": "c85f42aa-0a81-4838-8e87-72236a348d08"
-          },
-          "eventType": {
-            "type": "string",
-            "description": "Type of event\n\n    \n        payment.reserved\n        Published when payment has been approved by MobilePay user and is ready to be captured\n    \n    \n        payment.cancelled_by_user\n        Published when payment has been cancelled by user inside MobilePay app\n    \n    \n        payment.expired\n        Published when either initiated payment didn't have any user interactions for 5-10 minutes or payment was reserved, but 7 days have passed and the reservation has expired.\n    ",
-            "example": "payment.expired"
-          },
-          "eventDate": {
-            "type": "string",
-            "description": "Date time of event dispatch",
-            "format": "date-time"
-          },
-          "data": {
-            "description": "Event data, e.g. payment id",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/EventData"
-              }
-            ]
-          }
-        }
-      },
-      "EventData": {
-        "type": "object",
-        "description": "Event Data",
-        "example": {
-          "id": "ceb351ac-9d20-4300-b5ad-e05851d5a3b7",
-          "type": "payment"
-        },
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "MobilePay payment id",
-            "example": "ceb351ac-9d20-4300-b5ad-e05851d5a3b7"
-          },
-          "type": {
-            "type": "string",
-            "description": "Internal MobilePay representation of a type.",
-            "example": "payment"
-          }
-        }
-      },
       "ProductResponse": {
         "type": "object",
         "description": "Represents a purchasable product",
@@ -2466,10 +2284,7 @@
           "description": "Coffee clip card of 10 clips",
           "isPerk": true,
           "visible": true,
-          "allowedUserGroups": [
-            "Manager",
-            "Board"
-          ],
+          "allowedUserGroups": ["Manager", "Board"],
           "eligibleMenuItems": [
             {
               "id": 1,
@@ -2525,7 +2340,7 @@
           },
           "isPerk": {
             "type": "boolean",
-            "description": "Eligible due to a user perk privilege ",
+            "description": "Eligible due to a user perk privilege",
             "example": true
           },
           "visible": {
@@ -2544,10 +2359,7 @@
           "eligibleMenuItems": {
             "type": "array",
             "description": "The menu items that this product can be used on.",
-            "example": [
-              "Cappuccino",
-              "Caffe Latte"
-            ],
+            "example": ["Cappuccino", "Caffe Latte"],
             "items": {
               "$ref": "#/components/schemas/MenuItemResponse"
             }
@@ -2605,10 +2417,7 @@
           "allowedUserGroups": {
             "type": "array",
             "description": "Gets or sets the user groups that can access the product.",
-            "example": [
-              "Manager",
-              "Board"
-            ],
+            "example": ["Manager", "Board"],
             "items": {
               "$ref": "#/components/schemas/UserGroup"
             }
@@ -2616,10 +2425,7 @@
           "menuItemIds": {
             "type": "array",
             "description": "Gets or sets the menu items that are eligible for the product.",
-            "example": [
-              1,
-              2
-            ],
+            "example": [1, 2],
             "items": {
               "type": "integer",
               "format": "int32"
@@ -2678,10 +2484,7 @@
           "allowedUserGroups": {
             "type": "array",
             "description": "Gets or sets the user groups that can access the product.",
-            "example": [
-              "Manager",
-              "Board"
-            ],
+            "example": ["Manager", "Board"],
             "items": {
               "$ref": "#/components/schemas/UserGroup"
             }
@@ -2689,10 +2492,7 @@
           "menuItemIds": {
             "type": "array",
             "description": "Gets or sets the eligible menu items for the product.",
-            "example": [
-              1,
-              2
-            ],
+            "example": [1, 2],
             "items": {
               "type": "integer",
               "format": "int32"
@@ -2777,13 +2577,15 @@
           "Completed",
           "Cancelled",
           "PendingPayment",
-          "Refunded"
+          "Refunded",
+          "Expired"
         ],
         "enum": [
           "Completed",
           "Cancelled",
           "PendingPayment",
-          "Refunded"
+          "Refunded",
+          "Expired"
         ]
       },
       "SinglePurchaseResponse": {
@@ -2868,11 +2670,7 @@
         "description": "Payment details",
         "x-abstract": true,
         "additionalProperties": false,
-        "required": [
-          "paymentType",
-          "orderId",
-          "discriminator"
-        ],
+        "required": ["paymentType", "orderId", "discriminator"],
         "properties": {
           "paymentType": {
             "description": "Payment type",
@@ -2897,14 +2695,8 @@
       "PaymentType": {
         "type": "string",
         "description": "PaymentType represents the type of Payment which is used to fulfill a purchase",
-        "x-enumNames": [
-          "MobilePay",
-          "FreePurchase"
-        ],
-        "enum": [
-          "MobilePay",
-          "FreePurchase"
-        ]
+        "x-enumNames": ["MobilePay", "FreePurchase"],
+        "enum": ["MobilePay", "FreePurchase"]
       },
       "MobilePayPaymentDetails": {
         "allOf": [
@@ -2921,10 +2713,7 @@
               "paymentId": "186d2b31-ff25-4414-9fd1-bfe9807fa8b7"
             },
             "additionalProperties": false,
-            "required": [
-              "mobilePayAppRedirectUri",
-              "paymentId"
-            ],
+            "required": ["mobilePayAppRedirectUri", "paymentId"],
             "properties": {
               "mobilePayAppRedirectUri": {
                 "type": "string",
@@ -3040,10 +2829,7 @@
         "type": "object",
         "description": "Initiate a new purchase request",
         "additionalProperties": false,
-        "required": [
-          "productId",
-          "paymentType"
-        ],
+        "required": ["productId", "paymentType"],
         "properties": {
           "productId": {
             "type": "integer",
@@ -3062,16 +2848,161 @@
           }
         }
       },
+      "ReceiptResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["receipts", "continuationToken"],
+        "properties": {
+          "receipts": {
+            "type": "array",
+            "description": "The list of receipts for the user.",
+            "items": {
+              "$ref": "#/components/schemas/ReceiptBase"
+            }
+          },
+          "continuationToken": {
+            "type": "string",
+            "description": "Used as the \"from\" parameter in the next request to get the next batch of receipts.\nIs set to the date and time of the oldest receipt in the current batch.",
+            "minLength": 1
+          }
+        }
+      },
+      "ReceiptBase": {
+        "type": "object",
+        "discriminator": {
+          "propertyName": "Type",
+          "mapping": {
+            "Purchase": "#/components/schemas/PurchaseReceipt",
+            "Voucher": "#/components/schemas/VoucherReceipt",
+            "UsedTicket": "#/components/schemas/UsedTicketReceipt"
+          }
+        },
+        "description": "Shared properties for all receipt types.",
+        "x-abstract": true,
+        "additionalProperties": false,
+        "required": ["productName", "Type"],
+        "properties": {
+          "productName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "Type": {
+            "type": "string"
+          }
+        }
+      },
+      "PurchaseReceipt": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ReceiptBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["quantity", "status", "orderDate", "price", "orderId"],
+            "properties": {
+              "quantity": {
+                "type": "integer",
+                "description": "The amount of tickets issued by the purchase.",
+                "format": "int32"
+              },
+              "status": {
+                "description": "The status of the purchase.",
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/PurchaseStatus"
+                  }
+                ]
+              },
+              "orderDate": {
+                "type": "string",
+                "description": "The date and time when the order was placed.",
+                "format": "date-time",
+                "minLength": 1
+              },
+              "price": {
+                "type": "integer",
+                "description": "The total price of the purchase in kr.",
+                "format": "int32"
+              },
+              "orderId": {
+                "type": "string",
+                "description": "The unique identifier of the order associated with the purchase.",
+                "format": "guid",
+                "minLength": 1
+              }
+            }
+          }
+        ]
+      },
+      "VoucherReceipt": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ReceiptBase"
+          },
+          {
+            "type": "object",
+            "description": "Represents of tickets issued by a voucher.",
+            "additionalProperties": false,
+            "required": ["code", "redeemDate", "quantity"],
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "The code of the voucher.",
+                "minLength": 1
+              },
+              "redeemDate": {
+                "type": "string",
+                "format": "date-time",
+                "minLength": 1
+              },
+              "quantity": {
+                "type": "integer",
+                "description": "The amount of tickets issued by the purchase.",
+                "format": "int32"
+              }
+            }
+          }
+        ]
+      },
+      "UsedTicketReceipt": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ReceiptBase"
+          },
+          {
+            "type": "object",
+            "description": "Represents a receipt for a ticket being used by a swipe",
+            "additionalProperties": false,
+            "required": ["swipeDate", "menuItemName"],
+            "properties": {
+              "swipeDate": {
+                "type": "string",
+                "description": "The date and time when the swipe was made.",
+                "format": "date-time",
+                "minLength": 1
+              },
+              "menuItemName": {
+                "type": "string",
+                "description": "The name of the menu item that was redeemed with the ticket.",
+                "minLength": 1
+              }
+            }
+          }
+        ]
+      },
+      "ReceiptType": {
+        "type": "string",
+        "description": "The types of receipts that can be requested. Multiple types can be combined.",
+        "x-enumFlags": true,
+        "x-enumNames": ["Purchase", "Voucher", "UsedTicket", "All"],
+        "enum": ["Purchase", "Voucher", "UsedTicket", "All"]
+      },
       "TicketResponse": {
         "type": "object",
         "description": "Representing a ticket for a product",
         "additionalProperties": false,
-        "required": [
-          "id",
-          "dateCreated",
-          "productId",
-          "productName"
-        ],
+        "required": ["id", "dateCreated", "productId", "productName"],
         "properties": {
           "id": {
             "type": "integer",
@@ -3117,12 +3048,7 @@
         "type": "object",
         "description": "Representing a used ticket for a product",
         "additionalProperties": false,
-        "required": [
-          "id",
-          "dateCreated",
-          "dateUsed",
-          "productName"
-        ],
+        "required": ["id", "dateCreated", "dateUsed", "productName"],
         "properties": {
           "id": {
             "type": "integer",
@@ -3162,10 +3088,7 @@
         "type": "object",
         "description": "Represents a request to use a ticket.",
         "additionalProperties": false,
-        "required": [
-          "productId",
-          "menuItemId"
-        ],
+        "required": ["productId", "menuItemId"],
         "properties": {
           "productId": {
             "type": "integer",
@@ -3181,6 +3104,71 @@
           }
         }
       },
+      "GroupedTicketsResponse": {
+        "type": "object",
+        "description": "A collection of unused tickets a user owns for a product.",
+        "example": {
+          "productId": 1,
+          "productName": "Filter Coffee",
+          "ticketsLeft": 5,
+          "eligibleMenuItems": [
+            {
+              "id": 1,
+              "name": "Cappuccino"
+            },
+            {
+              "id": 2,
+              "name": "Caffe Latte"
+            }
+          ]
+        },
+        "additionalProperties": false,
+        "required": [
+          "productId",
+          "productName",
+          "ticketsLeft",
+          "eligibleMenuItems"
+        ],
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "description": "Id of product",
+            "format": "int32",
+            "example": 1
+          },
+          "productName": {
+            "type": "string",
+            "description": "Name of product",
+            "minLength": 1,
+            "example": "Filter Coffee"
+          },
+          "ticketsLeft": {
+            "type": "integer",
+            "description": "Remaining (if any) unused tickets left for product",
+            "format": "int32",
+            "example": 5
+          },
+          "eligibleMenuItems": {
+            "type": "array",
+            "description": "The menu items that this ticket can be used on.",
+            "example": [
+              {
+                "id": 1,
+                "name": "Cappuccino",
+                "active": true
+              },
+              {
+                "id": 2,
+                "name": "Caffe Latte",
+                "active": false
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/MenuItemResponse"
+            }
+          }
+        }
+      },
       "IssueVoucherResponse": {
         "type": "object",
         "description": "Response object for creating voucher codes",
@@ -3191,12 +3179,7 @@
           "IssuedAt": "2023-02-07T12:00:00"
         },
         "additionalProperties": false,
-        "required": [
-          "voucherCode",
-          "productId",
-          "productName",
-          "issuedAt"
-        ],
+        "required": ["voucherCode", "productId", "productName", "issuedAt"],
         "properties": {
           "voucherCode": {
             "type": "string",
@@ -3277,9 +3260,7 @@
         "type": "object",
         "description": "Represents a request to update user groups in bulk",
         "additionalProperties": false,
-        "required": [
-          "privilegedUsers"
-        ],
+        "required": ["privilegedUsers"],
         "properties": {
           "privilegedUsers": {
             "type": "array",
@@ -3294,10 +3275,7 @@
         "type": "object",
         "description": "Represents an account user group update",
         "additionalProperties": false,
-        "required": [
-          "accountId",
-          "userGroup"
-        ],
+        "required": ["accountId", "userGroup"],
         "properties": {
           "accountId": {
             "type": "integer",
