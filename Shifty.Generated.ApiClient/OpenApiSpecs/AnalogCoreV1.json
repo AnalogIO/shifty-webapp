@@ -1,5 +1,5 @@
 {
-  "x-generator": "NSwag v13.17.0.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))",
+  "x-generator": "NSwag v14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))",
   "openapi": "3.0.0",
   "info": {
     "title": "Cafe Analog CoffeeCard API",
@@ -17,15 +17,13 @@
   },
   "servers": [
     {
-      "url": "https://core.dev.analogio.dk"
+      "url": "https://core.prd.analogio.dk"
     }
   ],
   "paths": {
     "/api/v1/Account/register": {
       "post": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Register a new account. A account is required to verify its email before logging in",
         "operationId": "Account_Register",
         "requestBody": {
@@ -67,9 +65,7 @@
     },
     "/api/v1/Account/login": {
       "post": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Returns a token that is used to identify the account",
         "operationId": "Account_Login",
         "requestBody": {
@@ -124,9 +120,7 @@
     },
     "/api/v1/Account": {
       "get": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Returns basic data about the account",
         "operationId": "Account_Get",
         "responses": {
@@ -144,9 +138,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "summary": "Updates the account and returns the updated values.\nOnly properties which are present in the UpdateUserDto will be updated",
         "operationId": "Account_Update",
         "requestBody": {
@@ -179,9 +171,7 @@
     },
     "/api/v1/Account/forgotpassword": {
       "post": {
-        "tags": [
-          "Account"
-        ],
+        "tags": ["Account"],
         "operationId": "Account_ForgotPassword",
         "requestBody": {
           "x-name": "emailDTO",
@@ -222,9 +212,7 @@
     },
     "/api/v1/AppConfig": {
       "get": {
-        "tags": [
-          "AppConfig"
-        ],
+        "tags": ["AppConfig"],
         "summary": "Get app configuration",
         "operationId": "AppConfig_Get",
         "responses": {
@@ -245,9 +233,7 @@
     },
     "/api/v1/CoffeeCards": {
       "get": {
-        "tags": [
-          "CoffeeCards"
-        ],
+        "tags": ["CoffeeCards"],
         "summary": "Retrieve the coffee cards of the account",
         "operationId": "CoffeeCards_Get",
         "responses": {
@@ -265,6 +251,7 @@
             "description": "Invalid credentials"
           }
         },
+        "deprecated": true,
         "security": [
           {
             "jwt": []
@@ -277,9 +264,7 @@
     },
     "/api/v1/Leaderboard": {
       "get": {
-        "tags": [
-          "Leaderboard"
-        ],
+        "tags": ["Leaderboard"],
         "summary": "Gets the leaderboard by the specified preset",
         "operationId": "Leaderboard_Get",
         "parameters": [
@@ -314,9 +299,7 @@
     },
     "/api/v1/MobilePay/initiate": {
       "post": {
-        "tags": [
-          "MobilePay"
-        ],
+        "tags": ["MobilePay"],
         "summary": "Initiates a purchase from the given productId and returns an orderId",
         "operationId": "MobilePay_InitiatePurchase",
         "requestBody": {
@@ -350,9 +333,7 @@
     },
     "/api/v1/MobilePay/complete": {
       "post": {
-        "tags": [
-          "MobilePay"
-        ],
+        "tags": ["MobilePay"],
         "summary": "Validates the purchase against MobilePay and delivers the tickets if succeeded",
         "operationId": "MobilePay_CompletePurchase",
         "requestBody": {
@@ -386,9 +367,7 @@
     },
     "/api/v1/Ping": {
       "get": {
-        "tags": [
-          "Ping"
-        ],
+        "tags": ["Ping"],
         "summary": "Ping",
         "operationId": "Ping_Ping",
         "responses": {
@@ -408,9 +387,7 @@
     },
     "/api/v1/Products": {
       "get": {
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "summary": "Returns a list of available products based on a account's user group",
         "operationId": "Products_GetProductsPublic",
         "responses": {
@@ -432,9 +409,7 @@
     },
     "/api/v1/Products/app": {
       "get": {
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "summary": "Returns a list of available products based on a account's user group",
         "operationId": "Products_GetProductsForUser",
         "responses": {
@@ -467,9 +442,7 @@
     },
     "/api/v1/Programmes": {
       "get": {
-        "tags": [
-          "Programmes"
-        ],
+        "tags": ["Programmes"],
         "summary": "Returns a list of available programmes",
         "operationId": "Programmes_Get",
         "responses": {
@@ -491,9 +464,7 @@
     },
     "/api/v1/Purchases": {
       "get": {
-        "tags": [
-          "Purchases"
-        ],
+        "tags": ["Purchases"],
         "summary": "Returns a list of purchases for the given user via the supplied token in the header",
         "operationId": "Purchases_Get",
         "responses": {
@@ -514,9 +485,7 @@
     },
     "/api/v1/Purchases/redeemvoucher": {
       "post": {
-        "tags": [
-          "Purchases"
-        ],
+        "tags": ["Purchases"],
         "summary": "Redeems the voucher supplied as parameter in the path",
         "operationId": "Purchases_RedeemVoucher",
         "parameters": [
@@ -524,7 +493,8 @@
             "name": "voucherCode",
             "in": "query",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "nullable": true
             },
             "x-position": 1
           }
@@ -576,9 +546,7 @@
     },
     "/api/v1/Purchases/issueproduct": {
       "post": {
-        "tags": [
-          "Purchases"
-        ],
+        "tags": ["Purchases"],
         "summary": "Issue purchase used by the ipad in the cafe",
         "operationId": "Purchases_IssueProduct",
         "requestBody": {
@@ -603,9 +571,7 @@
     },
     "/api/v1/Tickets": {
       "get": {
-        "tags": [
-          "Tickets"
-        ],
+        "tags": ["Tickets"],
         "summary": "Returns a list of tickets",
         "operationId": "Tickets_Get",
         "parameters": [
@@ -649,9 +615,7 @@
     },
     "/api/v1/Tickets/useMultiple": {
       "post": {
-        "tags": [
-          "Tickets"
-        ],
+        "tags": ["Tickets"],
         "summary": "Uses the tickets supplied via product ids in the body",
         "operationId": "Tickets_UseMultipleTickets",
         "requestBody": {
@@ -707,9 +671,7 @@
     },
     "/api/v1/Tickets/use": {
       "post": {
-        "tags": [
-          "Tickets"
-        ],
+        "tags": ["Tickets"],
         "summary": "Use ticket request",
         "operationId": "Tickets_Use",
         "requestBody": {
@@ -718,7 +680,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UseTicketDTO"
+                "$ref": "#/components/schemas/UseTicketDto"
               }
             }
           },
@@ -788,11 +750,7 @@
           "password": "[no example provided]"
         },
         "additionalProperties": false,
-        "required": [
-          "name",
-          "email",
-          "password"
-        ],
+        "required": ["name", "email", "password"],
         "properties": {
           "name": {
             "type": "string",
@@ -836,7 +794,8 @@
         "additionalProperties": false,
         "properties": {
           "message": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           }
         }
       },
@@ -849,11 +808,7 @@
           "version": "2.1.0"
         },
         "additionalProperties": false,
-        "required": [
-          "email",
-          "password",
-          "version"
-        ],
+        "required": ["email", "password", "version"],
         "properties": {
           "email": {
             "type": "string",
@@ -929,9 +884,7 @@
           "email": "john@doe.com"
         },
         "additionalProperties": false,
-        "required": [
-          "email"
-        ],
+        "required": ["email"],
         "properties": {
           "email": {
             "type": "string",
@@ -944,7 +897,7 @@
       },
       "CoffeeCardDto": {
         "type": "object",
-        "description": "A CoffeeCard is a union datatype of a product and unused tickets associated with the product. ",
+        "description": "A CoffeeCard is a union datatype of a product and unused tickets associated with the product.",
         "example": {
           "productId": 1,
           "name": "Filter Coffee",
@@ -953,13 +906,7 @@
           "quantity": 10
         },
         "additionalProperties": false,
-        "required": [
-          "productId",
-          "name",
-          "ticketsLeft",
-          "price",
-          "quantity"
-        ],
+        "required": ["productId", "name", "ticketsLeft", "price", "quantity"],
         "properties": {
           "productId": {
             "type": "integer",
@@ -1000,9 +947,7 @@
           "productId": 1
         },
         "additionalProperties": false,
-        "required": [
-          "productId"
-        ],
+        "required": ["productId"],
         "properties": {
           "productId": {
             "type": "integer",
@@ -1020,10 +965,7 @@
           "transactionId": "123241619"
         },
         "additionalProperties": false,
-        "required": [
-          "orderId",
-          "transactionId"
-        ],
+        "required": ["orderId", "transactionId"],
         "properties": {
           "orderId": {
             "type": "string",
@@ -1050,13 +992,7 @@
           "description": "Coffee clip card of 10 clips"
         },
         "additionalProperties": false,
-        "required": [
-          "id",
-          "price",
-          "numberOfTickets",
-          "name",
-          "description"
-        ],
+        "required": ["id", "price", "numberOfTickets", "name", "description"],
         "properties": {
           "id": {
             "type": "integer",
@@ -1099,11 +1035,7 @@
           "fullName": "Software Development"
         },
         "additionalProperties": false,
-        "required": [
-          "id",
-          "shortName",
-          "fullName"
-        ],
+        "required": ["id", "shortName", "fullName"],
         "properties": {
           "id": {
             "type": "integer",
@@ -1207,11 +1139,7 @@
           "productId": 1
         },
         "additionalProperties": false,
-        "required": [
-          "issuedBy",
-          "userId",
-          "productId"
-        ],
+        "required": ["issuedBy", "userId", "productId"],
         "properties": {
           "issuedBy": {
             "type": "string",
@@ -1237,12 +1165,7 @@
         "description": "Representing a ticket for a product",
         "example": "{\n    \"id\": 122,\n    \"dateCreated\": \"2022-01-09T21:03:52.2283208Z\",\n    \"dateUsed\": \"2022-01-09T21:03:52.2283208Z\",\n    \"productName: \"Coffee\"\n}",
         "additionalProperties": false,
-        "required": [
-          "id",
-          "dateCreated",
-          "dateUsed",
-          "productName"
-        ],
+        "required": ["id", "dateCreated", "productName"],
         "properties": {
           "id": {
             "type": "integer",
@@ -1276,15 +1199,10 @@
         "type": "object",
         "description": "Use multiple tickets request",
         "example": {
-          "productIds": [
-            1,
-            2
-          ]
+          "productIds": [1, 2]
         },
         "additionalProperties": false,
-        "required": [
-          "productIds"
-        ],
+        "required": ["productIds"],
         "properties": {
           "productIds": {
             "type": "array",
@@ -1300,14 +1218,8 @@
       "UsedTicketResponse": {
         "type": "object",
         "description": "Representing a used ticket for a product",
-        "example": "{\n    \"id\": 122,\n    \"dateCreated\": \"2022-01-09T21:03:52.2283208Z\",\n    \"dateUsed\": \"2022-01-09T21:03:52.2283208Z\",\n    \"productName: \"Coffee\"\n}",
         "additionalProperties": false,
-        "required": [
-          "id",
-          "dateCreated",
-          "dateUsed",
-          "productName"
-        ],
+        "required": ["id", "dateCreated", "dateUsed", "productName"],
         "properties": {
           "id": {
             "type": "integer",
@@ -1333,24 +1245,28 @@
             "type": "string",
             "description": "Name of product a ticket is for",
             "minLength": 1,
-            "example": "Coffee"
+            "example": "Small drink"
+          },
+          "menuItemName": {
+            "type": "string",
+            "description": "Name of the menu item that this ticket was used on",
+            "nullable": true,
+            "example": "Cappuccino"
           }
         }
       },
-      "UseTicketDTO": {
+      "UseTicketDto": {
         "type": "object",
-        "description": "Use ticket request",
+        "description": "Use ticket request\n            ",
         "example": {
           "productId": 1
         },
         "additionalProperties": false,
-        "required": [
-          "productId"
-        ],
+        "required": ["productId"],
         "properties": {
           "productId": {
             "type": "integer",
-            "description": "Id of product to use a ticket for",
+            "description": "Id of product to use a ticket for\n            ",
             "format": "int32",
             "example": 1
           }
