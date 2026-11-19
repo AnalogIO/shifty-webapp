@@ -1,5 +1,6 @@
 @namespace Components
 @using System.ComponentModel.DataAnnotations
+@using System.Threading
 @using Shifty.App.Services
 @using Shifty.Api.Generated.AnalogCoreV1
 @using Shifty.Api.Generated.AnalogCoreV2
@@ -11,7 +12,7 @@
 <MudContainer MaxWidth="MaxWidth.Medium" Style="margin-top: 20px;">
     <MudTable 
         T="SimpleUserResponse" 
-        ServerData="@(new Func<TableState, Task<TableData<SimpleUserResponse>>>(LoadUsers))" 
+        ServerData="@(LoadUsers)" 
             @ref="_table"
             EditTrigger="TableEditTrigger.EditButton"
             ApplyButtonPosition="TableApplyButtonPosition.End"
@@ -70,7 +71,7 @@
     private string searchString = "";
     UserGroup UserGroupBeforeEdit;
 
-    private async Task<TableData<SimpleUserResponse>> LoadUsers(TableState state)
+    private async Task<TableData<SimpleUserResponse>> LoadUsers(TableState state, CancellationToken cancellationToken)
     {
         var result = await _userService.SearchUsers(searchString, state.Page, state.PageSize);
 

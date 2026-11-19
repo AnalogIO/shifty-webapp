@@ -59,7 +59,7 @@
                         }
                         else
                         {
-                            <MudIconButton Size="@Size.Small" Style="@($"color:{Colors.Grey.Default};")"
+                            <MudIconButton Size="@Size.Small" Style="@($"color:{Colors.Gray.Default};")"
                                 Icon="@Icons.Material.Filled.VisibilityOff" OnClick="@(() => ConfirmActiveToggle(context.Item))" />
                         }
                     }
@@ -105,7 +105,7 @@
         Console.WriteLine("MenuItems: " + _menuItems.Count());
         _loading = false;
     }
-    async Task CommittedItemChanges(MenuItem item)
+    async Task<DataGridEditFormAction> CommittedItemChanges(MenuItem item)
     {
         if (item.Id == 0)
         {
@@ -149,6 +149,9 @@
             );
         }
         StateHasChanged();
+        
+        // TODO verify behaviour
+        return DataGridEditFormAction.Close;
     }
     async Task<LanguageExt.Try<MenuItem>> updateMenuItem(MenuItem item)
     {

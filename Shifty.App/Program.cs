@@ -33,7 +33,6 @@ namespace Shifty.App
         {
             services.AddMudServices(config =>
             {
-                config.SnackbarConfiguration.RequireInteraction = true;
             });
             services.AddBlazoredLocalStorage();
             services.AddAuthorizationCore();
