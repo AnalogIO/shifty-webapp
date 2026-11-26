@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+      <PackageReference Include="System.Text.Json" Version="10.0.15" />
       <PackageReference Include="NSwag.ApiDescription.Client" Version="14.0.7" /> 
       <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     </ItemGroup>
@@ -18,12 +18,12 @@
         <OpenApiReference Include="OpenApiSpecs/AnalogCoreV1.json" >
             <ClassName>AnalogCoreV1</ClassName>
             <Namespace>Shifty.Api.Generated.AnalogCoreV1</Namespace>
-            <Options>/UseBaseUrl:false /OperationGenerationMode:SingleClientFromPathSegments</Options>
+            <Options>/JsonLibrary:SystemTextJson /UseBaseUrl:false /OperationGenerationMode:SingleClientFromPathSegments</Options>
         </OpenApiReference>
         <OpenApiReference Include="OpenApiSpecs/AnalogCoreV2.json" >
             <ClassName>AnalogCoreV2</ClassName>
             <Namespace>Shifty.Api.Generated.AnalogCoreV2</Namespace>
-            <Options>/AdditionalNamespaceUsages:Shifty.Api.Generated.AnalogCoreV1 /UseBaseUrl:false /OperationGenerationMode:SingleClientFromPathSegments</Options>
+            <Options>/AdditionalNamespaceUsages:Shifty.Api.Generated.AnalogCoreV1 /JsonLibrary:SystemTextJson /UseBaseUrl:false /OperationGenerationMode:SingleClientFromPathSegments</Options>
         </OpenApiReference>
     </ItemGroup>
 
