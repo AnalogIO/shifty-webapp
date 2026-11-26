@@ -1,0 +1,14 @@
+.dashboard-card {
+    transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.dashboard-card-link:hover .dashboard-card {
+    transform: translateY(-2px);
+    box-shadow: var(--mud-elevation-8);
+}
+
+.dashboard-card-link:focus-visible {
+    outline: 2px solid var(--mud-palette-primary);
+    outline-offset: 3px;
+    border-radius: var(--mud-default-borderradius);
+}
