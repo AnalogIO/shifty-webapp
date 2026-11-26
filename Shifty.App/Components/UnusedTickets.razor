@@ -43,7 +43,7 @@
 {
     private IEnumerable<UnusedTicket> Items;
     private bool _loading = false;
-    private DateRange _queryDateRange = new(){ Start = new(DateTime.Today.Year, 1, 1), End = new(DateTime.Today.Year, 12, 31)};
+    private DateRange _queryDateRange = new(start: new(DateTime.Today.Year, 1, 1), end: new(DateTime.Today.Year, 12, 31));
 
     private async Task LoadUnusedTickets(DateRange queryDateRange)
     {

@@ -48,11 +48,11 @@
     {
         _ = await _authenticationService.LoginUser(_loginForm.Email) switch
         {
-            true => await DialogService.ShowMessageBox(
+            true => await DialogService.ShowMessageBoxAsync(
                 "Email sent",
                 "A magic link has been sent to your email address. Please check your inbox to login."
             ),
-            _ => await DialogService.ShowMessageBox(
+            _ => await DialogService.ShowMessageBoxAsync(
                 "Error",
                 "An error occured. Please wait a few minutes and try again."
             )

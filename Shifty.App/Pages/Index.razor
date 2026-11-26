@@ -1,8 +1,45 @@
-﻿@page "/"
+@page "/"
+@using Shifty.App.Components
 
-<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16">
-    <MudText Typo="Typo.h3" GutterBottom="true">Analog Shifty</MudText>
-    <MudAlert Severity="Severity.Info">Analog Shifty is <b>in development</b>. 
-        In this first version you can check-in on your shift. Later versions will allow you to sell app clip cards to customers and see a history of the latest swipes.
-    </MudAlert>
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-6 mt-6">
+    <MudText Typo="Typo.h4" GutterBottom="true">Quick access</MudText>
+    <MudText Typo="Typo.body1" Color="Color.Secondary" Class="mb-6">
+        Choose a section to get started. Available sections depend on your account role.
+    </MudText>
+
+    <MudGrid Spacing="4">
+        <AuthorizeView Roles="Board,Manager">
+            <Authorized>
+                <QuickAccessCard Href="Voucher"
+                                 Icon="@Icons.Material.Filled.Sell"
+                                 Title="Issue vouchers"
+                                 Description="Create and issue vouchers." />
+            </Authorized>
+        </AuthorizeView>
+
+        <AuthorizeView Roles="Board">
+            <Authorized>
+                <QuickAccessCard Href="Products"
+                                 Icon="@Icons.Material.Outlined.Inventory"
+                                 Title="Product Management"
+                                 Description="Manage products and their availability." />
+                <QuickAccessCard Href="MenuItems"
+                                 Icon="@Icons.Material.Outlined.Coffee"
+                                 Title="Menu Item Management"
+                                 Description="Manage the menu items available in the app." />
+                <QuickAccessCard Href="Users"
+                                 Icon="@Icons.Material.Filled.ManageAccounts"
+                                 Title="Manage users"
+                                 Description="Find users and manage their access." />
+                <QuickAccessCard Href="Refunds"
+                                 Icon="@Icons.Material.Filled.Payments"
+                                 Title="Issue refunds"
+                                 Description="Review purchases and issue refunds." />
+                <QuickAccessCard Href="Statistics"
+                                 Icon="@Icons.Material.Filled.Analytics"
+                                 Title="Statistics"
+                                 Description="View application statistics." />
+            </Authorized>
+        </AuthorizeView>
+    </MudGrid>
 </MudContainer>

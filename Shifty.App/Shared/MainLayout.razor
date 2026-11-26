@@ -5,6 +5,7 @@
 <MudDialogProvider
     CloseOnEscapeKey="true"
 />
+<MudPopoverProvider/>
 <MudSnackbarProvider />
 
 <MudLayout>
@@ -36,7 +37,7 @@
 
     readonly MudTheme _theme = new MudTheme()
     {
-        Palette = new Palette()
+        PaletteLight = new PaletteLight()
         {
             Primary = new MudColor("#775440"),
             Secondary = new MudColor("#38251a"),
@@ -47,7 +48,7 @@
             Error = new MudColor("#893c24"),
             Warning = new MudColor("#fed521"),
             Success = new MudColor("#738d4b"),
-            Dark = Colors.Grey.Darken3,
+            Dark = Colors.Gray.Darken3,
         }
     };
 

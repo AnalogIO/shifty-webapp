@@ -1,5 +1,6 @@
 @namespace Components
 @using System.ComponentModel.DataAnnotations
+@using System.Threading
 @using Shifty.App.Services
 @using Shifty.Api.Generated.AnalogCoreV1
 @using Shifty.Api.Generated.AnalogCoreV2
@@ -131,7 +132,7 @@
         );
     }
 
-    private async Task<IEnumerable<Product>> Products(string value)
+    private async Task<IEnumerable<Product>> Products(string value, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(value))
             return _products;

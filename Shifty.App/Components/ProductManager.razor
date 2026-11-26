@@ -64,7 +64,7 @@
                             }
                             else
                             {
-                                <MudIcon Size="@Size.Small" Style="@($"color:{Colors.Grey.Default};")"
+                                <MudIcon Size="@Size.Small" Style="@($"color:{Colors.Gray.Default};")"
                                     Icon="@Icons.Material.Filled.VisibilityOff" />
                             }
                         }
@@ -189,13 +189,30 @@
         await JSRuntime.InvokeVoidAsync("window.focusElement", "first-edit-element");
     }
 
-    async Task CommittedItemChanges(Product item)
+    void AddItemToDataGrid()
+    {
+        _products = _products.Append(new Product{
+            Id = 0,
+            Name = "",
+            Description = "",
+            IsPerk = false,
+            NumberOfTickets = 1,
+            Price = 0,
+            Visible = true,
+            AllowedUserGroups = new List<UserGroup>(),
+            EligibleMenuItems = new List<MenuItem>(),
+        });
+        StateHasChanged();
+        _dataGrid.SetEditingItemAsync(_products.Last());
+    }
+
+    async Task<DataGridEditFormAction> CommittedItemChanges(Product item)
     {
         List<UserGroup> AllowedUserGroups =
-                UserGroupDict.Where(e => e.Value)
-                             .ToDictionary(kv => kv.Key, kv => kv.Value)
-                             .Keys
-                             .ToList();
+            UserGroupDict.Where(e => e.Value)
+                .ToDictionary(kv => kv.Key, kv => kv.Value)
+                .Keys
+                .ToList();
 
         item.AllowedUserGroups = AllowedUserGroups;
 
@@ -211,7 +228,7 @@
 
                     // Override the created product with the placeholder item
                     _products = _products.Where(p => p.Id != 0)
-                                .Append(product);
+                        .Append(product);
 
                     StateHasChanged();
                 },
@@ -236,23 +253,9 @@
                 }
             );
         }
-    }
-
-    void AddItemToDataGrid()
-    {
-        _products = _products.Append(new Product{
-            Id = 0,
-            Name = "",
-            Description = "",
-            IsPerk = false,
-            NumberOfTickets = 1,
-            Price = 0,
-            Visible = true,
-            AllowedUserGroups = new List<UserGroup>(),
-            EligibleMenuItems = new List<MenuItem>(),
-        });
-        StateHasChanged();
-        _dataGrid.SetEditingItemAsync(_products.Last());
+        
+        // TODO verify behaviour
+        return DataGridEditFormAction.Close;
     }
 
     private Func<Product, int, string> RowStyleFunc => (x, i) =>

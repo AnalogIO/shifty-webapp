@@ -1,5 +1,4 @@
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -33,27 +32,18 @@ namespace Shifty.App
         {
             services.AddMudServices(config =>
             {
-                config.SnackbarConfiguration.RequireInteraction = true;
             });
             services.AddBlazoredLocalStorage();
             services.AddAuthorizationCore();
 
 
-            services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
-                .CreateClient("AnalogCoreV1"));
-            services.AddHttpClient("AnalogCoreV1",
+            services.AddTransient<RequestAuthenticationHandler>();
+            services.AddHttpClient<AnalogCoreV1>(
                     client => client.BaseAddress = new Uri(configuration["ApiHost"]))
                 .AddHttpMessageHandler<RequestAuthenticationHandler>();
-            services.AddScoped(provider =>
-                new AnalogCoreV1(provider.GetRequiredService<IHttpClientFactory>().CreateClient("AnalogCoreV1")));
-
-            services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
-                .CreateClient("AnalogCoreV2"));
-            services.AddHttpClient("AnalogCoreV2",
+            services.AddHttpClient<AnalogCoreV2>(
                     client => client.BaseAddress = new Uri(configuration["ApiHost"]))
                 .AddHttpMessageHandler<RequestAuthenticationHandler>();
-            services.AddScoped(provider =>
-                new AnalogCoreV2(provider.GetRequiredService<IHttpClientFactory>().CreateClient("AnalogCoreV2")));
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IVoucherRepository, VoucherRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
@@ -70,7 +60,6 @@ namespace Shifty.App
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IMenuItemService, MenuItemService>();
             services.AddScoped<IUnusedTicketsService, UnusedTicketsService>();
-            services.AddScoped<RequestAuthenticationHandler>();
 
             services.AddMudServices(config =>
             {
