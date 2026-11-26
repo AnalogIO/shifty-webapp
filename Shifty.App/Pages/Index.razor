@@ -1,8 +1,122 @@
-﻿@page "/"
+@page "/"
 
-<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16">
-    <MudText Typo="Typo.h3" GutterBottom="true">Analog Shifty</MudText>
-    <MudAlert Severity="Severity.Info">Analog Shifty is <b>in development</b>. 
-        In this first version you can check-in on your shift. Later versions will allow you to sell app clip cards to customers and see a history of the latest swipes.
-    </MudAlert>
+<style>
+    .dashboard-card-link {
+        display: block;
+        height: 100%;
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .dashboard-card-link:hover .mud-card {
+        transform: translateY(-2px);
+        transition: transform 150ms ease, box-shadow 150ms ease;
+    }
+
+    .dashboard-card-link:focus-visible {
+        outline: 2px solid var(--mud-palette-primary);
+        outline-offset: 3px;
+        border-radius: var(--mud-default-borderradius);
+    }
+</style>
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-6 mt-6">
+    <MudText Typo="Typo.h4" GutterBottom="true">Quick access</MudText>
+    <MudText Typo="Typo.body1" Color="Color.Secondary" Class="mb-6">
+        Choose a section to get started. Available sections depend on your account role.
+    </MudText>
+
+    <MudGrid Spacing="4">
+        <AuthorizeView Roles="Board,Manager">
+            <Authorized>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudLink Href="Voucher" Underline="Underline.None" Style="color: inherit;" Class="dashboard-card-link">
+                        <MudCard Class="h-100">
+                            <MudCardContent Class="d-flex flex-column align-center text-center pa-6">
+                                <MudIcon Icon="@Icons.Material.Filled.Sell" Color="Color.Primary" Size="Size.Large" />
+                                <MudText Typo="Typo.h6" Class="mt-3">Issue vouchers</MudText>
+                                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mt-2">
+                                    Create and issue vouchers.
+                                </MudText>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudLink>
+                </MudItem>
+            </Authorized>
+        </AuthorizeView>
+
+        <AuthorizeView Roles="Board">
+            <Authorized>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudLink Href="Products" Underline="Underline.None" Style="color: inherit;" Class="dashboard-card-link">
+                        <MudCard Class="h-100">
+                            <MudCardContent Class="d-flex flex-column align-center text-center pa-6">
+                                <MudIcon Icon="@Icons.Material.Outlined.Inventory" Color="Color.Primary" Size="Size.Large" />
+                                <MudText Typo="Typo.h6" Class="mt-3">Product Management</MudText>
+                                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mt-2">
+                                    Manage products and their availability.
+                                </MudText>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudLink>
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="4">
+                    <MudLink Href="MenuItems" Underline="Underline.None" Style="color: inherit;" Class="dashboard-card-link">
+                        <MudCard Class="h-100">
+                            <MudCardContent Class="d-flex flex-column align-center text-center pa-6">
+                                <MudIcon Icon="@Icons.Material.Outlined.Coffee" Color="Color.Primary" Size="Size.Large" />
+                                <MudText Typo="Typo.h6" Class="mt-3">Menu Item Management</MudText>
+                                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mt-2">
+                                    Manage the menu items available in the app.
+                                </MudText>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudLink>
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="4">
+                    <MudLink Href="Users" Underline="Underline.None" Style="color: inherit;" Class="dashboard-card-link">
+                        <MudCard Class="h-100">
+                            <MudCardContent Class="d-flex flex-column align-center text-center pa-6">
+                                <MudIcon Icon="@Icons.Material.Filled.ManageAccounts" Color="Color.Primary" Size="Size.Large" />
+                                <MudText Typo="Typo.h6" Class="mt-3">Manage users</MudText>
+                                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mt-2">
+                                    Find users and manage their access.
+                                </MudText>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudLink>
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="4">
+                    <MudLink Href="Refunds" Underline="Underline.None" Style="color: inherit;" Class="dashboard-card-link">
+                        <MudCard Class="h-100">
+                            <MudCardContent Class="d-flex flex-column align-center text-center pa-6">
+                                <MudIcon Icon="@Icons.Material.Filled.Payments" Color="Color.Primary" Size="Size.Large" />
+                                <MudText Typo="Typo.h6" Class="mt-3">Issue refunds</MudText>
+                                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mt-2">
+                                    Review purchases and issue refunds.
+                                </MudText>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudLink>
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="4">
+                    <MudLink Href="Statistics" Underline="Underline.None" Style="color: inherit;" Class="dashboard-card-link">
+                        <MudCard Class="h-100">
+                            <MudCardContent Class="d-flex flex-column align-center text-center pa-6">
+                                <MudIcon Icon="@Icons.Material.Filled.Analytics" Color="Color.Primary" Size="Size.Large" />
+                                <MudText Typo="Typo.h6" Class="mt-3">Statistics</MudText>
+                                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mt-2">
+                                    View application statistics.
+                                </MudText>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudLink>
+                </MudItem>
+            </Authorized>
+        </AuthorizeView>
+    </MudGrid>
 </MudContainer>
